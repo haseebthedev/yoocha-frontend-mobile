@@ -11,7 +11,7 @@ const HomeScreen = () => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 22, color: "black" }}>This is home page</Text>
+      <Text style={{ fontSize: 20, color: "black" }}>This is home page</Text>
     </View>
   );
 };
