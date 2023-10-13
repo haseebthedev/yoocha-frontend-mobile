@@ -3,8 +3,8 @@ import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
-import { SplashScreen, HomeScreen } from "screens";
-import BootSplash from "react-native-bootsplash";
+import { HomeScreen } from "screens";
+import { colors } from "theme";
 
 export type NavigatorParamList = {
   splash: undefined;
@@ -37,7 +37,7 @@ export const AppNavigator = (props: NavigationProps) => {
 
   return (
     <NavigationContainer ref={navigationRef} {...props}>
-      <StatusBar translucent backgroundColor={"rgba(0,0,0,0)"} />
+      <StatusBar translucent backgroundColor={colors.transparent} />
       <AppStack />
     </NavigationContainer>
   );

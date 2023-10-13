@@ -1,17 +1,63 @@
-import { useEffect } from "react";
-import { Text, View } from "react-native";
-import BootSplash from "react-native-bootsplash";
+import { FlatList, View } from "react-native";
+import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard } from "components";
+import { HOME_CHAT_DATA, HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
+import { colors } from "theme";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import styles from "./home.styles";
+import { hp } from "utils/responsive";
 
 const HomeScreen = () => {
-  useEffect(() => {
-    setTimeout(() => {
-      BootSplash.hide();
-    }, 2000);
-  }, []);
-
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 20, color: "black" }}>This is home page</Text>
+    <View style={styles.container}>
+      {/* App Header */}
+      <View style={styles.appHeader}>
+        <MaterialCommunityIcons name="menu" color={colors.textDark} size={20} />
+        <Text text="YOOCHAT" preset="logo" />
+        <Ionicons name="notifications-outline" color={colors.textDark} size={20} />
+      </View>
+
+      <View style={styles.mainContainer}>
+        <View style={styles.sidebarContainer}>
+          <FlatList
+            data={HOME_STATUS_DATA}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            style={styles.sidebarList}
+            contentContainerStyle={styles.sidebarListContentContainer}
+            renderItem={({ item, index }) => <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
+          />
+        </View>
+
+        <View style={styles.mainBodyContainer}>
+          <AppHeading title="Suggestions" rightTitle="View All" />
+
+          <View>
+            <FlatList
+              horizontal
+              data={HOME_SUGGESTION_DATA}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ gap: 8 }}
+              renderItem={({ item, index }) => <UserSuggestionCard item={item} />}
+            />
+          </View>
+
+          <AppHeading title="Friends" />
+          <View>
+            <FlatList
+              data={[...HOME_CHAT_DATA, ...HOME_CHAT_DATA, ...HOME_CHAT_DATA, ...HOME_CHAT_DATA]}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => <ChatCard item={item} />}
+              ItemSeparatorComponent={() => (
+                <View style={{ paddingVertical: hp(1.2) }}>
+                  <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
