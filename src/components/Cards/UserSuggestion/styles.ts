@@ -4,8 +4,8 @@ import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
   container: {
-    width: wp(25),
-    height: hp(16),
+    width: wp(28),
+    height: hp(18),
     marginBottom: 20,
     borderRadius: wp(3),
     overflow: "hidden",
@@ -27,15 +27,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: hp(1.5),
     paddingHorizontal: 10,
+    alignSelf: 'center'
   },
   nameText: {
     color: colors.white,
     fontSize: hp(1.4),
-  },
-  locationText: {
-    color: colors.white,
-    fontSize: hp(1),
-    marginBottom: hp(0.5),
   },
   addFriendBlock: {
     flexDirection: "row",

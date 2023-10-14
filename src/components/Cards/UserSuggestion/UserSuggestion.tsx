@@ -17,7 +17,6 @@ const UserSuggestionCard = ({ item, onAddPress }: UserSuggestionCardI) => {
       <LinearGradient colors={[colors.transparent, colors.black]} style={styles.gradientBlock}></LinearGradient>
       <View style={styles.bottomAbsoluteBlock}>
         <Text text={item.name} preset="bold" style={styles.nameText} numberOfLines={1} />
-        <Text text={item.location} style={styles.locationText} numberOfLines={1} />
         <TouchableOpacity onPress={onAddPress} style={styles.addFriendBlock}>
           <Ionicons name="person-add-outline" color={colors.white} size={8} />
           <Text text="Add Friend" style={styles.addFriendText} />

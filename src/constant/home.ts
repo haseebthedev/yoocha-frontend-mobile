@@ -121,4 +121,22 @@ export const HOME_CHAT_DATA = [
     lastMessageDateTime: "2022-02-10T14:12:10Z",
     noOfUnReadMessages: 0,
   },
+  {
+    id: "6",
+    profilePic: "https://picsum.photos/215",
+    name: "David",
+    onlineStatus: true,
+    lastMessage: "I'll be there in 10 minutes.",
+    lastMessageDateTime: "2022-02-10T14:12:10Z",
+    noOfUnReadMessages: 0,
+  },
+  {
+    id: "7",
+    profilePic: "https://picsum.photos/215",
+    name: "Last",
+    onlineStatus: true,
+    lastMessage: "I'll be there in 10 minutes.",
+    lastMessageDateTime: "2022-02-10T14:12:10Z",
+    noOfUnReadMessages: 0,
+  },
 ];

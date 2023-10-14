@@ -43,19 +43,19 @@ const HomeScreen = () => {
           </View>
 
           <AppHeading title="Friends" />
-          <View>
-            <FlatList
-              data={[...HOME_CHAT_DATA, ...HOME_CHAT_DATA, ...HOME_CHAT_DATA, ...HOME_CHAT_DATA]}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <ChatCard item={item} />}
-              ItemSeparatorComponent={() => (
-                <View style={{ paddingVertical: hp(1.2) }}>
-                  <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
-                </View>
-              )}
-            />
-          </View>
+          <FlatList
+            data={HOME_CHAT_DATA}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => <ChatCard item={item} />}
+            style={{ flex: 1 }}
+            contentContainerStyle={{paddingBottom: 20}}
+            ItemSeparatorComponent={() => (
+              <View style={{ paddingVertical: hp(1.2) }}>
+                <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
+              </View>
+            )}
+          />
         </View>
       </View>
     </View>

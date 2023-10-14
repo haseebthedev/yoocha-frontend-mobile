@@ -1,1 +1,2 @@
-export * from './Home/home.screen';
+//  Home Navigator
+export * from './Main/main.screen';

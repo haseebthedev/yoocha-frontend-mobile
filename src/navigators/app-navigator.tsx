@@ -3,12 +3,11 @@ import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
-import { HomeScreen } from "screens";
+import { MainScreen } from "screens";
 import { colors } from "theme";
 
 export type NavigatorParamList = {
-  splash: undefined;
-  home: undefined;
+  main: undefined;
 };
 
 const Stack = createNativeStackNavigator<NavigatorParamList>();
@@ -20,10 +19,9 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="home"
+      initialRouteName="main"
     >
-      {/* <Stack.Screen name="splash" component={SplashScreen} /> */}
-      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen name="main" component={MainScreen} />
     </Stack.Navigator>
   );
 };
