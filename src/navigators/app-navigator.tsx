@@ -3,11 +3,12 @@ import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
-import { MainScreen } from "screens";
+import { MainScreen, UserMessagingScreen } from "screens";
 import { colors } from "theme";
 
 export type NavigatorParamList = {
   main: undefined;
+  usermessaging: undefined;
 };
 
 const Stack = createNativeStackNavigator<NavigatorParamList>();
@@ -19,9 +20,10 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="main"
+      initialRouteName="usermessaging"
     >
       <Stack.Screen name="main" component={MainScreen} />
+      <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
     </Stack.Navigator>
   );
 };
