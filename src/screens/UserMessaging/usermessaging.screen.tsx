@@ -1,14 +1,13 @@
 import { FC } from "react";
 import { Text } from "components";
-import { FlatList, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { USER_MESSAGING_DATA } from "constant";
 import styles from "./styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { hp, wp } from "utils/responsive";
-import { isIOS } from "utils/deviceInfo";
+import { wp } from "utils/responsive";
 
 const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "usermessaging">> = ({
   navigation,

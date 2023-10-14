@@ -9,9 +9,9 @@ interface ChatCardI {
   onPress?: () => void;
 }
 
-const ChatCard = ({ item }: ChatCardI) => {
+const ChatCard = ({ item, onPress }: ChatCardI) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.profileContainer}>
         <Image source={{ uri: item.profilePic }} style={styles.profileImage} />
         <View style={styles.textContainer}>

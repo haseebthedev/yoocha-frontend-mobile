@@ -6,8 +6,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
 import { hp } from "utils/responsive";
+import { NavigatorParamList, navigate } from "navigators";
+import { FC } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-const HomeScreen = () => {
+const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "main">> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* App Header */}
@@ -47,9 +50,9 @@ const HomeScreen = () => {
             data={HOME_CHAT_DATA}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <ChatCard item={item} />}
+            renderItem={({ item }) => <ChatCard item={item} onPress={() => navigation.navigate("usermessaging")} />}
             style={{ flex: 1 }}
-            contentContainerStyle={{paddingBottom: 20}}
+            contentContainerStyle={{ paddingBottom: 20 }}
             ItemSeparatorComponent={() => (
               <View style={{ paddingVertical: hp(1.2) }}>
                 <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
