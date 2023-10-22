@@ -25,7 +25,7 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="blockedusers"
+      initialRouteName="main"
     >
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />

@@ -15,7 +15,9 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <Ionicons name="chevron-back" color={colors.white} size={24} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back" color={colors.white} size={24} />
+        </TouchableOpacity>
         <Text text="Blocked Users" preset="logo" style={{ color: colors.white }} />
         <MaterialCommunityIcons name="menu" color={colors.primary} size={24} />
       </View>
