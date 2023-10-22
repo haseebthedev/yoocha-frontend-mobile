@@ -1,7 +1,5 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
-import { hp, wp } from "utils/responsive";
-import { colors } from "theme";
 import styles from "./styles";
 
 interface ChatCardI {

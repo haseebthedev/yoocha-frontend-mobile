@@ -1,23 +1,23 @@
+import { FC } from "react";
 import { FlatList, View } from "react-native";
+import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard } from "components";
 import { HOME_CHAT_DATA, HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
+import { hp } from "utils/responsive";
 import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
-import { hp } from "utils/responsive";
-import { NavigatorParamList, navigate } from "navigators";
-import { FC } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "main">> = ({ navigation }) => {
+const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <MaterialCommunityIcons name="menu" color={colors.textDark} size={20} />
+        <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
         <Text text="YOOCHAT" preset="logo" />
-        <Ionicons name="notifications-outline" color={colors.textDark} size={20} />
+        <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
       </View>
 
       <View style={styles.mainContainer}>
@@ -28,7 +28,8 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "main">> = ({ na
             showsVerticalScrollIndicator={false}
             style={styles.sidebarList}
             contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item, index }) => <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
+            renderItem={({ item, index }) => 
+            <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
           />
         </View>
 

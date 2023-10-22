@@ -8,6 +8,10 @@ import { colors } from "theme";
 
 export type NavigatorParamList = {
   main: undefined;
+  home: undefined;
+  contacts: undefined;
+  profile: undefined;
+
   usermessaging: undefined;
 };
 

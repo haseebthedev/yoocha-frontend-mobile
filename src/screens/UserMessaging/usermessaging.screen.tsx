@@ -5,9 +5,9 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { USER_MESSAGING_DATA } from "constant";
-import styles from "./styles";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { wp } from "utils/responsive";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import styles from "./styles";
 
 const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "usermessaging">> = ({
   navigation,
@@ -21,19 +21,19 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={styles.flexAlignCenter}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" color={colors.textDark} size={20} />
           </TouchableOpacity>
           <Image source={{ uri: "https://picsum.photos/218" }} style={styles.profileImage} />
           <View>
             <Text text={username} preset="heading" />
-            <Text text={`Last seen: ${lastSeen}`} style={{ fontSize: 10 }} />
+            <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
           </View>
         </View>
       </View>
 
-      <View style={{ flex: 1, backgroundColor: colors.lightShade }}>
+      <View style={styles.bodyContainer}>
         <FlatList
           data={USER_MESSAGING_DATA}
           keyExtractor={(item, index) => String(item.id + index)}
@@ -75,33 +75,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
               </View>
             </View>
           )}
-          ItemSeparatorComponent={() => <View style={{ paddingVertical: 4 }} />}
+          ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
         />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: colors.white,
-            paddingVertical: 10,
-            gap: 20,
-            paddingHorizontal: wp(5),
-            position: "absolute",
-            bottom: 0,
-          }}
-        >
-          <TextInput
-            placeholder="Type here..."
-            placeholderTextColor={colors.textDim}
-            style={{
-              width: wp(80),
-              backgroundColor: "#DCDCDC",
-              color: colors.textDim,
-              borderRadius: 10,
-              paddingVertical: 4,
-              paddingHorizontal: 12,
-            }}
-          />
-
+        <View style={styles.inputFieldBlock}>
+          <TextInput placeholder="Type here..." placeholderTextColor={colors.textDim} style={styles.inputfield} />
           <TouchableOpacity onPress={() => {}}>
             <Ionicons name="send" color={colors.primary} size={20} />
           </TouchableOpacity>

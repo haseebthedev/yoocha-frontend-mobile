@@ -22,7 +22,40 @@ const styles = StyleSheet.create({
     height: wp(10),
     borderRadius: wp(5),
     marginLeft: wp(4),
-    marginRight: wp(3)
+    marginRight: wp(3),
+  },
+  flexAlignCenter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  lastSeenText: {
+    fontSize: hp(1.3),
+  },
+  bodyContainer: {
+    flex: 1,
+    backgroundColor: colors.lightShade,
+  },
+  inputFieldBlock: {
+    width: wp(100),
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    paddingVertical: wp(4),
+    gap: 20,
+    paddingHorizontal: wp(5),
+    position: "absolute",
+    bottom: 0,
+  },
+  inputfield: {
+    width: wp(80),
+    backgroundColor: "#f2f2f2",
+    color: colors.textDim,
+    borderRadius: wp(2),
+    paddingVertical: hp(0.7),
+    paddingHorizontal: wp(5),
+  },
+  paddingVertical: {
+    paddingVertical: hp(0.5),
   },
 });
 
