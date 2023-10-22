@@ -3,7 +3,7 @@ import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
-import { MainScreen, UserMessagingScreen } from "screens";
+import { MainScreen, UserMessagingScreen, BlockedUsersScreen } from "screens";
 import { colors } from "theme";
 
 export type NavigatorParamList = {
@@ -13,6 +13,7 @@ export type NavigatorParamList = {
   profile: undefined;
 
   usermessaging: undefined;
+  blockedusers: undefined
 };
 
 const Stack = createNativeStackNavigator<NavigatorParamList>();
@@ -24,10 +25,11 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="main"
+      initialRouteName="blockedusers"
     >
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
+      <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
     </Stack.Navigator>
   );
 };

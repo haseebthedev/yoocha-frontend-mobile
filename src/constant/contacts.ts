@@ -87,3 +87,24 @@ export const PENDING_CONTACTS_DATA = [
     country: "China",
   },
 ];
+
+export const BLOCKED_CONTACTS_DATA = [
+  {
+    id: "0",
+    profilePic: "https://picsum.photos/232",
+    name: "Andrea Martinez",
+    country: "Spain",
+  },
+  {
+    id: "1",
+    profilePic: "https://picsum.photos/233",
+    name: "Hiroshi Tanaka",
+    country: "Japan",
+  },
+  {
+    id: "2",
+    profilePic: "https://picsum.photos/234",
+    name: "Anna Schmidt",
+    country: "Germany",
+  },
+];
