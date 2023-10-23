@@ -17,7 +17,10 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
       <View style={styles.appHeader}>
         <MaterialCommunityIcons name="menu" color={colors.white} size={24} />
         <Text text="YOOCHAT" preset="logo" style={{ color: colors.white }} />
-        <Ionicons name="settings-outline" color={colors.white} size={24} />
+
+        <TouchableOpacity onPress={() => navigation.navigate("settings")}>
+          <Ionicons name="settings-outline" color={colors.white} size={24} />
+        </TouchableOpacity>
       </View>
 
       <View
@@ -170,7 +173,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
         </View>
 
         <View style={{ marginTop: 30, paddingHorizontal: wp(5), position: "absolute", bottom: 20 }}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 50}}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 50 }}>
             <Text
               text="Photos"
               style={{ textAlign: "center", fontFamily: typography.semiBold, fontSize: 12, color: colors.primary }}

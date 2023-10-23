@@ -10,6 +10,8 @@ const colors = {
   textDim: "#5B5B5B",
   grey: "#DAD3D3",
 
+  red: "#DF1818",
+
   transparent: "rgba(0, 0, 0, 0)",
 };
 
