@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
-    borderBottomColor: colors.lightShade,
-    borderBottomWidth: 1,
+    // borderBottomColor: colors.lightShade,
+    // borderBottomWidth: 1,
   },
   sidebarContainer: {
     width: wp(20),

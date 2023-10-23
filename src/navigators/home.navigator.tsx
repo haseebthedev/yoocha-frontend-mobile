@@ -1,11 +1,14 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeScreen } from "screens/Main/Home/home.screen";
-import { ContactScreen } from "screens/Main/Contact/contact.screen";
 import { colors } from "theme";
 import { hp } from "utils/responsive";
 import { isIOS } from "utils/deviceInfo";
+
+import { HomeScreen } from "screens/Main/Home/home.screen";
+import { ContactScreen } from "screens/Main/Contact/contact.screen";
+import { ProfileScreen } from "screens/Main/Profile/profile.screen";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 export type NavigatorParamList = {
@@ -42,7 +45,7 @@ const HomeNavigator = () => {
     >
       <Tab.Screen name="home" component={HomeScreen} />
       <Tab.Screen name="contacts" component={ContactScreen} />
-      <Tab.Screen name="profile" component={HomeScreen} />
+      <Tab.Screen name="profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 };

@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
-    borderBottomColor: colors.lightShade,
-    borderBottomWidth: 1,
+    // borderBottomColor: colors.lightShade,
+    // borderBottomWidth: 1,
   },
   topHeaderBlock: {
     flexDirection: "row",
@@ -26,23 +26,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   menuContainer: {
-    backgroundColor: colors.lightShade,
+    backgroundColor: colors.white,
     width: wp(44),
     paddingVertical: hp(1.5),
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: wp(2),
-},
-selectedMenuStyles: {
+  },
+  selectedMenuStyles: {
     backgroundColor: colors.primary,
   },
   menuText: {
     color: colors.textDim,
   },
   selectedMenuText: {
-    color: colors.white
-  }
+    color: colors.white,
+  },
 });
 
 export default styles;
