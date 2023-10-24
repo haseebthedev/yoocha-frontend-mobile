@@ -1,5 +1,5 @@
+import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { StatusBar } from "react-native";
 import { AppNavigator } from "./src/navigators";
 import BootSplash from "react-native-bootsplash";
 

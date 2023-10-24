@@ -1,21 +1,27 @@
 import { FC } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard } from "components";
 import { HOME_CHAT_DATA, HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
 import { hp } from "utils/responsive";
 import { colors } from "theme";
+// import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
 
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
+
+  // const navigation = useNavigation()
+
   return (
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+        <TouchableOpacity onPress={() => navigation?.openDrawer()}>
+          <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+        </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" />
         <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
       </View>
@@ -28,8 +34,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             showsVerticalScrollIndicator={false}
             style={styles.sidebarList}
             contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item, index }) => 
-            <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
+            renderItem={({ item, index }) => <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
           />
         </View>
 

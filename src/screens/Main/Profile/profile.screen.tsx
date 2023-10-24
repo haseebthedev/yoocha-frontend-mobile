@@ -65,73 +65,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
           </View>
         </View>
 
-        {/* <View style={{ marginTop: hp(25), paddingHorizontal: wp(5) }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="person-circle-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Account Details"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="settings-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Settings"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="mail-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Contact Us"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="lock-closed-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Blocked Users"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-        </View> */}
-
         <View
           style={{
             marginTop: hp(20),
@@ -166,6 +99,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
 
         <View style={{ flexDirection: "row", alignItems: "center", marginTop: 30, gap: 10, justifyContent: "center" }}>
           <TouchableOpacity
+            onPress={() => navigation.navigate("editprofile")}
             style={{ backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 6, borderRadius: 6 }}
           >
             <Text text="Edit Profile" style={{ color: colors.white }} />

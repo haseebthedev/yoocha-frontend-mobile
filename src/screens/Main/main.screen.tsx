@@ -1,7 +1,8 @@
-import { HomeNavigator } from "navigators/home.navigator";
+// import { HomeNavigator } from "navigators/home.navigator";
+import { HomeDrawer } from "navigators";
 
 const MainScreen = () => {
-  return <HomeNavigator />;
+  return <HomeDrawer />;
 };
 
 export { MainScreen };
