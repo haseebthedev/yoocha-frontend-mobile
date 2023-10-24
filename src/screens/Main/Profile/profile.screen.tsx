@@ -15,7 +15,10 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <MaterialCommunityIcons name="menu" color={colors.white} size={24} />
+        {/* @ts-ignore */}
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <MaterialCommunityIcons name="menu" color={colors.white} size={24} />
+        </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={{ color: colors.white }} />
 
         <TouchableOpacity onPress={() => navigation.navigate("settings")}>

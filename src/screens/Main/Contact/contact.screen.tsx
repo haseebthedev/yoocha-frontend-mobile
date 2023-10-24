@@ -17,7 +17,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     <View style={styles.container}>
       {/* App Header */}
       <View style={styles.appHeader}>
-        <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+        {/* @ts-ignore */}
+        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+        </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" />
         <TouchableOpacity onPress={() => navigation.navigate("blockedusers")}>
           <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />

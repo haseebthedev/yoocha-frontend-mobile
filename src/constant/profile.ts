@@ -1,5 +1,5 @@
 export const MY_PROFILE_DATA = {
-  profilePic: "https://picsum.photos/407",
+  profilePic: "https://picsum.photos/300",
   firstname: "Haseeb",
   lastname: "Ahmed",
   email: "haseeb@gmail.com",
