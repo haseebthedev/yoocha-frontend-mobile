@@ -3,7 +3,14 @@ import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
-import { MainScreen, UserMessagingScreen, BlockedUsersScreen, SettingsScreen, EditProfileScreen, AppSettingsScreen } from "screens";
+import {
+  MainScreen,
+  UserMessagingScreen,
+  BlockedUsersScreen,
+  SettingsScreen,
+  EditProfileScreen,
+  AppSettingsScreen,
+} from "screens";
 import { colors } from "theme";
 
 export type NavigatorParamList = {
@@ -13,10 +20,10 @@ export type NavigatorParamList = {
   profile: undefined;
 
   usermessaging: undefined;
-  blockedusers: undefined
-  settings: undefined
-  editprofile: undefined
-  appsettings: undefined
+  blockedusers: undefined;
+  settings: undefined;
+  editprofile: undefined;
+  appsettings: undefined;
 };
 
 const Stack = createNativeStackNavigator<NavigatorParamList>();
