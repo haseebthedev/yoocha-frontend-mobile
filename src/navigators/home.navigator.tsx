@@ -28,7 +28,7 @@ enum BottomTabIcon {
   profile = "person-outline",
 }
 
-const BOTTOM_TAB_HEIGHT = isIOS ? hp(6.5) : hp(8);
+const BOTTOM_TAB_HEIGHT = isIOS ? hp(6.5) : hp(6.5);
 
 const HomeNavigator = () => {
   return (
