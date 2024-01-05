@@ -1,0 +1,47 @@
+import React from "react";
+import { Image, StatusBar, TouchableOpacity } from "react-native";
+import { View } from "react-native";
+import { Text } from "components/General/text/text";
+import { colors } from "theme";
+import { formatDate } from "utils/formatDateAndTime";
+import { ModalHoc } from "components/HOCModal/ModalScreen/ModalScreen";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import styles from "./styles";
+
+interface Props {
+  isVisible: boolean;
+  title?: string;
+  selectedItem?: any;
+  onPressClose: (arg0: any) => void;
+}
+
+export const StatusModal = ({ isVisible = false, title, onPressClose, selectedItem }: Props) => {
+  return (
+    <ModalHoc title={title} isVisible={isVisible} onPressClose={onPressClose}>
+      <StatusBar backgroundColor={colors.black} barStyle={"light-content"} />
+      <View style={{ zIndex: 1 }}>
+        <View style={styles.statusBarLine}>
+          <View style={styles.statusBar}></View>
+        </View>
+        <View style={styles.topHeaderContainer}>
+          <View style={styles.userInfo}>
+            <Image source={selectedItem.profilePic && { uri: selectedItem.profilePic }} style={styles.profileImage} />
+            <View>
+              <Text text={selectedItem.name} preset="semiBold" style={styles.name} numberOfLines={1} />
+              <Text text={formatDate(selectedItem.date)} preset="subheading" style={styles.dateAndTime} />
+            </View>
+          </View>
+          <TouchableOpacity onPress={() => onPressClose((prev) => !prev)} style={styles.closeBtn}>
+            <Ionicons name="close" size={22} color={colors.white} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <Image
+        source={{
+          uri: selectedItem.statusImage,
+        }}
+        style={styles.statusPic}
+      />
+    </ModalHoc>
+  );
+};

@@ -1,149 +1,114 @@
-import { FC } from "react";
-import { Text } from "components";
-import { Image, TextInput, TouchableOpacity, View } from "react-native";
+import { FC, useState } from "react";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { AlertBox, Button, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import { colors } from "theme";
+import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
+import { formatDateToDMY } from "utils/formatDateAndTime";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { hp, wp } from "utils/responsive";
-import { colors, typography } from "theme";
-import { BLOCKED_CONTACTS_DATA, MY_PROFILE_DATA } from "constant";
+import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
-  return (
-    <View style={styles.container}>
-      {/* App Header */}
-      <View style={styles.appHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" color={colors.textDark} size={24} />
-        </TouchableOpacity>
-        <Text text="Edit Profile" preset="logo" />
-        <Ionicons name="chevron-forward" color={colors.white} size={24} />
-      </View>
+  const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
+  const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
+  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
+  const [profileImage, setProfileImage] = useState<any>({ uri: MY_PROFILE_DATA.profilePic });
+  const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
+  const [date, setDate] = useState<Date>(new Date());
+  const [open, setOpen] = useState<boolean>(false);
 
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.white,
-          paddingHorizontal: wp(5),
-        }}
-      >
+  const closeModal = () => {
+    setImageModalVisible((prev) => !prev);
+  };
+
+  const handleBackdropPress = () => {
+    closeModal();
+  };
+  const onCloseAlertBoxPress = () => {
+    setSuccessModalVisible((prev) => !prev);
+  };
+
+  const onPressSaveHandler = () => {
+    console.log("country name is === ", selectedCountry);
+    setSuccessModalVisible((prev) => !prev);
+  };
+
+  const uploadProfileImage = async () => {
+    setImageModalVisible((prev) => !prev);
+  };
+
+  return (
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+
+      <View style={styles.mainContainer}>
         <View style={{ alignSelf: "center" }}>
-          <Image
-            source={{ uri: MY_PROFILE_DATA.profilePic }}
-            style={{
-              marginTop: 20,
-              width: 120,
-              height: 120,
-              borderRadius: 60,
-              borderWidth: 1,
-              borderColor: colors.primary,
-            }}
-          />
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              backgroundColor: colors.white,
-              width: 35,
-              height: 35,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 20,
-              elevation: 2,
-            }}
-          >
+          <Image source={profileImage} style={styles.profileImage} />
+          <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
             <Ionicons name="camera" size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          <Text text="Name" preset="semiBold" style={{ fontSize: 16, marginTop: 10 }} />
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: colors.lightShade,
-              borderRadius: 8,
-              paddingHorizontal: 20,
-              fontFamily: typography.regular,
-              fontSize: 14,
-              color: colors.textDark,
-            }}
-            value={MY_PROFILE_DATA.firstname + " " + MY_PROFILE_DATA.lastname}
-          />
-          <Text text="Email" preset="semiBold" style={{ fontSize: 16, marginTop: 10 }} />
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: colors.lightShade,
-              borderRadius: 8,
-              paddingHorizontal: 20,
-              fontFamily: typography.regular,
-              fontSize: 14,
-              color: colors.textDark,
-            }}
-            value={MY_PROFILE_DATA.email}
-          />
-          <Text text="Password" preset="semiBold" style={{ fontSize: 16, marginTop: 10 }} />
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: colors.lightShade,
-              borderRadius: 8,
-              paddingHorizontal: 20,
-              fontFamily: typography.regular,
-              fontSize: 14,
-              color: colors.textDark,
-            }}
-            secureTextEntry
-            value={MY_PROFILE_DATA.firstname}
-          />
-          <Text text="Date of Birth" preset="semiBold" style={{ fontSize: 16, marginTop: 10 }} />
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: colors.lightShade,
-              borderRadius: 8,
-              paddingHorizontal: 20,
-              fontFamily: typography.regular,
-              fontSize: 14,
-              color: colors.textDark,
-            }}
-            value={MY_PROFILE_DATA.dateOfBirth}
-          />
-          <Text text="Country / Region" preset="semiBold" style={{ fontSize: 16, marginTop: 10 }} />
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: colors.lightShade,
-              borderRadius: 8,
-              paddingHorizontal: 20,
-              fontFamily: typography.regular,
-              fontSize: 14,
-              color: colors.textDark,
-            }}
-            value={MY_PROFILE_DATA.country}
-          />
+        <View style={styles.infoContainer}>
+          <TextInput label="Name" value={MY_PROFILE_DATA.firstname + " " + MY_PROFILE_DATA.lastname} />
 
-          <TouchableOpacity
-            style={{
-              marginTop: 20,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: colors.primary,
-              paddingVertical: 12,
-              borderRadius: 8,
-            }}
-          >
-            <Text text="SAVE" style={{ fontFamily: typography.regular, fontSize: 16, color: colors.white }} />
+          <TextInput label="Email" value={MY_PROFILE_DATA.email} />
+
+          <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
+          <TouchableOpacity onPress={() => setOpen(true)} style={styles.pickerInputField}>
+            <Text text={date ? formatDateToDMY(date) : "Select Date"} preset="default" />
           </TouchableOpacity>
+
+          <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
+          <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
+            <Text text={selectedCountry} preset="default" />
+          </TouchableOpacity>
+
+          <Button title={"save"} onPress={onPressSaveHandler} />
         </View>
       </View>
-    </View>
+
+      {countryModalVisible && (
+        <CountryPickerModal
+          visible={countryModalVisible}
+          setSelectedCountry={setSelectedCountry}
+          setCountryModalVisible={setCountryModalVisible}
+        />
+      )}
+
+      <AlertBox
+        checkIcon={true}
+        open={successModalVisible}
+        type="success"
+        description="Your profile has been updated successfully."
+        onClose={onCloseAlertBoxPress}
+      />
+
+      <ImagePickerModal
+        title="Select an option!"
+        isVisible={imageModalVisible}
+        onModalClose={closeModal}
+        onBackdropPress={handleBackdropPress}
+        setProfileImage={setProfileImage}
+      />
+
+      <DatePicker
+        title={"Select Date"}
+        mode="date"
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen((prev) => !prev);
+          setDate(date);
+        }}
+        onCancel={() => {
+          setOpen((prev) => !prev);
+        }}
+      />
+    </ScrollView>
   );
 };
 

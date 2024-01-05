@@ -1,15 +1,15 @@
-import { ReactNode } from "react"
-import { StyleProp, TextStyle, ViewStyle } from "react-native"
-// import { TxKeyPath } from "../../../i18n"
+import { ReactNode } from "react";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 export interface HeaderProps {
-  // headerTx?: TxKeyPath
-  headerText?: string
-  rightIcon?: string
-  leftIcon?: string, 
-  onRightPress?(): void,
-  onLeftPress?(): void,
-  style?: StyleProp<ViewStyle>
-  titleStyle?: StyleProp<TextStyle>
-  customComponentRight?: ReactNode
+  headerText?: string;
+  rightIcon?: string;
+  leftIcon?: string;
+  onRightPress?(): void;
+  onLeftPress?(): void;
+  style?: StyleProp<ViewStyle>;
+  iconStyle?: StyleProp<any>;
+  titleStyle?: StyleProp<TextStyle>;
+  isSticky?: boolean;
+  customComponentRight?: ReactNode;
 }

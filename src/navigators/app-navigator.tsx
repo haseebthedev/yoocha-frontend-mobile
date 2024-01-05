@@ -10,8 +10,20 @@ import {
   SettingsScreen,
   EditProfileScreen,
   AppSettingsScreen,
+  SignInScreen,
+  SignUpScreen,
+  OTPVerificationScreen,
+  ForgetPasswordScreen,
+  ResetPasswordScreen,
+  ContactUsScreen,
+  ReportIssue,
+  NotificationScreen,
+  SuggestionsScreen,
+  PublicProfileScreen,
+  ChangePasswordScreen,
 } from "screens";
 import { colors } from "theme";
+import { SUGGESTED_USER_DATA_I } from "constant";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -24,6 +36,18 @@ export type NavigatorParamList = {
   settings: undefined;
   editprofile: undefined;
   appsettings: undefined;
+
+  signin: undefined;
+  signup: undefined;
+  otpVerification: undefined;
+  forgetPassword: undefined;
+  resetPassword: undefined;
+  contactUs: undefined;
+  reportIssue: undefined;
+  notifications: undefined;
+  suggestions: undefined;
+  publicProfile: { item: SUGGESTED_USER_DATA_I };
+  changePassword: undefined;
 };
 
 const Stack = createNativeStackNavigator<NavigatorParamList>();
@@ -37,12 +61,28 @@ const AppStack = () => {
       }}
       initialRouteName="main"
     >
+      {/* auth stack */}
+      <Stack.Screen name="signin" component={SignInScreen} />
+      <Stack.Screen name="signup" component={SignUpScreen} />
+      <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
+      <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
+      <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
+
+      {/*  */}
       <Stack.Screen name="main" component={MainScreen} />
+      <Stack.Screen name="notifications" component={NotificationScreen} />
+      <Stack.Screen name="suggestions" component={SuggestionsScreen} />
+      <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
+
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
       <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
       <Stack.Screen name="settings" component={SettingsScreen} />
       <Stack.Screen name="editprofile" component={EditProfileScreen} />
       <Stack.Screen name="appsettings" component={AppSettingsScreen} />
+      <Stack.Screen name="contactUs" component={ContactUsScreen} />
+      <Stack.Screen name="changePassword" component={ChangePasswordScreen} />
+
+      <Stack.Screen name="reportIssue" component={ReportIssue} />
     </Stack.Navigator>
   );
 };

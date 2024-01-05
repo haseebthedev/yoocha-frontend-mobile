@@ -15,26 +15,38 @@ export const MY_PROFILE_DATA = {
     {
       id: "0",
       media: "https://picsum.photos/400",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
     {
       id: "1",
       media: "https://picsum.photos/401",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
     {
       id: "2",
       media: "https://picsum.photos/402",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
     {
       id: "3",
       media: "https://picsum.photos/403",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
     {
       id: "4",
       media: "https://picsum.photos/404",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
     {
       id: "5",
       media: "https://picsum.photos/405",
+      profilePic: "https://picsum.photos/300",
+      date: "2024-01-01T21:33:22Z",
     },
   ],
 };

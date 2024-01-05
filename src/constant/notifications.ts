@@ -1,0 +1,41 @@
+export const NOTIFICATIONS_DATA = [
+  {
+    id: "0",
+    profilePic: "https://picsum.photos/210",
+    name: "Alexa",
+    notification: "Send you a friend request.Send you a friend request. Send you a friend request.",
+    notificationDateTime: "2024-01-01T21:33:22Z",
+    noOfUnreadNotifications: 5,
+    unReadNotification: true,
+  },
+  {
+    id: "1",
+    profilePic: "https://picsum.photos/211",
+    name: "John",
+    notification: "Send you a friend request.",
+    notificationDateTime: "2022-02-06T12:45:18Z",
+  },
+  {
+    id: "2",
+    profilePic: "https://picsum.photos/212",
+    name: "Emily",
+    notification: "Send you a friend request.",
+    notificationDateTime: "2022-02-07T09:15:30Z",
+  },
+  {
+    id: "3",
+    profilePic: "https://picsum.photos/213",
+    name: "David",
+    notification: "Send you a friend request.",
+    notificationDateTime: "2022-02-08T16:55:42Z",
+    noOfUnreadNotifications: 2,
+    unReadNotification: true,
+  },
+  {
+    id: "7",
+    profilePic: "https://picsum.photos/215",
+    name: "Last",
+    notification: "Send you a friend request.",
+    notificationDateTime: "2022-02-10T14:12:10Z",
+  },
+];

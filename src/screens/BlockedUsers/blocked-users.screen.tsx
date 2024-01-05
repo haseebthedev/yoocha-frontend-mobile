@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { Text } from "components";
+import { FC, useState } from "react";
+import { AlertBox, Header, Text } from "components";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -7,20 +7,26 @@ import { hp, wp } from "utils/responsive";
 import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import styles from "./blocked-users.styles";
 import { BLOCKED_CONTACTS_DATA } from "constant";
+import styles from "./blocked-users.styles";
 
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+
+  const onCloseAlertBoxPress = () => {
+    setAlertModalVisible((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
       {/* App Header */}
-      <View style={styles.appHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" color={colors.white} size={24} />
-        </TouchableOpacity>
-        <Text text="Blocked Users" preset="logo" style={{ color: colors.white }} />
-        <MaterialCommunityIcons name="menu" color={colors.primary} size={24} />
-      </View>
+      <Header
+        headerText="Blocked Users"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: colors.white }}
+        iconStyle={colors.white}
+      />
 
       <View
         style={{
@@ -67,6 +73,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
                   paddingHorizontal: 20,
                   paddingVertical: 8,
                 }}
+                onPress={() => setAlertModalVisible((prev) => !prev)}
               >
                 <Text text="Unblock" />
               </TouchableOpacity>
@@ -74,6 +81,16 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           )}
         />
       </View>
+
+      <AlertBox
+        open={alertModalVisible}
+        title="Unblock!"
+        description="Are you sure you want to unblock."
+        onClose={onCloseAlertBoxPress}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Unblock"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+      />
     </View>
   );
 };

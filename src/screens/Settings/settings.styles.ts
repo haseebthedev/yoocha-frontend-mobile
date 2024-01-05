@@ -8,12 +8,12 @@ const styles = StyleSheet.create({
     paddingTop: hp(2.5),
     backgroundColor: colors.primary,
   },
-  appHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  listContainer: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
     paddingHorizontal: wp(5),
-    paddingVertical: hp(2),
   },
 });
 

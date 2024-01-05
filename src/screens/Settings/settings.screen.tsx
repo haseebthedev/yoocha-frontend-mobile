@@ -1,138 +1,102 @@
-import { FC } from "react";
-import { Text } from "components";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
-import { NavigatorParamList } from "navigators";
+import { FC, useState } from "react";
+import { View } from "react-native";
+import { AlertBox, Header, SettingListItem, Text } from "components";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NavigatorParamList } from "navigators";
 import { hp, wp } from "utils/responsive";
-import { colors, typography } from "theme";
-import { BLOCKED_CONTACTS_DATA } from "constant";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { colors } from "theme";
 import styles from "./settings.styles";
 
 const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+  const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
+
+  const onCloseAlertBoxPress = () => {
+    setAlertModalVisible((prev) => !prev);
+  };
+
+  const onDelModalCancelPress = () => {
+    setDeleteAccModalVisible((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
-      {/* App Header */}
-      <View style={styles.appHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" color={colors.white} size={24} />
-        </TouchableOpacity>
-        <Text text="Settings" preset="logo" style={{ color: colors.white }} />
-        <MaterialCommunityIcons name="menu" color={colors.primary} size={24} />
-      </View>
+      <Header
+        headerText="Settings"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: colors.white }}
+        iconStyle={colors.white}
+      />
 
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.white,
-          borderTopRightRadius: 40,
-          borderTopLeftRadius: 40,
-          paddingHorizontal: wp(5),
-        }}
-      >
+      <View style={styles.listContainer}>
         <View style={{ marginTop: hp(3), paddingHorizontal: wp(5) }}>
-          <TouchableOpacity
+          <SettingListItem
+            iconName="person-circle-outline"
+            listText="Account Details"
             onPress={() => navigation.navigate("editprofile")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="person-circle-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Account Details"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
+          />
+          <SettingListItem
+            iconName="key-outline"
+            listText="Change Password"
+            onPress={() => navigation.navigate("changePassword")}
+          />
+          <SettingListItem
+            iconName="settings-outline"
+            listText="Settings"
             onPress={() => navigation.navigate("appsettings")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="settings-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Settings"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
+          />
+          <SettingListItem
+            iconName="lock-closed-outline"
+            listText="Blocked Users"
             onPress={() => navigation.navigate("blockedusers")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
+          />
+          <SettingListItem
+            iconName="mail-outline"
+            listText="Contact Us"
+            onPress={() => navigation.navigate("contactUs")}
+          />
+          <SettingListItem
+            iconName="log-out-outline"
+            listText="Logout"
+            onPress={() => {
+              setAlertModalVisible((prev) => !prev);
             }}
-          >
-            <Ionicons name="lock-closed-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Blocked Users"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
+          />
+          <SettingListItem
+            iconName="trash-outline"
+            iconColor={colors.red}
+            textColor={colors.red}
+            listText="Delete Account"
+            onPress={() => {
+              setDeleteAccModalVisible((prev) => !prev);
             }}
-          >
-            <Ionicons name="mail-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Contact Us"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="log-out-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Logout"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
-              paddingVertical: 15,
-              borderBottomColor: colors.lightShade,
-              borderBottomWidth: 1,
-            }}
-          >
-            <Ionicons name="trash-outline" size={20} color={colors.red} />
-            <Text
-              text="Delete Account"
-              style={{ fontFamily: typography.regular, fontSize: 16, marginTop: 3, color: colors.red }}
-            />
-          </View>
+          />
         </View>
       </View>
+
+      <AlertBox
+        open={alertModalVisible}
+        type="error"
+        title="Logout!"
+        description="Are you sure you want to logout?"
+        onClose={onCloseAlertBoxPress}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Logout"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+      />
+
+      <AlertBox
+        open={deleteAccModalVisible}
+        type="error"
+        title="Delete Account!"
+        description="Are you sure you want to delete your account?"
+        onClose={onDelModalCancelPress}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Delete"
+        secondaryOnClick={() => setDeleteAccModalVisible((prev) => !prev)}
+        buttonColor={colors.red}
+      />
     </View>
   );
 };

@@ -1,8 +1,8 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard } from "components";
+import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard, StatusModal } from "components";
 import { HOME_CHAT_DATA, HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
 import { hp } from "utils/responsive";
 import { colors } from "theme";
@@ -10,17 +10,42 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
 
+export interface UserStatusI {
+  id: string;
+  name: string;
+  profilePic: string;
+  date: string;
+  statusImage: string;
+}
+
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
+  const [viewStatus, setViewStatus] = useState<boolean>(false);
+  const [statusData, setStatusData] = useState<UserStatusI>({
+    id: "",
+    name: "",
+    profilePic: "",
+    date: "",
+    statusImage: "",
+  });
+
+  const onViewPress = (selectedItem: UserStatusI) => {
+    setStatusData(selectedItem);
+    setViewStatus((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
       {/* App Header */}
+
       <View style={styles.appHeader}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" />
-        <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
+        <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
+          <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.mainContainer}>
@@ -31,12 +56,18 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             showsVerticalScrollIndicator={false}
             style={styles.sidebarList}
             contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item, index }) => <HomeUserStatus key={item.id} item={item} onAddPress={() => {}} />}
+            renderItem={({ item, index }) => (
+              <HomeUserStatus key={item.id} item={item} onViewPress={() => onViewPress(item)} onAddPress={() => {}} />
+            )}
           />
         </View>
 
         <View style={styles.mainBodyContainer}>
-          <AppHeading title="Suggestions" rightTitle="View All" />
+          <AppHeading
+            title="Suggestions"
+            rightTitle="View All"
+            onRightPress={() => navigation.navigate("suggestions")}
+          />
 
           <View>
             <FlatList
@@ -44,7 +75,9 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
               data={HOME_SUGGESTION_DATA}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ gap: 8 }}
-              renderItem={({ item, index }) => <UserSuggestionCard item={item} />}
+              renderItem={({ item, index }) => (
+                <UserSuggestionCard item={item} onViewPress={() => navigation.navigate("publicProfile", { item })} />
+              )}
             />
           </View>
 
@@ -63,6 +96,15 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             )}
           />
         </View>
+
+        {viewStatus && (
+          <StatusModal
+            isVisible={viewStatus}
+            selectedItem={statusData}
+            title="Sara Khan"
+            onPressClose={() => setViewStatus(false)}
+          />
+        )}
       </View>
     </View>
   );

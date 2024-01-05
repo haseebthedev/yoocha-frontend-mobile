@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   mainBodyContainer: {
     flex: 1,
     paddingLeft: hp(1),
-    paddingTop: hp(1)
+    paddingTop: hp(1),
   },
 });
 

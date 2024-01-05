@@ -1,16 +1,37 @@
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { colors, typography } from "theme";
-import { Text } from "components";
+import { StatusModal, Text } from "components";
 import { hp, wp } from "utils/responsive";
 import { MY_PROFILE_DATA } from "constant";
+import { UserStatusI } from "../Home/home.screen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./profile.styles";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
+  const [viewStatus, setViewStatus] = useState<boolean>(false);
+  const [statusData, setStatusData] = useState<UserStatusI>({
+    id: "",
+    name: "",
+    profilePic: "",
+    date: "",
+    statusImage: "",
+  });
+
+  const onViewPress = (selectedItem) => {
+    setStatusData({
+      id: selectedItem.id,
+      statusImage: selectedItem.media,
+      name: "My Post",
+      date: selectedItem.date,
+      profilePic: selectedItem.profilePic,
+    });
+    setViewStatus((prev) => !prev);
+  };
+
   return (
     <View style={styles.container}>
       {/* App Header */}
@@ -129,13 +150,15 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 10 }}
             renderItem={({ item }) => (
-              <View>
+              <TouchableOpacity onPress={() => onViewPress(item)}>
                 <Image source={{ uri: item.media }} style={{ width: wp(28), height: hp(20), borderRadius: 12 }} />
-              </View>
+              </TouchableOpacity>
             )}
           />
         </View>
       </View>
+
+      <StatusModal isVisible={viewStatus} selectedItem={statusData} onPressClose={() => setViewStatus(false)} />
     </View>
   );
 };
