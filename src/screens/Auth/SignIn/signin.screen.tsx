@@ -5,16 +5,19 @@ import { NavigatorParamList } from "navigators";
 import { Button, Header, LinkBtn, Text, TextInput } from "components";
 import { signinValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { useAppDispatch } from "../../../store/store";
+import { signinService } from "../../../store/slice/auth/authService";
 import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
   const initialValues = { email: "", password: "" };
 
   const onPressSignup = () => {
-    console.log("signup");
     navigation.navigate("signup");
   };
 
@@ -22,10 +25,20 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
     navigation.navigate("forgetPassword");
   };
 
-  const submit = ({ email, password }) => {
+  const submit = async ({ email, password }) => {
     Keyboard.dismiss();
-    console.log("login by: ", email, password);
-    navigation.navigate("main");
+    await dispatch(
+      signinService({
+        email,
+        password,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigation.navigate("main");
+      });
+
+    // navigation.navigate("main");
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -59,7 +72,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           visible={touched.password}
         />
 
-        <Button title={"Login"} onPress={() => navigation.navigate("main")} />
+        <Button title={"Login"} onPress={handleSubmit} />
 
         <TouchableOpacity style={styles.forgetPassword} onPress={onPressForgetPasswordHandler}>
           <Text style={styles.forgetPasswordText} preset="heading">

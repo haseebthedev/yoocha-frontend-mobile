@@ -67,7 +67,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
         />
-        <Button title={"Submit"} onPress={handleSubmit} />
+        <Button title={"Submit"} onPress={() => navigation.goBack()} />
       </View>
     </View>
   );

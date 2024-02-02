@@ -9,6 +9,7 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
   const TIMER: number = 30;
   const [timer, setTimer] = useState<number>(TIMER);
   const [otpDisableBtn, setOptDisableBtn] = useState<boolean>(false);
+  const [disableResetBtn, setDisableResetBtn] = useState<boolean>(true);
   const input1 = useRef<TextInput>(null);
   const input2 = useRef<TextInput>(null);
   const input3 = useRef<TextInput>(null);
@@ -141,7 +142,7 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
           <Text style={styles.dontRecieveCodeText} preset="default">
             If you don't receive code!
           </Text>
-          <LinkBtn title="Resend" onPress={onPressResendCodeHandler} />
+          <LinkBtn title="Resend" onPress={onPressResendCodeHandler} disabled={disableResetBtn} />
         </View>
       </View>
     </View>

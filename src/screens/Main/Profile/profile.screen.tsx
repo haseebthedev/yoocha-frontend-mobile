@@ -1,36 +1,21 @@
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { colors, typography } from "theme";
-import { StatusModal, Text } from "components";
+import { Text } from "components";
 import { hp, wp } from "utils/responsive";
 import { MY_PROFILE_DATA } from "constant";
-import { UserStatusI } from "../Home/home.screen";
+import { RootState, useAppSelector } from "../../../store/store";
+import noImage from "../../../assets/images/noImage.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./profile.styles";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
-  const [viewStatus, setViewStatus] = useState<boolean>(false);
-  const [statusData, setStatusData] = useState<UserStatusI>({
-    id: "",
-    name: "",
-    profilePic: "",
-    date: "",
-    statusImage: "",
-  });
+  const { user, loading: userLoading } = useAppSelector((state: RootState) => state.auth);
 
-  const onViewPress = (selectedItem) => {
-    setStatusData({
-      id: selectedItem.id,
-      statusImage: selectedItem.media,
-      name: "My Post",
-      date: selectedItem.date,
-      profilePic: selectedItem.profilePic,
-    });
-    setViewStatus((prev) => !prev);
-  };
+  console.log("user === ", user);
 
   return (
     <View style={styles.container}>
@@ -68,20 +53,17 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
           }}
         >
           <Image
-            source={{ uri: MY_PROFILE_DATA.profilePic }}
+            source={user?.profilePicture ? { uri: user.profilePicture } : noImage}
             style={{
               width: 120,
               height: 120,
               borderRadius: 60,
               borderWidth: 4,
-              borderColor: colors.white,
+              // borderColor: colors.white,
+              borderColor: colors.bgGrey,
             }}
           />
-          <Text
-            text={MY_PROFILE_DATA.firstname + " " + MY_PROFILE_DATA.lastname}
-            preset="heading"
-            style={{ fontSize: 18, marginTop: 10 }}
-          />
+          <Text text={user.firstname + " " + user.lastname} preset="heading" style={{ fontSize: 18, marginTop: 10 }} />
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 }}>
             <Ionicons name="location-sharp" size={18} color={colors.textDark} />
@@ -150,15 +132,13 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 10 }}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => onViewPress(item)}>
+              <View>
                 <Image source={{ uri: item.media }} style={{ width: wp(28), height: hp(20), borderRadius: 12 }} />
-              </TouchableOpacity>
+              </View>
             )}
           />
         </View>
       </View>
-
-      <StatusModal isVisible={viewStatus} selectedItem={statusData} onPressClose={() => setViewStatus(false)} />
     </View>
   );
 };

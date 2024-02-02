@@ -1,18 +1,18 @@
 import { Text } from "components/General/text/text";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { ButtonProps, TouchableOpacity } from "react-native";
 import styles from "./styles";
 
-interface LinkBtnI {
-  title?: string;
+interface LinkBtnI extends ButtonProps {
+  title: string;
   onPress?: () => void;
 }
 
-const LinkBtn = ({ title, onPress }: LinkBtnI) => {
+const LinkBtn = ({ title, onPress, ...rest }: LinkBtnI) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} {...rest}>
       <Text style={styles.linkText} preset="semiBold">
-        {title}
+        {title ? title : "Some Text here..."}
       </Text>
     </TouchableOpacity>
   );

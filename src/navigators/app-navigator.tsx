@@ -59,7 +59,7 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="main"
+      initialRouteName="signin"
     >
       {/* auth stack */}
       <Stack.Screen name="signin" component={SignInScreen} />

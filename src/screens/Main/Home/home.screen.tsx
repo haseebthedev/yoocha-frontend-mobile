@@ -75,6 +75,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
               data={HOME_SUGGESTION_DATA}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ gap: 8 }}
+              showsHorizontalScrollIndicator={false}
               renderItem={({ item, index }) => (
                 <UserSuggestionCard item={item} onViewPress={() => navigation.navigate("publicProfile", { item })} />
               )}

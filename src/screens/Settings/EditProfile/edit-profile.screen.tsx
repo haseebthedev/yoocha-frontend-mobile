@@ -23,11 +23,12 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     setImageModalVisible((prev) => !prev);
   };
 
-  const handleBackdropPress = () => {
+  const handleImageBackdropPress = () => {
     closeModal();
   };
   const onCloseAlertBoxPress = () => {
     setSuccessModalVisible((prev) => !prev);
+    navigation.goBack();
   };
 
   const onPressSaveHandler = () => {
@@ -90,7 +91,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         title="Select an option!"
         isVisible={imageModalVisible}
         onModalClose={closeModal}
-        onBackdropPress={handleBackdropPress}
+        onBackdropPress={handleImageBackdropPress}
         setProfileImage={setProfileImage}
       />
 

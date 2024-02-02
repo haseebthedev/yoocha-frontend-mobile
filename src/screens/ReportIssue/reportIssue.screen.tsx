@@ -51,6 +51,7 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">>
           error={errors.message}
           visible={touched.message}
           multiline
+          numberOfLines={4}
         />
 
         <Button title={"Submit"} onPress={handleSubmit} />

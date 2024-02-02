@@ -3,25 +3,27 @@ import { colors, typography } from "theme";
 import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
+  publicProfileContainer: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
+  staticHeaderContainer: {
+    backgroundColor: colors.primary,
+    marginTop: hp(2.5),
+  },
   container: {
     flex: 1,
     paddingTop: hp(2.5),
     backgroundColor: colors.primary,
   },
-  appHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: wp(5),
-    paddingVertical: hp(2),
-  },
   mainContainer: {
-    marginTop: hp(16),
+    marginTop: hp(14),
     flex: 1,
     backgroundColor: colors.white,
     borderTopRightRadius: 40,
     borderTopLeftRadius: 40,
     position: "relative",
+    paddingHorizontal: wp(5),
   },
   roundedContainer: {
     position: "absolute",
@@ -37,6 +39,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     borderWidth: 4,
     borderColor: colors.white,
+    zIndex: 100,
   },
   name: {
     marginTop: hp(1.2),
@@ -89,6 +92,12 @@ const styles = StyleSheet.create({
     width: wp(28),
     height: hp(20),
     borderRadius: 12,
+  },
+  imagesGrid: {
+    marginBottom: hp(2),
+    flex: 1,
+    margin: 0,
+    alignItems: "center",
   },
 });
 

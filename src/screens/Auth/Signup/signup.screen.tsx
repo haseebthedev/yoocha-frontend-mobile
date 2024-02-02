@@ -5,9 +5,12 @@ import { NavigatorParamList } from "navigators";
 import { Button, Header, LinkBtn, Text, TextInput } from "components";
 import { signupValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { useAppDispatch } from "../../../store/store";
+import { signupService } from "../../../store/slice/auth/authService";
 import styles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
@@ -17,10 +20,20 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
     navigation.navigate("signin");
   };
 
-  const submit = (values) => {
+  const submit = async (values) => {
     Keyboard.dismiss();
-    console.log("Signup by: ", values.email, values.password);
-    navigation.navigate("otpVerification");
+    await dispatch(
+      signupService({
+        firstname: values.firstName,
+        lastname: values.lastName,
+        email: values.email,
+        password: values.password,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigation.navigate("signin");
+      });
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

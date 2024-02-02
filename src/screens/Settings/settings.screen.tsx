@@ -84,13 +84,14 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
         secondaryButtonText="Cancel"
         primaryButtonText="Logout"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={() => navigation.navigate("signin")}
       />
 
       <AlertBox
         open={deleteAccModalVisible}
         type="error"
         title="Delete Account!"
-        description="Are you sure you want to delete your account?"
+        description="Are you sure you want to delete your account permanently?"
         onClose={onDelModalCancelPress}
         secondaryButtonText="Cancel"
         primaryButtonText="Delete"
