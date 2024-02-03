@@ -89,8 +89,8 @@ const AppStack = () => {
         }}
         initialRouteName="signin"
       >
-        <Stack.Screen name="signup" component={SignUpScreen} />
         <Stack.Screen name="signin" component={SignInScreen} />
+        <Stack.Screen name="signup" component={SignUpScreen} />
         <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
         <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
         <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />

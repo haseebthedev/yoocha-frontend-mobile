@@ -22,7 +22,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
-  const initialValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
+  const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
   const onPressSignin = () => {
     navigation.navigate("signin");

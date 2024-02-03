@@ -16,14 +16,12 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <AppNavigator />
-          <FlashMessage position="bottom" style={{ marginTop: 20 }} />
-        </PersistGate>
-      </Provider>
-    </>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppNavigator />
+        <FlashMessage position="bottom" style={{ marginTop: 20 }} />
+      </PersistGate>
+    </Provider>
   );
 };
 

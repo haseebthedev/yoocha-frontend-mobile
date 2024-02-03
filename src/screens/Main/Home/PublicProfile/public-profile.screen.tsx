@@ -42,14 +42,14 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
           leftIcon="chevron-back"
           onLeftPress={() => navigation.goBack()}
           iconStyle={colors.white}
-          titleStyle={{ color: colors.white }}
+          titleStyle={styles.headerStyle}
         />
       </View>
 
       <FlatList
         data={item.posts}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: 15, backgroundColor: colors.white }}
+        contentContainerStyle={styles.containerStyle}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
           <View style={styles.container}>
@@ -64,15 +64,15 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
                 </View>
               </View>
               <View style={styles.infoContainer}>
-                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                <View style={styles.infoHeading}>
                   <Text text={String(item.posts.length)} style={styles.info} />
                   <Text text="Posts" style={styles.infoText} />
                 </View>
-                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                <View style={styles.infoHeading}>
                   <Text text={String(item.noOfFriends)} style={styles.info} />
                   <Text text="Friends" style={styles.infoText} />
                 </View>
-                <View style={{ flexDirection: "column", alignItems: "center" }}>
+                <View style={styles.infoHeading}>
                   <Text text={String(item.likes)} style={styles.info} />
                   <Text text="Likes" style={styles.infoText} />
                 </View>
