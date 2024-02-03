@@ -32,13 +32,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
         email,
         password,
       })
-    )
-      .unwrap()
-      .then(() => {
-        navigation.navigate("main");
-      });
-
-    // navigation.navigate("main");
+    );
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

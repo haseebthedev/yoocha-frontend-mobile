@@ -1,15 +1,27 @@
 import { FC, useState } from "react";
 import { View } from "react-native";
-import { AlertBox, Header, SettingListItem, Text } from "components";
+import { AlertBox, Header, SettingListItem } from "components";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { hp, wp } from "utils/responsive";
 import { colors } from "theme";
+import { useAppDispatch } from "../../store/store";
+import { logoutUser } from "../../store/slice/auth/authReducer";
 import styles from "./settings.styles";
 
 const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
+  const dispatch = useAppDispatch();
+
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
+
+  const onLogoutPress = () => {
+    setAlertModalVisible((prev) => !prev);
+  };
+
+  const onConfirmLogoutPress = async () => {
+    await dispatch(logoutUser());
+  };
 
   const onCloseAlertBoxPress = () => {
     setAlertModalVisible((prev) => !prev);
@@ -56,13 +68,7 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
             listText="Contact Us"
             onPress={() => navigation.navigate("contactUs")}
           />
-          <SettingListItem
-            iconName="log-out-outline"
-            listText="Logout"
-            onPress={() => {
-              setAlertModalVisible((prev) => !prev);
-            }}
-          />
+          <SettingListItem iconName="log-out-outline" listText="Logout" onPress={onLogoutPress} />
           <SettingListItem
             iconName="trash-outline"
             iconColor={colors.red}
@@ -84,7 +90,7 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
         secondaryButtonText="Cancel"
         primaryButtonText="Logout"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
-        primaryOnClick={() => navigation.navigate("signin")}
+        primaryOnClick={onConfirmLogoutPress}
       />
 
       <AlertBox

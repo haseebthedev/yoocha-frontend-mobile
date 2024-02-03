@@ -20,8 +20,8 @@ export interface SignupResponseI {
 
 export interface AuthI {
   loading: boolean;
-  user: SignupResponseI["result"];
-  error?: string;
+  user: SignupResponseI["result"] | null;
+  error?: string | null;
   stack?: string;
 }
 
@@ -44,5 +44,15 @@ export interface SigninResponseI {
     };
 
     token: string;
+  };
+}
+
+export interface ForgetPasswordPayloadI {
+  email: string;
+}
+
+export interface ForgetPasswordResponseI {
+  result: {
+    result: string;
   };
 }

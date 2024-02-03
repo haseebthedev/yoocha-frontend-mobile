@@ -6,14 +6,17 @@ import { Button, Header, Text, TextInput } from "components";
 import { forgotPasswordValidation } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import styles from "./forgetPassword.styles";
+import { forgetPasswordService, useAppDispatch } from "../../../store";
 
 const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forgetPassword">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+
   const validationSchema = forgotPasswordValidation;
   const initialValues = { email: "" };
 
-  const submit = ({ email }) => {
+  const submit = async ({ email }) => {
     Keyboard.dismiss();
-    console.log("email address: ", email);
+    await dispatch(forgetPasswordService({ email: email }));
     navigation.navigate("otpVerification");
   };
 
@@ -45,7 +48,7 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forge
           error={errors.email}
           visible={touched.email}
         />
-        <Button title={"Recover Password"} onPress={() => navigation.navigate("otpVerification")} />
+        <Button title={"Recover Password"} onPress={handleSubmit} />
       </View>
     </View>
   );

@@ -20,7 +20,7 @@ const App = () => {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <AppNavigator />
-          <FlashMessage position="top" style={{ marginTop: 20 }} />
+          <FlashMessage position="bottom" style={{ marginTop: 20 }} />
         </PersistGate>
       </Provider>
     </>

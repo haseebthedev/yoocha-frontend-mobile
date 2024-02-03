@@ -1,6 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
-import { SignupResponseI, SignupPayloadI, SigninPayloadI, SigninResponseI } from "./types";
+import {
+  SignupResponseI,
+  SignupPayloadI,
+  SigninPayloadI,
+  SigninResponseI,
+  ForgetPasswordPayloadI,
+  ForgetPasswordResponseI,
+} from "./types";
 import { API_URL } from "config/config.dev";
 import { saveString } from "utils/storage";
 import { showFlashMessage } from "utils/flashMessage";
@@ -15,8 +22,6 @@ export const signupService: any = createAsyncThunk(
         email: payload.email,
         password: payload.password,
       });
-
-      console.log("response === ", response.data.result);
 
       showFlashMessage("success", "Signup Successfully!");
 
@@ -38,14 +43,31 @@ export const signinService: any = createAsyncThunk(
         password: payload.password,
       });
 
-      // console.log("response === ", response.data.result);
-
       if (response?.data?.result?.token) {
         const { result } = response.data;
         await saveString("UserToken", result.token);
       }
 
       showFlashMessage("success", "Login Successfully!");
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage("danger", `${error?.response?.data?.message || "Something went wrong!"}`);
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const forgetPasswordService: any = createAsyncThunk(
+  "auth/forgetPassword",
+  async (payload: ForgetPasswordPayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<ForgetPasswordResponseI> = await axios.post(`${API_URL}/auth/forget-password`, {
+        email: payload.email,
+      });
+
+      showFlashMessage("success", `${response.data.result.result}`);
 
       return response.data;
     } catch (error: any) {

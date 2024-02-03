@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
   notificationText: {
     color: colors.textDim,
     width: wp(60),
+    marginTop: hp(-0.4),
   },
   infoContainer: {
     flexDirection: "column",
