@@ -11,19 +11,10 @@ import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
-
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
   const initialValues = { email: "", password: "" };
-
-  const onPressSignup = () => {
-    navigation.navigate("signup");
-  };
-
-  const onPressForgetPasswordHandler = () => {
-    navigation.navigate("forgetPassword");
-  };
 
   const submit = async ({ email, password }) => {
     Keyboard.dismiss();
@@ -68,7 +59,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
 
         <Button title={"Login"} onPress={handleSubmit} />
 
-        <TouchableOpacity style={styles.forgetPassword} onPress={onPressForgetPasswordHandler}>
+        <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>
           <Text style={styles.forgetPasswordText} preset="heading">
             Forget Password?
           </Text>
@@ -78,7 +69,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           <Text style={styles.dontHaveAccText} preset="default">
             Don't have an Account yet?
           </Text>
-          <LinkBtn title="Sign Up" onPress={onPressSignup} />
+          <LinkBtn title="Sign Up" onPress={() => navigation.navigate("signup")} />
         </View>
       </View>
     </View>
