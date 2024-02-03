@@ -54,9 +54,7 @@ export type NavigatorParamList = {
 const Stack = createNativeStackNavigator<NavigatorParamList>();
 
 const AppStack = () => {
-  const { user, loading: userLoading } = useAppSelector((state: RootState) => state.auth);
-
-  // console.log("user === ", user);
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   // user?.isEmailVerified
   if (user) {
@@ -82,21 +80,7 @@ const AppStack = () => {
         <Stack.Screen name="reportIssue" component={ReportIssue} />
       </Stack.Navigator>
     );
-  }
-  // else if (!user?.isEmailVerified) {
-  //   return (
-  //     <Stack.Navigator
-  //       screenOptions={{
-  //         headerShown: false,
-  //         animation: "slide_from_right",
-  //       }}
-  //       initialRouteName="otpVerification"
-  //     >
-  //       <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
-  //     </Stack.Navigator>
-  //   );
-  // }
-  else {
+  } else {
     return (
       <Stack.Navigator
         screenOptions={{
