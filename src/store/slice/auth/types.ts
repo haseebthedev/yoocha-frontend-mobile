@@ -7,7 +7,7 @@ export interface SignupPayloadI {
 
 export interface SignupResponseI {
   result: {
-    profilePicture: any;
+    profilePicture: string | null;
     firstname: string;
     lastname: string;
     email: string;
