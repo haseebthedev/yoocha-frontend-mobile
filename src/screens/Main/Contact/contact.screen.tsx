@@ -14,10 +14,6 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   const [activeTab, setActiveTab] = useState<string>("contacts");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
-  const onCloseAlertBoxPress = () => {
-    setAlertModalVisible((prev) => !prev);
-  };
-
   return (
     <View style={styles.container}>
       {/* App Header */}
@@ -192,7 +188,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         open={alertModalVisible}
         title="Cancel Request!"
         description="Are you sure you want to cancel request?"
-        onClose={onCloseAlertBoxPress}
+        onClose={() => setAlertModalVisible((prev) => !prev)}
         secondaryButtonText="Cancel"
         primaryButtonText="Remove"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
