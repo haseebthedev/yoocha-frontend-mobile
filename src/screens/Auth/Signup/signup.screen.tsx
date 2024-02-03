@@ -9,6 +9,14 @@ import { useAppDispatch } from "../../../store/store";
 import { signupService } from "../../../store/slice/auth/authService";
 import styles from "./signup.styles";
 
+interface SignupFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -20,7 +28,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
     navigation.navigate("signin");
   };
 
-  const submit = async (values) => {
+  const submit = async (values: SignupFormValues) => {
     Keyboard.dismiss();
     await dispatch(
       signupService({
