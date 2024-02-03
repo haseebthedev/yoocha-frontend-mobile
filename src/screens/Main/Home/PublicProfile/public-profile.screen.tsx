@@ -78,7 +78,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
                 </View>
               </View>
 
-              <View style={{ marginTop: hp(3.8) }}>
+              <View style={styles.addFriendBtnContainer}>
                 <AddFriendButton title="Add Friend" onPress={() => console.log("Add Friend")} />
               </View>
 
