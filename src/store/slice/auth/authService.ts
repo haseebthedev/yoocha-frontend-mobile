@@ -23,11 +23,11 @@ export const signupService: any = createAsyncThunk(
         password: payload.password,
       });
 
-      showFlashMessage("success", "Signup Successfully!");
+      showFlashMessage({ type: "success", message: "Signup Successfully!" });
 
       return response.data;
     } catch (error: any) {
-      showFlashMessage("danger", `${error?.response?.data?.message || "Something went wrong!"}`);
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
 
       return rejectWithValue(error?.response?.data || "Something went wrong!");
     }
@@ -47,12 +47,11 @@ export const signinService: any = createAsyncThunk(
         const { result } = response.data;
         await saveString("UserToken", result.token);
       }
-
-      showFlashMessage("success", "Login Successfully!");
+      showFlashMessage({ type: "success", message: "Login Successfully!" });
 
       return response.data;
     } catch (error: any) {
-      showFlashMessage("danger", `${error?.response?.data?.message || "Something went wrong!"}`);
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
 
       return rejectWithValue(error?.response?.data || "Something went wrong!");
     }
@@ -67,11 +66,11 @@ export const forgetPasswordService: any = createAsyncThunk(
         email: payload.email,
       });
 
-      showFlashMessage("success", `${response.data.result.result}`);
+      showFlashMessage({ type: "success", message: `${response.data.result.result}` });
 
       return response.data;
     } catch (error: any) {
-      showFlashMessage("danger", `${error?.response?.data?.message || "Something went wrong!"}`);
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
 
       return rejectWithValue(error?.response?.data || "Something went wrong!");
     }
