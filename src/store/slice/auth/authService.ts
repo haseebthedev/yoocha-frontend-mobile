@@ -47,6 +47,7 @@ export const signinService: any = createAsyncThunk(
         const { result } = response.data;
         await saveString("UserToken", result.token);
       }
+
       showFlashMessage({ type: "success", message: "Login Successfully!" });
 
       return response.data;

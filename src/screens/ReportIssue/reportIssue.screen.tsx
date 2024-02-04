@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, TextInput } from "components";
+import { AppButton, Header, TextInput } from "components";
 import { reportAnIssueValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { ReportIssueFormI } from "interfaces/auth";
@@ -54,8 +54,7 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">>
           multiline
           numberOfLines={4}
         />
-
-        <Button title={"Submit"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Submit" onPress={handleSubmit} />
       </View>
     </View>
   );

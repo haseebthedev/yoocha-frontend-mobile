@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text } from "components";
+import { AppButton, Header, Text } from "components";
 import styles from "./otpVerification.styles";
 
 const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpVerification">> = ({ navigation }) => {
@@ -137,12 +137,13 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
           <Text text={"00 : " + timer} style={styles.timerText} />
         </View>
 
-        <Button title={"Verify"} onPress={onPressVerifyHandler} />
+        <AppButton preset="filled" text="Verify" onPress={onPressVerifyHandler} />
+
         <View style={styles.dontRecieveCodeContainer}>
           <Text style={styles.dontRecieveCodeText} preset="default">
             If you don't receive code!
           </Text>
-          <LinkBtn title="Resend" onPress={onPressResendCodeHandler} disabled={disableResetBtn} />
+          <AppButton preset="link" text="Resend" onPress={onPressResendCodeHandler} disabled={disableResetBtn} />
         </View>
       </View>
     </View>

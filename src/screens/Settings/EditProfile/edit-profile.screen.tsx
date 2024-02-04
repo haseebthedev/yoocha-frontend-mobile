@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { AlertBox, Button, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import { colors } from "theme";
 import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
@@ -61,9 +61,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text text={selectedCountry} preset="default" />
           </TouchableOpacity>
-
-          <Button title={"save"} onPress={onPressSaveHandler} />
         </View>
+
+        <AppButton preset="filled" text={"Save Changes"} onPress={onPressSaveHandler} />
       </View>
 
       {countryModalVisible && (

@@ -21,9 +21,8 @@ export * from "./List/SettingsListItem/SettingListItem";
 export * from "./Drawer/drawer";
 
 //Button
-export * from "./Buttons/Button/Button";
-export * from "./Buttons/LinkBtn/LinkBtn";
 export * from "./Buttons/AddFriendButton/AddFriendButton";
+export * from "./Buttons/AppButton/AppButton";
 
 //Modal HOC
 export * from "./HOCModal/ModalScreen/ModalScreen";

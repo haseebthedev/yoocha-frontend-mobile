@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, Text, TextInput } from "components";
+import { Header, Text, TextInput, AppButton } from "components";
 import { forgotPasswordValidation } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { forgetPasswordService, useAppDispatch } from "store";
@@ -49,7 +49,7 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forge
           error={errors.email}
           visible={touched.email}
         />
-        <Button title={"Recover Password"} onPress={handleSubmit} />
+        <AppButton text={"Recover Password"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>
   );

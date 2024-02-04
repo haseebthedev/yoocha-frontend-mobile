@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text, TextInput } from "components";
+import { AppButton, Header, Text, TextInput } from "components";
 import { signinValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { signinService, useAppDispatch } from "store";
@@ -49,7 +49,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           visible={touched.password}
         />
 
-        <Button title={"Login"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Login" onPress={handleSubmit} />
 
         <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>
           <Text style={styles.forgetPasswordText} preset="heading">
@@ -61,7 +61,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           <Text style={styles.dontHaveAccText} preset="default">
             Don't have an Account yet?
           </Text>
-          <LinkBtn title="Sign Up" onPress={() => navigation.navigate("signup")} />
+          <AppButton preset="link" text="Sign Up" onPress={() => navigation.navigate("signup")} />
         </View>
       </View>
     </View>

@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, TextInput } from "components";
+import { AppButton, Header, TextInput } from "components";
 import { contactUsValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import styles from "./contactUs.styles";
@@ -11,9 +11,9 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
   const validationSchema = contactUsValidationSchema;
   const initialValues = { name: "", email: "", message: "" };
 
-  const submit = ({ name, email, message }) => {
+  const submit = () => {
     Keyboard.dismiss();
-    console.log("message by: ", name, email, message);
+    console.log("message by: ", values.name, values.email, values.message);
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -53,8 +53,7 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           multiline
           numberOfLines={4}
         />
-
-        <Button title={"Submit"} onPress={handleSubmit} />
+        <AppButton text={"Recover Password"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>
   );

@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Keyboard, ScrollView, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text, TextInput } from "components";
+import { AppButton, Header, Text, TextInput } from "components";
 import { signupValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { signupService, useAppDispatch } from "store";
@@ -16,9 +16,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const validationSchema = signupValidationSchema;
   const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
-  const onPressSignin = () => navigation.navigate("signin");
-
-  const submit = async (values: SignupFormValues) => {
+  const submit = async () => {
     Keyboard.dismiss();
     await dispatch(
       signupService({
@@ -94,13 +92,13 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           visible={touched.confirmPassword}
         />
 
-        <Button title={"Sign Up"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Sign Up" onPress={handleSubmit} />
 
         <View style={styles.haveAccContainer}>
           <Text style={styles.haveAccText} preset="default">
             Already have an Account?
           </Text>
-          <LinkBtn title="Sign In" onPress={onPressSignin} />
+          <AppButton preset="link" text="Sign In" onPress={() => navigation.navigate("signin")} />
         </View>
       </ScrollView>
     </View>
