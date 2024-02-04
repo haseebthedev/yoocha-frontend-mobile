@@ -56,7 +56,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
       // animationType="slide"
     >
       <View>
-        <Text text={title} preset="heading" style={{ textAlign: "center" }} />
+        <Text text={title} preset="heading" style={styles.heading} />
 
         <View style={styles.body}>
           <View style={styles.btnParentSection}>

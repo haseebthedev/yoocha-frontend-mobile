@@ -40,7 +40,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
       <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.mainContainer}>
-        <View style={{ alignSelf: "center" }}>
+        <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
           <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
             <Ionicons name="camera" size={20} color={colors.primary} />

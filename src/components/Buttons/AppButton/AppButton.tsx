@@ -1,9 +1,9 @@
-import { Text } from "components/General/text/text";
-import { TextProps } from "components/General/text/text.props";
 import React, { ComponentType } from "react";
 import { Pressable, PressableProps, PressableStateCallbackType, StyleProp, TextStyle, ViewStyle } from "react-native";
-import { colors, typography } from "theme";
+import { Text } from "components/General/text/text";
 import { hp, wp } from "utils/responsive";
+import { TextProps } from "components/General/text/text.props";
+import { colors, typography } from "theme";
 
 type Presets = keyof typeof $viewPresets;
 
@@ -77,19 +77,18 @@ const $baseViewStyle: ViewStyle = {
   width: "100%",
   alignSelf: "center",
   minHeight: 50,
-  borderRadius: 12,
+  borderRadius: hp(1.8),
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "row",
   paddingVertical: hp(1.8),
   marginVertical: hp(1),
-  // paddingHorizontal: spacing.sm,
   overflow: "hidden",
 };
 
 const $baseTextStyle: TextStyle = {
-  fontSize: 16,
-  lineHeight: 20,
+  fontSize: hp(2.1),
+  lineHeight: hp(2.9),
   color: colors.primary,
   fontFamily: typography.bold,
   textAlign: "center",
@@ -112,14 +111,7 @@ const $viewPresets = {
   ] as StyleProp<ViewStyle>,
 
   filled: [$baseViewStyle, { backgroundColor: colors.primary }] as StyleProp<ViewStyle>,
-  link: [
-    // $baseViewStyle,
-    {
-      //   borderBottomWidth: 1,
-      //   borderBottomColor: colors.primary,
-      //   backgroundColor: colors.white,
-    },
-  ] as StyleProp<ViewStyle>,
+  link: [{}] as StyleProp<ViewStyle>,
 };
 
 const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
@@ -138,13 +130,13 @@ const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
 };
 
 const $pressedViewPresets: Record<Presets, StyleProp<ViewStyle>> = {
-  default: { backgroundColor: colors.lightShade },
-  filled: { backgroundColor: colors.primary },
+  default: { backgroundColor: colors.white, opacity: 0.5 },
+  filled: { backgroundColor: colors.primaryLight },
   link: { backgroundColor: colors.white },
 };
 
 const $pressedTextPresets: Record<Presets, StyleProp<TextStyle>> = {
-  default: { opacity: 0.9 },
+  default: { opacity: 0.5 },
   filled: { opacity: 0.9 },
   link: { opacity: 0.5 },
 };

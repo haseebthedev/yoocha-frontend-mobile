@@ -14,13 +14,12 @@ const styles = StyleSheet.create({
     width: wp(100),
   },
   btnSection: {
-    // paddingHorizontal: wp(5),
     paddingVertical: hp(1),
-    // backgroundColor: colors.lightShade,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: hp(0.2),
   },
+  heading: { textAlign: "center" },
 });
 
 export default styles;

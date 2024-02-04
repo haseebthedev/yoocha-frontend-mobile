@@ -50,7 +50,7 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
       <Header headerText="Verification" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.form}>
-        <View style={{ alignItems: "center" }}>
+        <View style={styles.head}>
           <Text text="Get Your Code" preset="largeHeading" />
           <Text
             text="Please enter the 4 digit code that send to your email address."
