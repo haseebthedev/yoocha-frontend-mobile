@@ -5,13 +5,8 @@ import { NavigatorParamList } from "navigators";
 import { Button, Header, TextInput } from "components";
 import { reportAnIssueValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { ReportIssueFormI } from "interfaces/auth";
 import styles from "./reportIssue.styles";
-
-interface ReportIssueFormI {
-  name: string;
-  email: string;
-  message: string;
-}
 
 const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">> = ({ navigation }) => {
   const validationSchema = reportAnIssueValidationSchema;

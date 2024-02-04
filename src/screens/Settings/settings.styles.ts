@@ -15,6 +15,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     paddingHorizontal: wp(5),
   },
+  spacing: {
+    marginTop: hp(3),
+    paddingHorizontal: wp(5),
+  },
 });
 
 export default styles;

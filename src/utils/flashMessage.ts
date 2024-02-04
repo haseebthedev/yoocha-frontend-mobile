@@ -6,3 +6,20 @@ export const showFlashMessage = (type, message) => {
     message,
   });
 };
+
+// import { showMessage as flashMessage, FlashMessageProps, Message, MessageOptions } from "react-native-flash-message";
+
+// type FlashMessageType = "success" | "info" | "warning" | "danger";
+// interface FlashMessageI extends MessageOptions {
+//   type: FlashMessageType;
+//   message: string;
+// }
+
+// export const showFlashMessage = ({ type, message, ...rest }: FlashMessageI): void => {
+//   const options: MessageOptions = {
+//     type,
+//     message,
+//     ...rest,
+//   };
+//   flashMessage(options);
+// };

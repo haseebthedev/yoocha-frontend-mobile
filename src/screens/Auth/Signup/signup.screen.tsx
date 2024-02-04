@@ -5,17 +5,9 @@ import { NavigatorParamList } from "navigators";
 import { Button, Header, LinkBtn, Text, TextInput } from "components";
 import { signupValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
-import { useAppDispatch } from "../../../store/store";
-import { signupService } from "../../../store/slice/auth/authService";
+import { signupService, useAppDispatch } from "store";
+import { SignupFormValues } from "interfaces/auth";
 import styles from "./signup.styles";
-
-interface SignupFormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -24,9 +16,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const validationSchema = signupValidationSchema;
   const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
-  const onPressSignin = () => {
-    navigation.navigate("signin");
-  };
+  const onPressSignin = () => navigation.navigate("signin");
 
   const submit = async (values: SignupFormValues) => {
     Keyboard.dismiss();

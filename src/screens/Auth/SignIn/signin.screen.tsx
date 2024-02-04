@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-import { Keyboard, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { Button, Header, LinkBtn, Text, TextInput } from "components";
 import { signinValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
-import { useAppDispatch } from "../../../store/store";
-import { signinService } from "../../../store/slice/auth/authService";
+import { signinService, useAppDispatch } from "store";
+import { SigninFormValues } from "interfaces/auth";
 import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
@@ -14,17 +14,9 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
-  const initialValues = { email: "", password: "" };
+  const initialValues: SigninFormValues = { email: "", password: "" };
 
-  const submit = async ({ email, password }) => {
-    Keyboard.dismiss();
-    await dispatch(
-      signinService({
-        email,
-        password,
-      })
-    );
-  };
+  const submit = async ({ email, password }: SigninFormValues) => await dispatch(signinService({ email, password }));
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
     submit,

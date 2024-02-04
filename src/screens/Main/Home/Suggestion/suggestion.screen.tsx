@@ -8,10 +8,7 @@ import { HOME_SUGGESTION_DATA } from "constant";
 import styles from "./suggestion.styles";
 
 const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggestions">> = ({ navigation }) => {
-  const onViewPress = (item) => {
-    // console.log("item === ", item);
-    navigation.navigate("publicProfile", { item });
-  };
+  const onViewPress = (item) => navigation.navigate("publicProfile", { item });
 
   return (
     <View style={styles.container}>

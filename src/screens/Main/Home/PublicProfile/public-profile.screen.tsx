@@ -4,7 +4,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { colors } from "theme";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
-import { hp, wp } from "utils/responsive";
 import { UserStatusI } from "../home.screen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./public-profile.styles";

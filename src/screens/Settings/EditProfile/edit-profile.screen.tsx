@@ -19,13 +19,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);
 
-  const closeModal = () => {
-    setImageModalVisible((prev) => !prev);
-  };
+  const closeModal = () => setImageModalVisible((prev) => !prev);
 
-  const handleImageBackdropPress = () => {
-    closeModal();
-  };
+  const handleImageBackdropPress = () => closeModal();
+
   const onCloseAlertBoxPress = () => {
     setSuccessModalVisible((prev) => !prev);
     navigation.goBack();
@@ -36,9 +33,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     setSuccessModalVisible((prev) => !prev);
   };
 
-  const uploadProfileImage = async () => {
-    setImageModalVisible((prev) => !prev);
-  };
+  const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>

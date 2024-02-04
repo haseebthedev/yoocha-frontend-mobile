@@ -24,7 +24,7 @@ import {
 } from "screens";
 import { colors } from "theme";
 import { SUGGESTED_USER_DATA_I } from "constant";
-import { RootState, useAppSelector } from "../store/store";
+import { RootState, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -56,7 +56,6 @@ const Stack = createNativeStackNavigator<NavigatorParamList>();
 const AppStack = () => {
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  // user?.isEmailVerified
   if (user) {
     return (
       <Stack.Navigator

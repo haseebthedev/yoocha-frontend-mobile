@@ -17,9 +17,6 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
 
   const submit = ({ currentPassword, newPassword, confirmPassword }) => {
     Keyboard.dismiss();
-    console.log("currentPassword: ", currentPassword);
-    console.log("newPassword: ", newPassword);
-    console.log("confirmPassword: ", confirmPassword);
     navigation.navigate("signin");
   };
 

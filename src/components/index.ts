@@ -12,6 +12,7 @@ export * from "./Cards/HomeUserStatus/HomeUserStatus";
 export * from "./Cards/UserSuggestion/UserSuggestion";
 export * from "./Cards/ChatCard/ChatCard";
 export * from "./Cards/AddUserSuggestionCard/AddUserSuggestionCard";
+export * from "./Cards/NotificationCard/NotificationCard";
 
 // List Component
 export * from "./List/SettingsListItem/SettingListItem";
