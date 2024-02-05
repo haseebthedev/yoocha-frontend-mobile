@@ -8,13 +8,13 @@ export interface SignupPayloadI {
 export interface SignupResponseI {
   result: {
     profilePicture: string | null;
-    firstname: string;
-    lastname: string;
-    email: string;
-    isEmailVerified: boolean;
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
+    firstname: string | null;
+    lastname: string | null;
+    email: string | null;
+    isEmailVerified: boolean | null;
+    _id: string | null;
+    createdAt: string | null;
+    updatedAt: string | null;
   };
 }
 

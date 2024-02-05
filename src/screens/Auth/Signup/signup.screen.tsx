@@ -17,6 +17,8 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
   const submit = async () => {
+    console.log("form submitted...");
+
     Keyboard.dismiss();
     await dispatch(
       signupService({
@@ -27,16 +29,10 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
       })
     )
       .unwrap()
-      .then(() => {
-        navigation.navigate("signin");
-      });
+      .then(() => navigation.navigate("signin"));
   };
 
-  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
-    submit,
-    validationSchema,
-    initialValues
-  );
+  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(submit, validationSchema, initialValues);
 
   return (
     <View style={styles.container}>

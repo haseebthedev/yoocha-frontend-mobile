@@ -4,17 +4,16 @@ import { AuthI } from "./types";
 
 const initialState: AuthI = {
   loading: false,
-  user:
-    {
-      profilePicture: null,
-      firstname: "",
-      lastname: "",
-      email: "",
-      isEmailVerified: false,
-      _id: "",
-      createdAt: "",
-      updatedAt: "",
-    } || null,
+  user: {
+    profilePicture: null,
+    firstname: null,
+    lastname: null,
+    email: null,
+    isEmailVerified: null,
+    _id: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   error: "",
   stack: "",
 };

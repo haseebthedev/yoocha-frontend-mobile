@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { wp } from "utils/responsive";
-import CountryPicker from "react-native-country-picker-modal";
+import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
 
 interface CountryPickerModalI {
-  visible?: boolean;
+  visible: boolean;
   setSelectedCountry: (name: string) => void;
   setCountryModalVisible: (any) => void;
 }
 
 const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelectedCountry, setCountryModalVisible }) => {
-  const [countryCode, setCountryCode] = useState<any>("FR");
+  const [countryCode, setCountryCode] = useState<CountryCode>("FR");
   const [country, setCountry] = useState<any>(null);
   const [withCountryNameButton, setWithCountryNameButton] = useState<boolean>(false);
   const [withFlag, setWithFlag] = useState<boolean>(true);
@@ -23,24 +23,25 @@ const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelecte
     setCountryCode(country.cca2);
     setCountry(country);
     setSelectedCountry(name);
-    setCountryModalVisible((prev) => !prev);
+    setCountryModalVisible((prev: boolean) => !prev);
   };
   return (
     <>
-      <CountryPicker
-        {...{
-          countryCode,
-          withFilter,
-          withFlag,
-          withCountryNameButton,
-          withAlphaFilter,
-          withCallingCode,
-          withEmoji,
-          onSelect,
-        }}
-        visible={visible}
-        containerButtonStyle={{ marginBottom: wp(5) }}
-      />
+      {visible && (
+        <CountryPicker
+          countryCode={countryCode}
+          withFilter={true}
+          withFlag={true}
+          withCountryNameButton={false}
+          withAlphaFilter={false}
+          withCallingCode={false}
+          withEmoji={true}
+          onSelect={onSelect}
+          visible={visible}
+          containerButtonStyle={{ marginBottom: wp(5) }}
+          onClose={() => setCountryModalVisible(false)}
+        />
+      )}
     </>
   );
 };

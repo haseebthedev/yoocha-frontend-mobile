@@ -66,13 +66,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         <AppButton preset="filled" text={"Save Changes"} onPress={onPressSaveHandler} />
       </View>
 
-      {countryModalVisible && (
-        <CountryPickerModal
-          visible={countryModalVisible}
-          setSelectedCountry={setSelectedCountry}
-          setCountryModalVisible={setCountryModalVisible}
-        />
-      )}
+      <CountryPickerModal visible={countryModalVisible} setSelectedCountry={setSelectedCountry} setCountryModalVisible={setCountryModalVisible} />
 
       <AlertBox
         checkIcon={true}
