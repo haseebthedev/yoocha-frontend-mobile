@@ -5,17 +5,13 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { hp, wp } from "utils/responsive";
 import { colors } from "theme";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { BLOCKED_CONTACTS_DATA } from "constant";
 import styles from "./blocked-users.styles";
 
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
-  const onCloseAlertBoxPress = () => {
-    setAlertModalVisible((prev) => !prev);
-  };
+  const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
   return (
     <View style={styles.container}>

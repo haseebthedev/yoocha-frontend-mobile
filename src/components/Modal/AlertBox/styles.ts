@@ -49,6 +49,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
   },
+  btnContainer: {
+    flexDirection: "row",
+    marginTop: hp(2),
+    gap: wp(4),
+    marginBottom: hp(2),
+  },
+  btn: { flex: 1 },
 });
 
 export default styles;

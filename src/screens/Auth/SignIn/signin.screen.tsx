@@ -1,32 +1,22 @@
 import { FC, useState } from "react";
-import { Keyboard, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text, TextInput } from "components";
+import { AppButton, Header, Text, TextInput } from "components";
 import { signinValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { signinService, useAppDispatch } from "store";
+import { SigninFormValues } from "interfaces/auth";
 import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
-  const initialValues = { email: "", password: "" };
+  const initialValues: SigninFormValues = { email: "", password: "" };
 
-  const onPressSignup = () => {
-    console.log("signup");
-    navigation.navigate("signup");
-  };
-
-  const onPressForgetPasswordHandler = () => {
-    navigation.navigate("forgetPassword");
-  };
-
-  const submit = ({ email, password }) => {
-    Keyboard.dismiss();
-    console.log("login by: ", email, password);
-    navigation.navigate("main");
-  };
+  const submit = async ({ email, password }: SigninFormValues) => await dispatch(signinService({ email, password }));
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
     submit,
@@ -59,9 +49,9 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           visible={touched.password}
         />
 
-        <Button title={"Login"} onPress={() => navigation.navigate("main")} />
+        <AppButton preset="filled" text="Login" onPress={handleSubmit} />
 
-        <TouchableOpacity style={styles.forgetPassword} onPress={onPressForgetPasswordHandler}>
+        <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>
           <Text style={styles.forgetPasswordText} preset="heading">
             Forget Password?
           </Text>
@@ -71,7 +61,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           <Text style={styles.dontHaveAccText} preset="default">
             Don't have an Account yet?
           </Text>
-          <LinkBtn title="Sign Up" onPress={onPressSignup} />
+          <AppButton preset="link" text="Sign Up" onPress={() => navigation.navigate("signup")} />
         </View>
       </View>
     </View>

@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
-import { AlertBox, Button, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import { colors } from "theme";
 import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
@@ -19,15 +19,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);
 
-  const closeModal = () => {
-    setImageModalVisible((prev) => !prev);
-  };
+  const closeModal = () => setImageModalVisible((prev) => !prev);
 
-  const handleBackdropPress = () => {
-    closeModal();
-  };
+  const handleImageBackdropPress = () => closeModal();
+
   const onCloseAlertBoxPress = () => {
     setSuccessModalVisible((prev) => !prev);
+    navigation.goBack();
   };
 
   const onPressSaveHandler = () => {
@@ -35,16 +33,14 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     setSuccessModalVisible((prev) => !prev);
   };
 
-  const uploadProfileImage = async () => {
-    setImageModalVisible((prev) => !prev);
-  };
+  const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.mainContainer}>
-        <View style={{ alignSelf: "center" }}>
+        <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
           <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
             <Ionicons name="camera" size={20} color={colors.primary} />
@@ -65,9 +61,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text text={selectedCountry} preset="default" />
           </TouchableOpacity>
-
-          <Button title={"save"} onPress={onPressSaveHandler} />
         </View>
+
+        <AppButton preset="filled" text={"Save Changes"} onPress={onPressSaveHandler} />
       </View>
 
       {countryModalVisible && (
@@ -90,7 +86,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         title="Select an option!"
         isVisible={imageModalVisible}
         onModalClose={closeModal}
-        onBackdropPress={handleBackdropPress}
+        onBackdropPress={handleImageBackdropPress}
         setProfileImage={setProfileImage}
       />
 

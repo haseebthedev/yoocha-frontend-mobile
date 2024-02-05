@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, Text, TextInput } from "components";
+import { AppButton, Button, Header, Text, TextInput } from "components";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { newPasswordValidation } from "utils/validations";
 import styles from "./resetPassword.styles";
@@ -16,8 +16,7 @@ const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetP
 
   const submit = ({ newPassword, confirmPassword }) => {
     Keyboard.dismiss();
-    console.log("newPassword: ", newPassword);
-    console.log("confirmPassword: ", confirmPassword);
+    console.log("Passwords === ", newPassword, confirmPassword);
     navigation.navigate("signin");
   };
 
@@ -63,7 +62,7 @@ const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetP
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
         />
-        <Button title={"Continue"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Continue" onPress={handleSubmit} />
       </View>
     </View>
   );

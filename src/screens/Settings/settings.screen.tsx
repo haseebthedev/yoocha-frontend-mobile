@@ -1,23 +1,22 @@
 import { FC, useState } from "react";
 import { View } from "react-native";
-import { AlertBox, Header, SettingListItem, Text } from "components";
+import { AlertBox, Header, SettingListItem } from "components";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { hp, wp } from "utils/responsive";
 import { colors } from "theme";
+import { NavigatorParamList } from "navigators";
+import { logoutUser, useAppDispatch } from "store";
 import styles from "./settings.styles";
 
 const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
+  const dispatch = useAppDispatch();
+
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
 
-  const onCloseAlertBoxPress = () => {
-    setAlertModalVisible((prev) => !prev);
-  };
-
-  const onDelModalCancelPress = () => {
-    setDeleteAccModalVisible((prev) => !prev);
-  };
+  const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
+  const onConfirmLogoutPress = async () => await dispatch(logoutUser());
+  const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
+  const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
 
   return (
     <View style={styles.container}>
@@ -30,7 +29,7 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
       />
 
       <View style={styles.listContainer}>
-        <View style={{ marginTop: hp(3), paddingHorizontal: wp(5) }}>
+        <View style={styles.spacing}>
           <SettingListItem
             iconName="person-circle-outline"
             listText="Account Details"
@@ -56,21 +55,13 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
             listText="Contact Us"
             onPress={() => navigation.navigate("contactUs")}
           />
-          <SettingListItem
-            iconName="log-out-outline"
-            listText="Logout"
-            onPress={() => {
-              setAlertModalVisible((prev) => !prev);
-            }}
-          />
+          <SettingListItem iconName="log-out-outline" listText="Logout" onPress={onLogoutPress} />
           <SettingListItem
             iconName="trash-outline"
             iconColor={colors.red}
             textColor={colors.red}
             listText="Delete Account"
-            onPress={() => {
-              setDeleteAccModalVisible((prev) => !prev);
-            }}
+            onPress={() => setDeleteAccModalVisible((prev) => !prev)}
           />
         </View>
       </View>
@@ -84,13 +75,14 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
         secondaryButtonText="Cancel"
         primaryButtonText="Logout"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={onConfirmLogoutPress}
       />
 
       <AlertBox
         open={deleteAccModalVisible}
         type="error"
         title="Delete Account!"
-        description="Are you sure you want to delete your account?"
+        description="Are you sure you want to delete your account permanently?"
         onClose={onDelModalCancelPress}
         secondaryButtonText="Cancel"
         primaryButtonText="Delete"

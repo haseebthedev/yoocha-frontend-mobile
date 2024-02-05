@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     marginVertical: hp(6),
     paddingHorizontal: wp(5),
   },
+  head: { alignItems: "center" },
   subHeading: {
     width: wp(80),
     textAlign: "center",

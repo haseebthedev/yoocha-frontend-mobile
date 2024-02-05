@@ -24,6 +24,7 @@ import {
 } from "screens";
 import { colors } from "theme";
 import { SUGGESTED_USER_DATA_I } from "constant";
+import { RootState, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -53,38 +54,48 @@ export type NavigatorParamList = {
 const Stack = createNativeStackNavigator<NavigatorParamList>();
 
 const AppStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        animation: "slide_from_right",
-      }}
-      initialRouteName="main"
-    >
-      {/* auth stack */}
-      <Stack.Screen name="signin" component={SignInScreen} />
-      <Stack.Screen name="signup" component={SignUpScreen} />
-      <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
-      <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
-      <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
-      {/*  */}
-      <Stack.Screen name="main" component={MainScreen} />
-      <Stack.Screen name="notifications" component={NotificationScreen} />
-      <Stack.Screen name="suggestions" component={SuggestionsScreen} />
-      <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
-
-      <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
-      <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
-      <Stack.Screen name="settings" component={SettingsScreen} />
-      <Stack.Screen name="editprofile" component={EditProfileScreen} />
-      <Stack.Screen name="appsettings" component={AppSettingsScreen} />
-      <Stack.Screen name="contactUs" component={ContactUsScreen} />
-      <Stack.Screen name="changePassword" component={ChangePasswordScreen} />
-
-      <Stack.Screen name="reportIssue" component={ReportIssue} />
-    </Stack.Navigator>
-  );
+  if (user) {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
+        initialRouteName="main"
+      >
+        <Stack.Screen name="main" component={MainScreen} />
+        <Stack.Screen name="notifications" component={NotificationScreen} />
+        <Stack.Screen name="suggestions" component={SuggestionsScreen} />
+        <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
+        <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
+        <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
+        <Stack.Screen name="settings" component={SettingsScreen} />
+        <Stack.Screen name="editprofile" component={EditProfileScreen} />
+        <Stack.Screen name="appsettings" component={AppSettingsScreen} />
+        <Stack.Screen name="contactUs" component={ContactUsScreen} />
+        <Stack.Screen name="changePassword" component={ChangePasswordScreen} />
+        <Stack.Screen name="reportIssue" component={ReportIssue} />
+      </Stack.Navigator>
+    );
+  } else {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
+        initialRouteName="signin"
+      >
+        <Stack.Screen name="signup" component={SignUpScreen} />
+        <Stack.Screen name="signin" component={SignInScreen} />
+        <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
+        <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
+        <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
+      </Stack.Navigator>
+    );
+  }
 };
 
 interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}

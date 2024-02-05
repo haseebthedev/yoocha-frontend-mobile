@@ -1,8 +1,7 @@
 import React from "react";
 import { Modal, View, Pressable, GestureResponderEvent, ModalProps } from "react-native";
-import { Text } from "components/General/text/text";
-import { hp, wp } from "utils/responsive";
-import { Button } from "components/Buttons/Button/Button";
+import { Text } from "components";
+import { AppButton } from "components";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
@@ -56,25 +55,15 @@ const AlertBox = ({
             {title && <Text text={title} style={styles.title} preset="largeHeading" />}
             <Text text={description} style={styles.text} />
 
-            <View style={{ flexDirection: "row", marginTop: hp(1), gap: wp(4) }}>
+            <View style={styles.btnContainer}>
               {secondaryButtonText && (
-                <View style={{ flex: 1 }}>
-                  <Button
-                    title={secondaryButtonText}
-                    onPress={secondaryOnClick}
-                    preset="outlined"
-                    buttonColor={buttonColor}
-                  />
+                <View style={styles.btn}>
+                  <AppButton text={secondaryButtonText} onPress={secondaryOnClick} />
                 </View>
               )}
               {primaryButtonText && (
-                <View style={{ flex: 1 }}>
-                  <Button
-                    title={primaryButtonText}
-                    onPress={primaryOnClick}
-                    buttonColor={buttonColor}
-                    preset="filled"
-                  />
+                <View style={styles.btn}>
+                  <AppButton preset="filled" text={primaryButtonText} onPress={primaryOnClick} />
                 </View>
               )}
             </View>

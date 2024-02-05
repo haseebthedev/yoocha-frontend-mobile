@@ -3,40 +3,50 @@ import { colors, typography } from "theme";
 import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
+  publicProfileContainer: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
+  headerStyle: {
+    color: colors.white,
+  },
+  staticHeaderContainer: {
+    backgroundColor: colors.primary,
+    marginTop: hp(2.5),
+  },
   container: {
     flex: 1,
     paddingTop: hp(2.5),
     backgroundColor: colors.primary,
   },
-  appHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: wp(5),
-    paddingVertical: hp(2),
+  containerStyle: {
+    gap: wp(2),
+    backgroundColor: colors.white,
   },
   mainContainer: {
-    marginTop: hp(16),
+    marginTop: hp(14),
     flex: 1,
     backgroundColor: colors.white,
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
+    borderTopRightRadius: hp(6),
+    borderTopLeftRadius: hp(6),
     position: "relative",
+    paddingHorizontal: wp(5),
   },
   roundedContainer: {
     position: "absolute",
     flexDirection: "column",
     alignItems: "center",
-    top: -60,
+    top: hp(-7.5),
     left: 0,
     right: 0,
   },
   profilePic: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
+    width: wp(31),
+    height: hp(15.5),
+    borderRadius: hp(10),
+    borderWidth: wp(1),
     borderColor: colors.white,
+    zIndex: 100,
   },
   name: {
     marginTop: hp(1.2),
@@ -44,8 +54,8 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 8,
+    gap: wp(2),
+    marginTop: hp(1),
   },
   infoContainer: {
     marginTop: hp(20),
@@ -55,13 +65,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   info: {
-    fontSize: 24,
+    fontSize: hp(3.2),
     fontFamily: typography.semiBold,
     color: colors.primary,
   },
+  infoHeading: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
   infoText: {
     fontFamily: typography.light,
-    fontSize: 14,
+    fontSize: hp(1.9),
+  },
+  addFriendBtnContainer: {
+    marginTop: hp(3.8),
   },
   tabNavContainer: {
     paddingHorizontal: wp(5),
@@ -71,24 +88,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: hp(5),
-    gap: 50,
+    gap: wp(15),
   },
   tabNavText: {
     textAlign: "center",
     fontFamily: typography.semiBold,
-    fontSize: 12,
+    fontSize: hp(1.6),
     color: colors.primary,
   },
   divider: {
     width: wp(90),
     height: 1,
     backgroundColor: colors.lightShade,
-    marginVertical: 10,
+    marginVertical: hp(1.3),
   },
   postImage: {
     width: wp(28),
     height: hp(20),
-    borderRadius: 12,
+    borderRadius: hp(1.8),
+  },
+  imagesGrid: {
+    marginBottom: hp(2),
+    flex: 1,
+    margin: 0,
+    alignItems: "center",
   },
 });
 

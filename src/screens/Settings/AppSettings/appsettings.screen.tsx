@@ -1,13 +1,11 @@
 import { FC } from "react";
 import { Text } from "components";
-import { Image, Switch, TextInput, TouchableOpacity, View } from "react-native";
+import { Switch, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { hp, wp } from "utils/responsive";
 import { colors, typography } from "theme";
-import { BLOCKED_CONTACTS_DATA, MY_PROFILE_DATA } from "constant";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./appsettings.styles";
 
 const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsettings">> = ({ navigation, route }) => {

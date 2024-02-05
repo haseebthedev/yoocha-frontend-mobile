@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingHorizontal: wp(5),
   },
+  imgContainer: { alignSelf: "center" },
   profileImage: {
     marginTop: 20,
     width: 120,

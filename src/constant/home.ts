@@ -81,7 +81,7 @@ export const HOME_SUGGESTION_DATA: SUGGESTED_USER_DATA_I[] = [
       },
       {
         id: "3",
-        media: "https://picsum.photos/402",
+        media: "https://picsum.photos/403",
         profilePic: "https://picsum.photos/300",
         date: "2024-01-01T21:33:22Z",
       },

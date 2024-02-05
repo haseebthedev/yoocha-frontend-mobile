@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, TextInput } from "components";
+import { AppButton, Header, TextInput } from "components";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { changePasswordValidationSchema } from "utils/validations";
 import styles from "./change-password.styles";
@@ -17,9 +17,6 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
 
   const submit = ({ currentPassword, newPassword, confirmPassword }) => {
     Keyboard.dismiss();
-    console.log("currentPassword: ", currentPassword);
-    console.log("newPassword: ", newPassword);
-    console.log("confirmPassword: ", confirmPassword);
     navigation.navigate("signin");
   };
 
@@ -67,7 +64,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
         />
-        <Button title={"Submit"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Submit" onPress={() => navigation.goBack()} />
       </View>
     </View>
   );

@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { Text } from "components";
+import { AlertBox, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors, typography } from "theme";
@@ -12,6 +12,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<string>("contacts");
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
   return (
     <View style={styles.container}>
@@ -173,6 +174,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                     paddingHorizontal: 20,
                     paddingVertical: 8,
                   }}
+                  onPress={() => setAlertModalVisible((prev) => !prev)}
                 >
                   <Text text="Pending" />
                 </TouchableOpacity>
@@ -181,6 +183,16 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           />
         </View>
       )}
+
+      <AlertBox
+        open={alertModalVisible}
+        title="Cancel Request!"
+        description="Are you sure you want to cancel request?"
+        onClose={() => setAlertModalVisible((prev) => !prev)}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Remove"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+      />
     </View>
   );
 };

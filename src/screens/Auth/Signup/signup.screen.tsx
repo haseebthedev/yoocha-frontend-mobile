@@ -2,25 +2,34 @@ import { FC, useState } from "react";
 import { Keyboard, ScrollView, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text, TextInput } from "components";
+import { AppButton, Header, Text, TextInput } from "components";
 import { signupValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { signupService, useAppDispatch } from "store";
+import { SignupFormValues } from "interfaces/auth";
 import styles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
-  const initialValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
+  const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
-  const onPressSignin = () => {
-    navigation.navigate("signin");
-  };
-
-  const submit = (values) => {
+  const submit = async () => {
     Keyboard.dismiss();
-    console.log("Signup by: ", values.email, values.password);
-    navigation.navigate("otpVerification");
+    await dispatch(
+      signupService({
+        firstname: values.firstName,
+        lastname: values.lastName,
+        email: values.email,
+        password: values.password,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        navigation.navigate("signin");
+      });
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -83,13 +92,13 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           visible={touched.confirmPassword}
         />
 
-        <Button title={"Sign Up"} onPress={handleSubmit} />
+        <AppButton preset="filled" text="Sign Up" onPress={handleSubmit} />
 
         <View style={styles.haveAccContainer}>
           <Text style={styles.haveAccText} preset="default">
             Already have an Account?
           </Text>
-          <LinkBtn title="Sign In" onPress={onPressSignin} />
+          <AppButton preset="link" text="Sign In" onPress={() => navigation.navigate("signin")} />
         </View>
       </ScrollView>
     </View>

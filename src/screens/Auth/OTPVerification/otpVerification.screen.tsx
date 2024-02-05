@@ -2,13 +2,14 @@ import { FC, useEffect, useRef, useState } from "react";
 import { TextInput, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, LinkBtn, Text } from "components";
+import { AppButton, Header, Text } from "components";
 import styles from "./otpVerification.styles";
 
 const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpVerification">> = ({ navigation }) => {
   const TIMER: number = 30;
   const [timer, setTimer] = useState<number>(TIMER);
   const [otpDisableBtn, setOptDisableBtn] = useState<boolean>(false);
+  const [disableResetBtn, setDisableResetBtn] = useState<boolean>(true);
   const input1 = useRef<TextInput>(null);
   const input2 = useRef<TextInput>(null);
   const input3 = useRef<TextInput>(null);
@@ -49,7 +50,7 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
       <Header headerText="Verification" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.form}>
-        <View style={{ alignItems: "center" }}>
+        <View style={styles.head}>
           <Text text="Get Your Code" preset="largeHeading" />
           <Text
             text="Please enter the 4 digit code that send to your email address."
@@ -136,12 +137,13 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
           <Text text={"00 : " + timer} style={styles.timerText} />
         </View>
 
-        <Button title={"Verify"} onPress={onPressVerifyHandler} />
+        <AppButton preset="filled" text="Verify" onPress={onPressVerifyHandler} />
+
         <View style={styles.dontRecieveCodeContainer}>
           <Text style={styles.dontRecieveCodeText} preset="default">
             If you don't receive code!
           </Text>
-          <LinkBtn title="Resend" onPress={onPressResendCodeHandler} />
+          <AppButton preset="link" text="Resend" onPress={onPressResendCodeHandler} disabled={disableResetBtn} />
         </View>
       </View>
     </View>

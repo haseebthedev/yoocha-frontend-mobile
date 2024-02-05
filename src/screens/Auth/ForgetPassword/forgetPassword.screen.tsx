@@ -2,18 +2,22 @@ import { FC } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { Button, Header, Text, TextInput } from "components";
+import { Header, Text, TextInput, AppButton } from "components";
 import { forgotPasswordValidation } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { forgetPasswordService, useAppDispatch } from "store";
+import { ForgetPasswordFormValues } from "interfaces/auth";
 import styles from "./forgetPassword.styles";
 
 const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forgetPassword">> = ({ navigation }) => {
-  const validationSchema = forgotPasswordValidation;
-  const initialValues = { email: "" };
+  const dispatch = useAppDispatch();
 
-  const submit = ({ email }) => {
+  const validationSchema = forgotPasswordValidation;
+  const initialValues: ForgetPasswordFormValues = { email: "" };
+
+  const submit = async ({ email }: ForgetPasswordFormValues) => {
     Keyboard.dismiss();
-    console.log("email address: ", email);
+    await dispatch(forgetPasswordService({ email }));
     navigation.navigate("otpVerification");
   };
 
@@ -45,7 +49,7 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forge
           error={errors.email}
           visible={touched.email}
         />
-        <Button title={"Recover Password"} onPress={() => navigation.navigate("otpVerification")} />
+        <AppButton text={"Recover Password"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>
   );

@@ -2,8 +2,7 @@ import { FC } from "react";
 import { FlatList, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Header } from "components";
-import { NotificationCard } from "components/Cards/NotificationCard/NotificationCard";
+import { Header, NotificationCard } from "components";
 import { NOTIFICATIONS_DATA } from "constant/notifications";
 import styles from "./notification.styles";
 
