@@ -56,3 +56,45 @@ export interface ForgetPasswordResponseI {
     result: string;
   };
 }
+
+export interface UpdateUserPayloadI {
+  firstName: string;
+  lastName: string;
+}
+
+export interface UpdateUserResponseI {
+  result: {
+    profilePicture: any;
+    firstname: string;
+    lastname: string;
+    email: string;
+    isEmailVerified: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export interface getMyProfileResponseI {
+  result: {
+    profilePicture: any;
+    firstname: string;
+    lastname: string;
+    email: string;
+    isEmailVerified: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export interface ChangePasswordPayloadI {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordResponseI {
+  result: {
+    result: string;
+  };
+}

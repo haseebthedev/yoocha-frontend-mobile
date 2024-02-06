@@ -11,6 +11,8 @@ const BASE: TextStyle = {
 export const presets = {
   default: BASE,
 
+  inputText: { ...BASE, fontSize: hp(1.7) } as TextStyle,
+
   light: { ...BASE, fontFamily: typography.light } as TextStyle,
   semiBold: { ...BASE, fontFamily: typography.semiBold } as TextStyle,
   bold: { ...BASE, fontFamily: typography.bold } as TextStyle,

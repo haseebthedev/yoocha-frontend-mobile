@@ -6,11 +6,18 @@ import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
 import { formatDateToDMY } from "utils/formatDateAndTime";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
+import { UpdateUserI } from "interfaces/user";
+import { editAccountValidationSchema } from "utils/validations";
+import { useFormikHook } from "hooks/UseFormikHook";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
+  const dispatch = useAppDispatch();
+  const { user, loading: userLoading } = useAppSelector((state: RootState) => state.auth);
+
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
@@ -19,8 +26,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);
 
-  const closeModal = () => setImageModalVisible((prev) => !prev);
+  const validationSchema = editAccountValidationSchema;
+  const initialValues: UpdateUserI = { firstName: user?.firstname, lastName: user?.lastname };
 
+  const closeModal = () => setImageModalVisible((prev) => !prev);
   const handleImageBackdropPress = () => closeModal();
 
   const onCloseAlertBoxPress = () => {
@@ -28,12 +37,20 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     navigation.goBack();
   };
 
-  const onPressSaveHandler = () => {
-    console.log("country name is === ", selectedCountry);
-    setSuccessModalVisible((prev) => !prev);
+  const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
+
+  const submit = async ({ firstName, lastName }: UpdateUserI) => {
+    // setSuccessModalVisible((prev) => !prev);
+
+    await dispatch(updateUserService({ firstName, lastName }));
+    // navigation.goBack();
   };
 
-  const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
+  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
+    submit,
+    validationSchema,
+    initialValues
+  );
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -48,25 +65,47 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         </View>
 
         <View style={styles.infoContainer}>
-          <TextInput label="Name" value={MY_PROFILE_DATA.firstname + " " + MY_PROFILE_DATA.lastname} />
+          <TextInput
+            label="First Name"
+            placeholder="Enter First Name"
+            value={values.firstName}
+            onBlur={() => setFieldTouched("firstName")}
+            onChangeText={handleChange("firstName")}
+            error={errors.firstName}
+            visible={touched.firstName}
+          />
 
-          <TextInput label="Email" value={MY_PROFILE_DATA.email} />
+          <TextInput
+            label="Last Name"
+            placeholder="Enter Last Name"
+            value={values.lastName}
+            onBlur={() => setFieldTouched("lastName")}
+            onChangeText={handleChange("lastName")}
+            error={errors.lastName}
+            visible={touched.lastName}
+          />
+
+          <TextInput label="Email" value={`${user?.email}`} />
 
           <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.pickerInputField}>
-            <Text text={date ? formatDateToDMY(date) : "Select Date"} preset="default" />
+            <Text text={date ? formatDateToDMY(date) : "Select Date"} preset="inputText" />
           </TouchableOpacity>
 
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
-            <Text text={selectedCountry} preset="default" />
+            <Text text={selectedCountry} preset="inputText" />
           </TouchableOpacity>
         </View>
 
-        <AppButton preset="filled" text={"Save Changes"} onPress={onPressSaveHandler} />
+        <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
       </View>
 
-      <CountryPickerModal visible={countryModalVisible} setSelectedCountry={setSelectedCountry} setCountryModalVisible={setCountryModalVisible} />
+      <CountryPickerModal
+        visible={countryModalVisible}
+        setSelectedCountry={setSelectedCountry}
+        setCountryModalVisible={setCountryModalVisible}
+      />
 
       <AlertBox
         checkIcon={true}

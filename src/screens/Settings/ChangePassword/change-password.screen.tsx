@@ -6,8 +6,10 @@ import { AppButton, Header, TextInput } from "components";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { changePasswordValidationSchema } from "utils/validations";
 import styles from "./change-password.styles";
+import { changePasswordService, useAppDispatch } from "store";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
@@ -15,9 +17,10 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
   const validationSchema = changePasswordValidationSchema;
   const initialValues = { currentPassword: "", newPassword: "", confirmPassword: "" };
 
-  const submit = ({ currentPassword, newPassword, confirmPassword }) => {
+  const submit = async ({ currentPassword, newPassword }) => {
     Keyboard.dismiss();
-    navigation.navigate("signin");
+    await dispatch(changePasswordService({ oldPassword: currentPassword, newPassword }));
+    navigation.goBack();
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -64,7 +67,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
         />
-        <AppButton preset="filled" text="Submit" onPress={() => navigation.goBack()} />
+        <AppButton preset="filled" text="Submit" onPress={handleSubmit} />
       </View>
     </View>
   );

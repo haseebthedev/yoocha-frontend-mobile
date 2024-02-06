@@ -1,5 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { forgetPasswordService, signinService, signupService } from "./authService";
+import {
+  changePasswordService,
+  forgetPasswordService,
+  getMyProfileService,
+  signinService,
+  signupService,
+  updateUserService,
+} from "./authService";
 import { AuthI } from "./types";
 
 const initialState: AuthI = {
@@ -60,9 +67,43 @@ export const authSlice = createSlice({
       })
       .addCase(forgetPasswordService.fulfilled, (state, action) => {
         state.loading = false;
-        // state.user = action.payload.result.user;
       })
       .addCase(forgetPasswordService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateUserService.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUserService.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.result;
+      })
+      .addCase(updateUserService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(getMyProfileService.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getMyProfileService.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.result;
+      })
+      .addCase(getMyProfileService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(changePasswordService.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(changePasswordService.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(changePasswordService.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
