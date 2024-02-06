@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -9,6 +9,8 @@ import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
+import { RootState, useAppDispatch, useAppSelector } from "store";
+import { getListRoomsService } from "store/slice/chat/chatService";
 
 export interface UserStatusI {
   id: string;
@@ -19,6 +21,9 @@ export interface UserStatusI {
 }
 
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+  const { activeChatRoom, loading: userLoading } = useAppSelector((state: RootState) => state.chat);
+
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -32,6 +37,12 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     setStatusData(selectedItem);
     setViewStatus((prev) => !prev);
   };
+
+  console.log("rooms === ", activeChatRoom);
+
+  useEffect(() => {
+    dispatch(getListRoomsService());
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -16,7 +16,7 @@ import {
 import { API_URL } from "config/config.dev";
 import { saveString } from "utils/storage";
 import { showFlashMessage } from "utils/flashMessage";
-import AxiosInstance from "../../../../src/services/api/api";
+import AxiosInstance from "services/api/api";
 
 export const signupService: any = createAsyncThunk(
   "auth/signup",

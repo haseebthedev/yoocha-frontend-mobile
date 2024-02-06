@@ -7,6 +7,7 @@ import { useFormikHook } from "hooks/UseFormikHook";
 import { changePasswordValidationSchema } from "utils/validations";
 import styles from "./change-password.styles";
 import { changePasswordService, useAppDispatch } from "store";
+import { ChangePasswordI } from "interfaces/user";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -15,9 +16,9 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const validationSchema = changePasswordValidationSchema;
-  const initialValues = { currentPassword: "", newPassword: "", confirmPassword: "" };
+  const initialValues: ChangePasswordI = { currentPassword: "", newPassword: "", confirmPassword: "" };
 
-  const submit = async ({ currentPassword, newPassword }) => {
+  const submit = async ({ currentPassword, newPassword }: ChangePasswordI) => {
     Keyboard.dismiss();
     await dispatch(changePasswordService({ oldPassword: currentPassword, newPassword }));
     navigation.goBack();

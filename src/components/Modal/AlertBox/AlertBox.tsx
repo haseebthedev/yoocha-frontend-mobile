@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, View, Pressable, GestureResponderEvent, ModalProps } from "react-native";
 import { Text } from "components";
 import { AppButton } from "components";
+import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
@@ -17,7 +18,6 @@ interface PropsI extends ModalProps {
   secondaryOnClick?: () => void;
   primaryOnClick?: () => void;
   checkIcon?: boolean;
-  buttonColor?: string;
 }
 
 const AlertBox = ({
@@ -31,7 +31,6 @@ const AlertBox = ({
   secondaryOnClick,
   primaryOnClick,
   checkIcon,
-  buttonColor,
 }: PropsI) => {
   if (!open) return null;
 
@@ -58,12 +57,22 @@ const AlertBox = ({
             <View style={styles.btnContainer}>
               {secondaryButtonText && (
                 <View style={styles.btn}>
-                  <AppButton text={secondaryButtonText} onPress={secondaryOnClick} />
+                  <AppButton
+                    text={secondaryButtonText}
+                    onPress={secondaryOnClick}
+                    textStyle={type === "error" && { color: colors.red }}
+                    style={type === "error" && { borderColor: colors.red }}
+                  />
                 </View>
               )}
               {primaryButtonText && (
                 <View style={styles.btn}>
-                  <AppButton preset="filled" text={primaryButtonText} onPress={primaryOnClick} />
+                  <AppButton
+                    preset="filled"
+                    text={primaryButtonText}
+                    onPress={primaryOnClick}
+                    style={type === "error" && { backgroundColor: colors.red }}
+                  />
                 </View>
               )}
             </View>

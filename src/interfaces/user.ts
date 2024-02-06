@@ -15,7 +15,7 @@ export interface UpdateUserI {
 }
 
 export interface ChangePasswordI {
-  name: string;
-  email: string;
-  message: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
