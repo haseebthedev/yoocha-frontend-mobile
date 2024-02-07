@@ -1,5 +1,6 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
 
 interface ChatCardI {
@@ -11,10 +12,14 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.profileContainer}>
-        <Image source={{ uri: item.profilePic }} style={styles.profileImage} />
+        <Image source={personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
-          <Text preset="semiBold" text={item.name} numberOfLines={1} />
-          <Text text={item.lastMessage} numberOfLines={1} style={styles.lastMessageText} />
+          <Text preset="semiBold" text={item.name ? item.name : "Name here"} numberOfLines={1} />
+          <Text
+            text={item.lastMessage ? item.lastMessage : "Message text here..."}
+            numberOfLines={1}
+            style={styles.lastMessageText}
+          />
         </View>
       </View>
 

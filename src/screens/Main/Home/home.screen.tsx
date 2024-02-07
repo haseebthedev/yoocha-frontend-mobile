@@ -3,14 +3,13 @@ import { FlatList, TouchableOpacity, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard, StatusModal } from "components";
-import { HOME_CHAT_DATA, HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
+import { HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
 import { hp } from "utils/responsive";
 import { colors } from "theme";
+import { RootState, useAppDispatch, useAppSelector, getListRoomsService } from "store";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
-import { RootState, useAppDispatch, useAppSelector } from "store";
-import { getListRoomsService } from "store/slice/chat/chatService";
 
 export interface UserStatusI {
   id: string;
@@ -38,7 +37,9 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     setViewStatus((prev) => !prev);
   };
 
-  console.log("rooms === ", activeChatRoom);
+  const renderLoader = () => <></>;
+
+  const loadMoreItems = () => {};
 
   useEffect(() => {
     dispatch(getListRoomsService());
@@ -95,6 +96,24 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
 
           <AppHeading title="Friends" />
           <FlatList
+            data={activeChatRoom}
+            keyExtractor={(item: any) => item._id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <ChatCard item={item} onPress={() => navigation.navigate("usermessaging", { roomId: item?._id })} />
+            )}
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            ItemSeparatorComponent={() => (
+              <View style={{ paddingVertical: hp(1.2) }}>
+                <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
+              </View>
+            )}
+            onEndReached={loadMoreItems}
+            onEndReachedThreshold={0}
+            ListFooterComponent={renderLoader}
+          />
+          {/* <FlatList
             data={HOME_CHAT_DATA}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
@@ -106,7 +125,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
                 <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
               </View>
             )}
-          />
+          /> */}
         </View>
 
         {viewStatus && (
