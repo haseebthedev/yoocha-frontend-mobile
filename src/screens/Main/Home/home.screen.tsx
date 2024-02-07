@@ -1,28 +1,20 @@
 import { FC, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { colors } from "theme";
+import { ListRoomsI } from "interfaces/chat";
+import { UserStatusI } from "interfaces/user";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard, StatusModal } from "components";
 import { HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
-import { hp } from "utils/responsive";
-import { colors } from "theme";
-import { RootState, useAppDispatch, useAppSelector, getListRoomsService } from "store";
+import { useAppDispatch, getListRoomsService, ListRoomResponseI } from "store";
+import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard, StatusModal, Divider } from "components";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
 
-export interface UserStatusI {
-  id: string;
-  name: string;
-  profilePic: string;
-  date: string;
-  statusImage: string;
-}
-
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
-  const { activeChatRoom, loading: userLoading } = useAppSelector((state: RootState) => state.chat);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -32,23 +24,51 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     statusImage: "",
   });
 
+  const [state, setState] = useState<ListRoomsI>({
+    list: [],
+    page: 1,
+    hasNext: false,
+    listRefreshing: false,
+  });
+
   const onViewPress = (selectedItem: UserStatusI) => {
     setStatusData(selectedItem);
-    setViewStatus((prev) => !prev);
+    setViewStatus((prev: boolean) => !prev);
   };
 
-  const renderLoader = () => <></>;
+  const getChatRooms = async () => {
+    setIsLoading(true);
+    await dispatch(getListRoomsService())
+      .unwrap()
+      .then((response: ListRoomResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListRoomsI) => ({
+            ...prev,
+            list: prev.list.concat(response?.result?.docs),
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+          }));
+        }
+      })
+      .finally(() => setIsLoading(false));
+  };
 
-  const loadMoreItems = () => {};
+  const loadMoreItems = () => {
+    if (!isLoading && state.hasNext) {
+      getChatRooms();
+    }
+  };
 
   useEffect(() => {
-    dispatch(getListRoomsService());
+    getChatRooms();
+
+    return () => {
+      setState({ ...state, list: [], page: 1, hasNext: false });
+    };
   }, []);
 
   return (
     <View style={styles.container}>
-      {/* App Header */}
-
       <View style={styles.appHeader}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
@@ -68,7 +88,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             showsVerticalScrollIndicator={false}
             style={styles.sidebarList}
             contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item, index }) => (
+            renderItem={({ item }) => (
               <HomeUserStatus key={item.id} item={item} onViewPress={() => onViewPress(item)} onAddPress={() => {}} />
             )}
           />
@@ -95,48 +115,29 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           </View>
 
           <AppHeading title="Friends" />
+
           <FlatList
-            data={activeChatRoom}
+            data={state.list}
             keyExtractor={(item: any) => item._id}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <ChatCard item={item} onPress={() => navigation.navigate("usermessaging", { roomId: item?._id })} />
             )}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            ItemSeparatorComponent={() => (
-              <View style={{ paddingVertical: hp(1.2) }}>
-                <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
-              </View>
-            )}
+            style={styles.listChatroom}
+            contentContainerStyle={styles.listChatroomContainer}
+            ItemSeparatorComponent={() => <Divider />}
             onEndReached={loadMoreItems}
-            onEndReachedThreshold={0}
-            ListFooterComponent={renderLoader}
+            onEndReachedThreshold={0.4}
+            ListEmptyComponent={() => isLoading && <ActivityIndicator />}
           />
-          {/* <FlatList
-            data={HOME_CHAT_DATA}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <ChatCard item={item} onPress={() => navigation.navigate("usermessaging")} />}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 20 }}
-            ItemSeparatorComponent={() => (
-              <View style={{ paddingVertical: hp(1.2) }}>
-                <View style={{ width: "100%", height: 1, backgroundColor: colors.lightShade }} />
-              </View>
-            )}
-          /> */}
         </View>
-
-        {viewStatus && (
-          <StatusModal
-            isVisible={viewStatus}
-            selectedItem={statusData}
-            title="Sara Khan"
-            onPressClose={() => setViewStatus(false)}
-          />
-        )}
       </View>
+      <StatusModal
+        isVisible={viewStatus}
+        selectedItem={statusData}
+        title="Sara Khan"
+        onPressClose={() => setViewStatus(false)}
+      />
     </View>
   );
 };

@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightShade,
   },
   inputFieldBlock: {
+    height: hp(8),
     width: wp(100),
     flexDirection: "row",
     alignItems: "center",
@@ -95,6 +96,10 @@ const styles = StyleSheet.create({
   },
   loaderStyle: {
     marginVertical: 16,
+    alignItems: "center",
+  },
+  emptyTextContainer: {
+    paddingHorizontal: wp(5),
     alignItems: "center",
   },
 });

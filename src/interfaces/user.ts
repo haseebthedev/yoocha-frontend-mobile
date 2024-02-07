@@ -1,3 +1,11 @@
+export interface UserStatusI {
+  id: string;
+  name: string;
+  profilePic: string;
+  date: string;
+  statusImage: string;
+}
+
 export interface UserI {
   profilePicture: string;
   firstname: string;

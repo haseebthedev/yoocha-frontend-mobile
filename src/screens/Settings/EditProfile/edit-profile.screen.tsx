@@ -2,26 +2,26 @@ import { FC, useState } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import { colors } from "theme";
-import { MY_PROFILE_DATA } from "constant";
-import { NavigatorParamList } from "navigators";
-import { formatDateToDMY } from "utils/formatDateAndTime";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
 import { UpdateUserI } from "interfaces/user";
-import { editAccountValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { formatDateToDMY } from "utils/formatDateAndTime";
+import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { editAccountValidationSchema } from "utils/validations";
+import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
-  const { user, loading: userLoading } = useAppSelector((state: RootState) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<any>({ uri: MY_PROFILE_DATA.profilePic });
+  const [profileImage, setProfileImage] = useState<any>(personPlaceholder);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);
@@ -40,10 +40,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
 
   const submit = async ({ firstName, lastName }: UpdateUserI) => {
-    // setSuccessModalVisible((prev) => !prev);
-
+    setSuccessModalVisible((prev) => !prev);
     await dispatch(updateUserService({ firstName, lastName }));
-    // navigation.goBack();
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

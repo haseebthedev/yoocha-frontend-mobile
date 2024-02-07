@@ -1,12 +1,12 @@
-import { ActivityIndicator, FlatList, Image, TouchableOpacity, View } from "react-native";
 import { FC, useEffect } from "react";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { colors } from "theme";
+import { ActivityIndicator, FlatList, Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
+import { colors } from "theme";
 import { MY_PROFILE_DATA } from "constant";
+import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootState, getMyProfileService, useAppDispatch, useAppSelector } from "store";
-import noImage from "assets/images/noImage.jpeg";
+import noImage from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./profile.styles";

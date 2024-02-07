@@ -58,10 +58,4 @@ export interface GetMessageListResponseI {
 
 export interface ChatI {
   loading: boolean;
-  chatRooms: ListRoomResponseI | null;
-  activeChatRoom: ListRoomResponseI["result"]["docs"];
-  pendingChatRoom: ListRoomResponseI["result"]["docs"];
-  chatMessages: GetMessageListResponseI["result"];
-  error?: string | null;
-  stack?: string | null;
 }
