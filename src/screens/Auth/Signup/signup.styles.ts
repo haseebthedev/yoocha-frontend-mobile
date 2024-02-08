@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   form: {
-    paddingHorizontal: wp(5),
     flex: 1,
+    paddingHorizontal: wp(5),
     marginTop: hp(3),
   },
   input: {

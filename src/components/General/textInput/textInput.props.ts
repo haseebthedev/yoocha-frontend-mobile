@@ -1,6 +1,5 @@
 import { StyleProp, TextStyle, TextInputAndroidProps } from "react-native";
 import { TextProps } from "../text/text.props";
-import { ComponentType } from "react";
 
 export interface TextInputProps extends TextInputAndroidProps {
   value?: string;
@@ -9,9 +8,9 @@ export interface TextInputProps extends TextInputAndroidProps {
   placeholder?: TextProps["text"];
   rightIcon?: string;
   isPassword?: boolean;
-  error?: any;
-  visible?: any;
-  multiline?: any;
+  error?: string | undefined | string[] | any;
+  visible?: boolean | any;
+  multiline?: boolean;
   onBlur?: () => void;
   onRightPress?: () => void;
   onChangeText?: (text: string) => void;

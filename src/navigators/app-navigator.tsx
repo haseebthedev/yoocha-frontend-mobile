@@ -32,7 +32,7 @@ export type NavigatorParamList = {
   contacts: undefined;
   profile: undefined;
 
-  usermessaging: undefined;
+  usermessaging: { roomId: string | null };
   blockedusers: undefined;
   settings: undefined;
   editprofile: undefined;
@@ -47,7 +47,7 @@ export type NavigatorParamList = {
   reportIssue: undefined;
   notifications: undefined;
   suggestions: undefined;
-  publicProfile: { item: SUGGESTED_USER_DATA_I };
+  publicProfile: { item: SUGGESTED_USER_DATA_I; onAddFriendBtnPress: () => void };
   changePassword: undefined;
 };
 
@@ -56,7 +56,7 @@ const Stack = createNativeStackNavigator<NavigatorParamList>();
 const AppStack = () => {
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  return user ? (
+  return user?._id ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,

@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.lightShade,
     borderRadius: 8,
-    paddingHorizontal: 20,
-    marginTop: hp(1),
+    paddingHorizontal: wp(3.6),
+    marginVertical: hp(1),
   },
   topSpacing: {
-    marginTop: hp(1),
+    marginTop: hp(1.6),
   },
 });
 

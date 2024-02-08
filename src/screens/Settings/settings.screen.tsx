@@ -24,7 +24,7 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
         headerText="Settings"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: colors.white }}
+        titleStyle={styles.headerTitle}
         iconStyle={colors.white}
       />
 
@@ -68,7 +68,6 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
 
       <AlertBox
         open={alertModalVisible}
-        type="error"
         title="Logout!"
         description="Are you sure you want to logout?"
         onClose={onCloseAlertBoxPress}
@@ -87,7 +86,6 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
         secondaryButtonText="Cancel"
         primaryButtonText="Delete"
         secondaryOnClick={() => setDeleteAccModalVisible((prev) => !prev)}
-        buttonColor={colors.red}
       />
     </View>
   );

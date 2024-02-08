@@ -7,7 +7,7 @@ export interface TextProps extends TextProperties {
   children?: React.ReactNode;
   // tx?: TxKeyPath
   // txOptions?: i18n.TranslateOptions
-  text?: string;
+  text?: string | null;
   style?: StyleProp<TextStyle>;
   preset?: TextPresets;
 }

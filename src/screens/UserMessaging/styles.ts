@@ -24,6 +24,38 @@ const styles = StyleSheet.create({
     marginLeft: wp(4),
     marginRight: wp(3),
   },
+  listContainer: {
+    paddingVertical: 20,
+    flexGrow: 1,
+  },
+  messageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  messageTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  otherParticipantImage: {
+    width: wp(10),
+    height: wp(10),
+    borderRadius: wp(5),
+    marginTop: 10,
+    marginRight: 10,
+  },
+  messageText: {
+    maxWidth: wp(65),
+    padding: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    elevation: 1,
+  },
+  recieveTime: {
+    fontSize: 10,
+    color: colors.textDim,
+  },
   flexAlignCenter: {
     flexDirection: "row",
     alignItems: "center",
@@ -35,7 +67,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.lightShade,
   },
+  listHeight: {
+    height: hp(80),
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: colors.lightShade,
+  },
   inputFieldBlock: {
+    height: hp(8),
     width: wp(100),
     flexDirection: "row",
     alignItems: "center",
@@ -48,7 +88,7 @@ const styles = StyleSheet.create({
   },
   inputfield: {
     width: wp(80),
-    backgroundColor: "#f2f2f2",
+    backgroundColor: colors.lightShade,
     color: colors.textDim,
     borderRadius: wp(2),
     paddingVertical: hp(0.7),
@@ -56,6 +96,14 @@ const styles = StyleSheet.create({
   },
   paddingVertical: {
     paddingVertical: hp(0.5),
+  },
+  loaderStyle: {
+    marginVertical: 16,
+    alignItems: "center",
+  },
+  emptyTextContainer: {
+    paddingHorizontal: wp(5),
+    alignItems: "center",
   },
 });
 

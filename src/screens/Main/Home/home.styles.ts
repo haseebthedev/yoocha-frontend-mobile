@@ -19,8 +19,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
-    // borderBottomColor: colors.lightShade,
-    // borderBottomWidth: 1,
   },
   sidebarContainer: {
     width: wp(20),
@@ -38,6 +36,12 @@ const styles = StyleSheet.create({
     paddingLeft: hp(1),
     paddingTop: hp(1),
   },
+  loaderStyle: {
+    marginVertical: 16,
+    alignItems: "center",
+  },
+  listChatroom: { flex: 1 },
+  listChatroomContainer: { paddingBottom: 20 },
 });
 
 export default styles;

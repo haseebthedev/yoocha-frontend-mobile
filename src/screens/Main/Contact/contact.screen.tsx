@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { AlertBox, Text } from "components";
+import { FlatList, TextInput, TouchableOpacity, View } from "react-native";
+import { AlertBox, ContactUserCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors, typography } from "theme";
@@ -78,40 +78,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             style={{ marginTop: hp(2) }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 10,
-                  paddingHorizontal: wp(5),
-                  paddingBottom: 15,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                  <Image
-                    source={{ uri: item.profilePic }}
-                    style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.grey }}
-                  />
-
-                  <View>
-                    <Text preset="semiBold" text={item.name} numberOfLines={1} />
-                    <Text text={item.country} numberOfLines={1} />
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#EBEBEB",
-                    borderRadius: 8,
-                    paddingHorizontal: 20,
-                    paddingVertical: 8,
-                  }}
-                >
-                  <Text text="Add" />
-                </TouchableOpacity>
-              </View>
+              <ContactUserCard item={item} btnTitle="Add" onBtnPress={() => console.log("join room")} />
             )}
           />
         </View>
@@ -144,41 +111,11 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             style={{ marginTop: hp(2) }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 10,
-                  paddingHorizontal: wp(5),
-                  paddingBottom: 15,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                  <Image
-                    source={{ uri: item.profilePic }}
-                    style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.grey }}
-                  />
-
-                  <View>
-                    <Text preset="semiBold" text={item.name} numberOfLines={1} />
-                    <Text text={item.country} numberOfLines={1} />
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#EBEBEB",
-                    borderRadius: 8,
-                    paddingHorizontal: 20,
-                    paddingVertical: 8,
-                  }}
-                  onPress={() => setAlertModalVisible((prev) => !prev)}
-                >
-                  <Text text="Pending" />
-                </TouchableOpacity>
-              </View>
+              <ContactUserCard
+                item={item}
+                btnTitle="Pending"
+                onBtnPress={() => setAlertModalVisible((prev: boolean) => !prev)}
+              />
             )}
           />
         </View>

@@ -131,7 +131,7 @@ const $textPresets: Record<Presets, StyleProp<TextStyle>> = {
 
 const $pressedViewPresets: Record<Presets, StyleProp<ViewStyle>> = {
   default: { backgroundColor: colors.white, opacity: 0.5 },
-  filled: { backgroundColor: colors.primaryLight },
+  filled: { opacity: 0.9 },
   link: { backgroundColor: colors.white },
 };
 

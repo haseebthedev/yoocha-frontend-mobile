@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     paddingTop: hp(2.5),
     backgroundColor: colors.primary,
   },
+  headerTitle: { color: colors.white },
   listContainer: {
     flex: 1,
     backgroundColor: colors.white,
