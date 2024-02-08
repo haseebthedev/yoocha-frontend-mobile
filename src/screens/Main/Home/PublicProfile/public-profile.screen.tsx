@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
 import { colors } from "theme";
+import { UserStatusI } from "interfaces";
+import { NavigatorParamList } from "navigators";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
-import { UserStatusI } from "../home.screen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./public-profile.styles";
 
@@ -12,7 +12,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   navigation,
   route,
 }) => {
-  const { item } = route.params;
+  const { item, onAddFriendBtnPress } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -78,7 +78,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
               </View>
 
               <View style={styles.addFriendBtnContainer}>
-                <AddFriendButton title="Add Friend" onPress={() => console.log("Add Friend")} />
+                <AddFriendButton title="Add Friend" onPress={onAddFriendBtnPress} />
               </View>
 
               <View>

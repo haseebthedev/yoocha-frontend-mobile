@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ChatI } from "./types";
-import { getListMessageService, getListRoomsService } from "./chatService";
+import { getFriendsSuggestionService, getListMessageService, getListRoomsService } from "./chatService";
 
 const initialState: ChatI = {
   loading: false,
@@ -33,6 +33,17 @@ export const chatSlice = createSlice({
       })
 
       .addCase(getListMessageService.rejected, (state, action) => {
+        state.loading = false;
+      })
+
+      .addCase(getFriendsSuggestionService.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getFriendsSuggestionService.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+
+      .addCase(getFriendsSuggestionService.rejected, (state, action) => {
         state.loading = false;
       });
   },

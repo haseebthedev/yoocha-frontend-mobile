@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
 import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import { colors } from "theme";
 import { UpdateUserI } from "interfaces/user";
@@ -21,7 +21,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<any>(personPlaceholder);
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);

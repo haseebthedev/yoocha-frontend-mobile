@@ -1,11 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
-import { ListChatI } from "interfaces/chat";
+import { socket } from "socket/socketIo";
+import { EventEnum } from "enums";
 import { MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
+import { SendMessagePayloadI } from "interfaces";
+import { ListChatI, MessageI } from "interfaces/chat";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { GetMessageListResponseI, getListMessageService, useAppDispatch } from "store";
+import { GetMessageListResponseI, RootState, getListMessageService, useAppDispatch, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
@@ -18,6 +21,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 }) => {
   const { roomId } = route.params;
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -32,7 +36,19 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const lastSeen = "8:14 PM";
 
   const sendMessage = () => {
-    console.log(message);
+    if (message) {
+      const payload: SendMessagePayloadI = {
+        chatRoomId: roomId,
+        message: message,
+        sender: user?._id ?? null,
+      };
+
+      if (socket) {
+        socket.emit(EventEnum.SEND_MESSAGE, payload);
+      }
+
+      setMessage("");
+    }
   };
 
   const renderLoader = () => {
@@ -74,6 +90,18 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     };
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("receive_message", (payload: any) => {
+        console.log("payload === ", payload);
+        setState((prev: ListChatI) => ({
+          ...prev,
+          list: prev.list.concat([payload._doc]),
+        }));
+      });
+    }
+  }, [socket]);
+
   return (
     <View style={styles.container}>
       <View style={styles.appHeader}>
@@ -90,21 +118,27 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
       </View>
 
       <View style={styles.bodyContainer}>
-        <FlatList
-          data={state.list}
-          keyExtractor={(item) => String(item?._id)}
-          contentContainerStyle={styles.listContainer}
-          renderItem={({ item }) => <MessageCard item={item} />}
-          ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
-          onEndReached={loadMoreItems}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderLoader}
-          ListEmptyComponent={() => (
-            <View style={styles.emptyTextContainer}>
-              <Text preset="heading">There are no messages yet. Start a conversation!</Text>
-            </View>
-          )}
-        />
+        <View style={styles.listHeight}>
+          <FlatList
+            // inverted
+            data={state.list}
+            keyExtractor={(item: MessageI) => String(item?._id)}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }: { item: MessageI }) => <MessageCard item={item} />}
+            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+            onEndReached={loadMoreItems}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderLoader}
+            ListEmptyComponent={() =>
+              !isLoading &&
+              state.list.length === 0 && (
+                <View style={styles.emptyTextContainer}>
+                  <Text preset="heading">There are no messages yet. Start a conversation!</Text>
+                </View>
+              )
+            }
+          />
+        </View>
 
         <View style={styles.inputFieldBlock}>
           <TextInput

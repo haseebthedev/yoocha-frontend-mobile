@@ -21,6 +21,7 @@ module.exports = {
           utils: "./src/utils",
           store: "./src/store",
           services: "./src/services",
+          socket: "./src/socket",
         },
       },
     ],

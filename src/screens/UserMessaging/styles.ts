@@ -67,6 +67,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.lightShade,
   },
+  listHeight: {
+    height: hp(80),
+  },
   loadingContainer: {
     flex: 1,
     backgroundColor: colors.lightShade,
