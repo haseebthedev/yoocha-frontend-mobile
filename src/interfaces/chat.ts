@@ -43,7 +43,7 @@ export interface UserI {
 }
 
 export interface ListRoomItemI {
-  _id: string | null;
+  _id: string;
   participants: {
     user: UserI | null;
     role: string | null;

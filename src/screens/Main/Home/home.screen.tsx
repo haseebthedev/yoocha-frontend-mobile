@@ -143,7 +143,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             keyExtractor={(item: ListRoomItemI, index: number) => item?._id || index.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }: { item: ListRoomItemI }) => (
-              <ChatCard item={item} onPress={() => navigation.navigate("usermessaging", { roomId: item?._id })} />
+              <ChatCard item={item} onPress={(fullName: string) => navigation.navigate("usermessaging", { roomId: item._id, friendName: fullName })} />
             )}
             style={styles.listChatroom}
             contentContainerStyle={styles.listChatroomContainer}

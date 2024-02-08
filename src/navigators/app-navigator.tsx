@@ -32,7 +32,7 @@ export type NavigatorParamList = {
   contacts: undefined;
   profile: undefined;
 
-  usermessaging: { roomId: string | null };
+  usermessaging: { roomId: string, friendName: string };
   blockedusers: undefined;
   settings: undefined;
   editprofile: undefined;

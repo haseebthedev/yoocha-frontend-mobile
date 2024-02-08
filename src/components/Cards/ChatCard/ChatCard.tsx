@@ -1,21 +1,27 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { ListRoomItemI } from "interfaces";
 import { Text } from "components";
+import { RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
+import { navigationRef } from "navigators";
 
 interface ChatCardI {
   item: ListRoomItemI;
-  onPress?: () => void;
+  onPress: (friendName: string) => void
 }
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const friend = item.participants.find(participant => participant.user?._id !== user?._id);
+  const fullName: string = friend?.user ? `${friend.user.firstname} ${friend.user.lastname}` : '';
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)}>
       <View style={styles.profileContainer}>
         <Image source={personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
-          <Text preset="semiBold" text={"Name here"} numberOfLines={1} />
+          <Text preset="semiBold" text={fullName} numberOfLines={1} />
           <Text text={"Last Message text here..."} numberOfLines={1} style={styles.lastMessageText} />
         </View>
       </View>

@@ -19,7 +19,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   navigation,
   route,
 }) => {
-  const { roomId } = route.params;
+  const { roomId, friendName } = route.params;
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
@@ -32,7 +32,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     listRefreshing: false,
   });
 
-  const username = "Muhammad Ali";
   const lastSeen = "8:14 PM";
 
   const sendMessage = () => {
@@ -111,7 +110,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           </TouchableOpacity>
           <Image source={personPlaceholder} style={styles.profileImage} />
           <View>
-            <Text text={username} preset="heading" />
+            <Text text={friendName} preset="heading" />
             <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
           </View>
         </View>
