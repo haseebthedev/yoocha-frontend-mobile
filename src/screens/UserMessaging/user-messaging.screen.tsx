@@ -3,15 +3,23 @@ import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View }
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
-import { MessageCard, Text } from "components";
+import { EmptyListText, MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
-import { SendMessagePayloadI } from "interfaces";
-import { ListChatI, MessageI } from "interfaces/chat";
+import { ListMessageI, SendMessagePayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { GetMessageListResponseI, RootState, getListMessageService, useAppDispatch, useAppSelector } from "store";
+import {
+  ListMessageResponseI,
+  MessageItemI,
+  RootState,
+  getListMessageService,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
+import { RefreshControl } from "react-native";
+import { Keyboard } from "react-native";
 
 const LIMIT: number = 15;
 
@@ -25,7 +33,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [state, setState] = useState<ListChatI>({
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [state, setState] = useState<ListMessageI>({
     list: [],
     page: 1,
     hasNext: false,
@@ -34,12 +43,31 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const lastSeen = "8:14 PM";
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await dispatch(getListMessageService({ roomId: roomId, page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListMessageResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListMessageI) => ({
+            ...prev,
+            list: response.result.docs,
+            page: 1 + prev.page,
+            hasNext: response.result.hasNextPage,
+          }));
+        }
+      })
+      .finally(() => setRefreshing(false));
+  };
+
   const sendMessage = () => {
+    Keyboard.dismiss();
     if (message) {
       const payload: SendMessagePayloadI = {
         chatRoomId: roomId,
         message: message,
-        sender: user?._id ?? null,
+        sender: user?._id ?? "",
       };
 
       if (socket) {
@@ -62,9 +90,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     setIsLoading(true);
     await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
       .unwrap()
-      .then((response: GetMessageListResponseI) => {
+      .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListChatI) => ({
+          setState((prev: ListMessageI) => ({
             ...prev,
             list: prev.list.concat(response.result.docs),
             page: 1 + prev.page,
@@ -92,8 +120,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   useEffect(() => {
     if (socket) {
       socket.on("receive_message", (payload: any) => {
-        console.log("payload === ", payload);
-        setState((prev: ListChatI) => ({
+        setState((prev: ListMessageI) => ({
           ...prev,
           list: prev.list.concat([payload._doc]),
         }));
@@ -121,20 +148,17 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           <FlatList
             // inverted
             data={state.list}
-            keyExtractor={(item: MessageI) => String(item?._id)}
+            keyExtractor={(item: MessageItemI) => String(item?._id)}
             contentContainerStyle={styles.listContainer}
-            renderItem={({ item }: { item: MessageI }) => <MessageCard item={item} />}
+            renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
             ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderLoader}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
             ListEmptyComponent={() =>
               !isLoading &&
-              state.list.length === 0 && (
-                <View style={styles.emptyTextContainer}>
-                  <Text preset="heading">There are no messages yet. Start a conversation!</Text>
-                </View>
-              )
+              state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
             }
           />
         </View>

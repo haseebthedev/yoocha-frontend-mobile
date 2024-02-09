@@ -1,6 +1,5 @@
 import { FC, useState } from "react";
 import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
-import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import { colors } from "theme";
 import { UpdateUserI } from "interfaces/user";
 import { useFormikHook } from "hooks/UseFormikHook";
@@ -9,6 +8,7 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { editAccountValidationSchema } from "utils/validations";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
+import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -19,7 +19,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
@@ -27,7 +27,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [open, setOpen] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
-  const initialValues: UpdateUserI = { firstName: user?.firstname, lastName: user?.lastname };
+  const initialValues: UpdateUserI = { firstname: user?.firstname ?? "", lastname: user?.lastname ?? "" };
 
   const closeModal = () => setImageModalVisible((prev) => !prev);
   const handleImageBackdropPress = () => closeModal();
@@ -39,9 +39,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
 
   const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
 
-  const submit = async ({ firstName, lastName }: UpdateUserI) => {
+  const submit = async ({ firstname, lastname }: UpdateUserI) => {
     setSuccessModalVisible((prev) => !prev);
-    await dispatch(updateUserService({ firstName, lastName }));
+    await dispatch(updateUserService({ firstname, lastname }));
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -51,10 +51,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
-      <View style={styles.mainContainer}>
+      <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
           <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
@@ -66,38 +66,44 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <TextInput
             label="First Name"
             placeholder="Enter First Name"
-            value={values.firstName}
-            onBlur={() => setFieldTouched("firstName")}
-            onChangeText={handleChange("firstName")}
-            error={errors.firstName}
-            visible={touched.firstName}
+            value={values.firstname}
+            onBlur={() => setFieldTouched("firstname")}
+            onChangeText={handleChange("firstname")}
+            error={errors.firstname}
+            visible={touched.firstname}
           />
 
           <TextInput
             label="Last Name"
             placeholder="Enter Last Name"
-            value={values.lastName}
-            onBlur={() => setFieldTouched("lastName")}
-            onChangeText={handleChange("lastName")}
-            error={errors.lastName}
-            visible={touched.lastName}
+            value={values.lastname}
+            onBlur={() => setFieldTouched("lastname")}
+            onChangeText={handleChange("lastname")}
+            error={errors.lastname}
+            visible={touched.lastname}
           />
 
           <TextInput label="Email" value={`${user?.email}`} />
 
           <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.pickerInputField}>
-            <Text text={date ? formatDateToDMY(date) : "Select Date"} preset="inputText" />
+            <Text
+              text={user?.dateOfBirth ? formatDateToDMY(user?.dateOfBirth) : "Select Date"}
+              preset={user?.dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+            />
           </TouchableOpacity>
 
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
-            <Text text={selectedCountry} preset="inputText" />
+            <Text
+              text={user?.country ? user?.country : "Select Country"}
+              preset={user?.country ? "inputText" : "inputTextPlaceholder"}
+            />
           </TouchableOpacity>
         </View>
 
         <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
-      </View>
+      </ScrollView>
 
       <CountryPickerModal
         visible={countryModalVisible}
@@ -135,7 +141,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           setOpen((prev) => !prev);
         }}
       />
-    </ScrollView>
+    </View>
   );
 };
 

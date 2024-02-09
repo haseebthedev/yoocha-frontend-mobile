@@ -1,100 +1,70 @@
+export interface UserI {
+  profilePicture: string | null;
+  firstname: string;
+  lastname: string;
+  email: string;
+  isEmailVerified: boolean;
+  _id: string;
+  dateOfBirth: string | null;
+  country: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface SignupPayloadI {
-  firstname: string | null;
-  lastname: string | null;
-  email: string | null;
-  password: string | null;
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
 }
 
 export interface SignupResponseI {
-  result: {
-    profilePicture: string | null;
-    firstname: string | null;
-    lastname: string | null;
-    email: string | null;
-    isEmailVerified: boolean | null;
-    _id: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-  };
+  result: UserI;
 }
 
 export interface AuthI {
   loading: boolean;
-  user: SignupResponseI["result"] | null;
-  error?: string | null;
-  stack?: string | null;
+  user: UserI | null;
+  error: string | null;
 }
 
-export interface SigninPayloadI {
-  email: string | null;
-  password: string | null;
-}
+export type SigninPayloadI = Pick<SignupPayloadI, "email" | "password">;
 
 export interface SigninResponseI {
   result: {
-    user: {
-      profilePicture: string | null;
-      firstname: string | null;
-      lastname: string | null;
-      email: string | null;
-      isEmailVerified: boolean | null;
-      _id: string | null;
-      createdAt: string | null;
-      updatedAt: string | null;
-    };
-
-    token: string | null;
+    user: UserI;
+    token: string;
   };
 }
 
-export interface ForgetPasswordPayloadI {
-  email: string | null;
-}
+export type ForgetPasswordPayloadI = Pick<UserI, "email">;
 
 export interface ForgetPasswordResponseI {
   result: {
-    result: string | null;
+    result: string;
   };
 }
 
 export interface UpdateUserPayloadI {
-  firstName: string | null;
-  lastName: string | null;
+  firstname: string;
+  lastname: string;
 }
 
 export interface UpdateUserResponseI {
-  result: {
-    profilePicture: string | null;
-    firstname: string | null;
-    lastname: string | null;
-    email: string | null;
-    isEmailVerified: boolean | null;
-    _id: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-  };
+  result: UserI;
 }
 
 export interface getMyProfileResponseI {
-  result: {
-    profilePicture: string | null;
-    firstname: string | null;
-    lastname: string | null;
-    email: string | null;
-    isEmailVerified: boolean | null;
-    _id: string | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-  };
+  result: UserI;
 }
 
 export interface ChangePasswordPayloadI {
-  oldPassword: string | null;
-  newPassword: string | null;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface ChangePasswordResponseI {
   result: {
-    result: string | null;
+    result: string;
   };
 }

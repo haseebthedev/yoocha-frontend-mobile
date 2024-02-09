@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import {
   GetFriendsSuggestionResponseI,
-  GetMessageListPayloadI,
-  GetMessageListResponseI,
+  ListMessagePayloadI,
+  ListMessageResponseI,
   ListChatRoomPayloadI,
   ListRoomResponseI,
 } from "./types";
@@ -30,9 +30,9 @@ export const getListRoomsService: any = createAsyncThunk(
 
 export const getListMessageService: any = createAsyncThunk(
   "chat/getListMessage",
-  async (payload: GetMessageListPayloadI, { rejectWithValue }) => {
+  async (payload: ListMessagePayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<GetMessageListResponseI> = await AxiosInstance.post(
+      const response: AxiosResponse<ListMessageResponseI> = await AxiosInstance.post(
         `/chat/list-messages?page=${payload.page}&limit=${payload.limit}`,
         {
           roomId: payload.roomId,

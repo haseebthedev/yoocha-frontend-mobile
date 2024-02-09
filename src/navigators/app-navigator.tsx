@@ -23,8 +23,7 @@ import {
   ChangePasswordScreen,
 } from "screens";
 import { colors } from "theme";
-import { SUGGESTED_USER_DATA_I } from "constant";
-import { RootState, useAppSelector } from "store";
+import { RootState, UserI, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -32,7 +31,7 @@ export type NavigatorParamList = {
   contacts: undefined;
   profile: undefined;
 
-  usermessaging: { roomId: string, friendName: string };
+  usermessaging: { roomId: string; friendName: string };
   blockedusers: undefined;
   settings: undefined;
   editprofile: undefined;
@@ -47,7 +46,7 @@ export type NavigatorParamList = {
   reportIssue: undefined;
   notifications: undefined;
   suggestions: undefined;
-  publicProfile: { item: SUGGESTED_USER_DATA_I; onAddFriendBtnPress: () => void };
+  publicProfile: { item: UserI };
   changePassword: undefined;
 };
 

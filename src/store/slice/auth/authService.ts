@@ -87,8 +87,8 @@ export const updateUserService: any = createAsyncThunk(
   async (payload: UpdateUserPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<UpdateUserResponseI> = await AxiosInstance.post(`/user/me`, {
-        firstname: payload.firstName,
-        lastname: payload.lastName,
+        firstname: payload.firstname,
+        lastname: payload.lastname,
       });
 
       showFlashMessage({ type: "success", message: "User Successfully Updated!" });
@@ -121,8 +121,6 @@ export const changePasswordService: any = createAsyncThunk(
         oldPassword: payload.oldPassword,
         newPassword: payload.newPassword,
       });
-
-      console.log("res", response.data.result);
 
       showFlashMessage({ type: "success", message: `${response.data.result.result}` });
 

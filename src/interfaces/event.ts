@@ -1,15 +1,15 @@
 export interface SendFriendReqPayloadI {
-  participants: { user: string | null; role: string | null }[];
+  participants: { user: string; role: string }[];
 }
 
 export interface JoinRoomPayloadI {
-  roomId: string | null;
-  inviteeId: string | null;
+  roomId: string;
+  inviteeId: string;
 }
 
 export interface SendMessagePayloadI {
-  chatRoomId: string | null;
-  sender: string | null;
+  chatRoomId: string;
+  sender: string;
   message: string | null;
   link?: string | null;
   files?: string[] | null;

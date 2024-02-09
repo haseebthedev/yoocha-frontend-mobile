@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   container: {
     width: wp(28),
     height: hp(18),
-    marginBottom: 20,
+    marginBottom: hp(2.2),
     borderRadius: wp(3),
     overflow: "hidden",
     position: "relative",
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: hp(1.5),
     paddingHorizontal: 10,
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   nameText: {
     color: colors.white,

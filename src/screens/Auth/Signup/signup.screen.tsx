@@ -6,7 +6,7 @@ import { AppButton, Header, Text, TextInput } from "components";
 import { signupValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { signupService, useAppDispatch } from "store";
-import { SignupFormValues } from "interfaces/auth";
+import { SignupI } from "interfaces/auth";
 import styles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
@@ -14,16 +14,14 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
-  const initialValues: SignupFormValues = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
+  const initialValues: SignupI = { firstname: "", lastname: "", email: "", password: "", confirmPassword: "" };
 
   const submit = async () => {
-    console.log("form submitted...");
-
     Keyboard.dismiss();
     await dispatch(
       signupService({
-        firstname: values.firstName,
-        lastname: values.lastName,
+        firstname: values.firstname,
+        lastname: values.lastname,
         email: values.email,
         password: values.password,
       })
@@ -32,7 +30,11 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
       .then(() => navigation.navigate("signin"));
   };
 
-  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(submit, validationSchema, initialValues);
+  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
+    submit,
+    validationSchema,
+    initialValues
+  );
 
   return (
     <View style={styles.container}>
@@ -41,19 +43,19 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
       <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
         <TextInput
           label="First Name"
-          placeholder="Enter Firstname"
-          onBlur={() => setFieldTouched("firstName")}
-          onChangeText={handleChange("firstName")}
-          error={errors.firstName}
-          visible={touched.firstName}
+          placeholder="Enter firstname"
+          onBlur={() => setFieldTouched("firstname")}
+          onChangeText={handleChange("firstname")}
+          error={errors.firstname}
+          visible={touched.firstname}
         />
         <TextInput
           label="Last Name"
-          placeholder="Enter Lastname"
-          onBlur={() => setFieldTouched("lastName")}
-          onChangeText={handleChange("lastName")}
-          error={errors.lastName}
-          visible={touched.lastName}
+          placeholder="Enter lastname"
+          onBlur={() => setFieldTouched("lastname")}
+          onChangeText={handleChange("lastname")}
+          error={errors.lastname}
+          visible={touched.lastname}
         />
         <TextInput
           label="Email"

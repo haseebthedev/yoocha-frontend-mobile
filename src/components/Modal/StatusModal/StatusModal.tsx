@@ -5,6 +5,7 @@ import { Text } from "components/General/text/text";
 import { colors } from "theme";
 import { formatDate } from "utils/formatDateAndTime";
 import { ModalHoc } from "components/HOCModal/ModalScreen/ModalScreen";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
@@ -12,14 +13,14 @@ interface Props {
   isVisible: boolean;
   title?: string;
   selectedItem?: any;
-  onPressClose: (arg0: any) => void;
+  onPressClose: () => void;
 }
 
 export const StatusModal = ({ isVisible = false, title, onPressClose, selectedItem }: Props) => {
   return (
     <ModalHoc title={title} isVisible={isVisible} onPressClose={onPressClose}>
       <StatusBar backgroundColor={colors.black} barStyle={"light-content"} />
-      <View style={{ zIndex: 1 }}>
+      <View style={styles.statusHeader}>
         <View style={styles.statusBarLine}>
           <View style={styles.statusBar}></View>
         </View>
@@ -31,15 +32,19 @@ export const StatusModal = ({ isVisible = false, title, onPressClose, selectedIt
               <Text text={formatDate(selectedItem.date)} preset="subheading" style={styles.dateAndTime} />
             </View>
           </View>
-          <TouchableOpacity onPress={() => onPressClose((prev) => !prev)} style={styles.closeBtn}>
+          <TouchableOpacity onPress={onPressClose} style={styles.closeBtn}>
             <Ionicons name="close" size={22} color={colors.white} />
           </TouchableOpacity>
         </View>
       </View>
       <Image
-        source={{
-          uri: selectedItem.statusImage,
-        }}
+        source={
+          selectedItem.statusImage
+            ? {
+                uri: selectedItem.statusImage,
+              }
+            : personPlaceholder
+        }
         style={styles.statusPic}
       />
     </ModalHoc>

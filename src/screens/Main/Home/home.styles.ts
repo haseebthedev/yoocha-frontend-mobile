@@ -42,6 +42,16 @@ const styles = StyleSheet.create({
   },
   listChatroom: { flex: 1 },
   listChatroomContainer: { paddingBottom: 20 },
+  emptyTextContainer: {
+    paddingHorizontal: wp(5),
+    alignItems: "center",
+  },
+  loaderContainer: {
+    height: hp(18),
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: hp(2.2),
+  },
 });
 
 export default styles;

@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ChatI } from "./types";
+import { LoadingI } from "./types";
 import { getFriendsSuggestionService, getListMessageService, getListRoomsService } from "./chatService";
 
-const initialState: ChatI = {
+const initialState: LoadingI = {
   loading: false,
 };
 

@@ -2,13 +2,23 @@ import { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
+import { HOME_STATUS_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { HOME_STATUS_DATA, HOME_SUGGESTION_DATA } from "constant";
-import { ListRoomItemI, ListRoomsI, SendFriendReqPayloadI, UserStatusI } from "interfaces";
-import { useAppDispatch, getListRoomsService, ListRoomResponseI, useAppSelector, RootState } from "store";
+import { ListRoomsI, SendFriendReqPayloadI, UserStatusI } from "interfaces";
 import { Text, HomeUserStatus, UserSuggestionCard, AppHeading, ChatCard, StatusModal, Divider } from "components";
+import {
+  useAppDispatch,
+  getListRoomsService,
+  ListRoomResponseI,
+  useAppSelector,
+  RootState,
+  getFriendsSuggestionService,
+  GetFriendsSuggestionResponseI,
+  UserI,
+  ListRoomItemI,
+} from "store";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./home.styles";
@@ -28,6 +38,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     date: "",
     statusImage: "",
   });
+  const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
 
   const [state, setState] = useState<ListRoomsI>({
     list: [],
@@ -36,22 +47,39 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     listRefreshing: false,
   });
 
+  const getFriendsSuggestions = async () => {
+    await dispatch(getFriendsSuggestionService())
+      .unwrap()
+      .then((response: GetFriendsSuggestionResponseI) => {
+        if (response?.result?.doc) {
+          setSuggestedFriends(response?.result?.doc);
+        }
+      });
+  };
+
   const onViewPress = (selectedItem: UserStatusI) => {
     setStatusData(selectedItem);
     setViewStatus((prev: boolean) => !prev);
   };
 
-  const onAddFriendBtnPress = async () => {
+  const onAddFriendBtnPress = async (id: string) => {
     const payload: SendFriendReqPayloadI = {
       participants: [
-        { user: user?._id ?? null, role: EventEnumRole.INITIATOR },
-        { user: "65c4a2aea52f5e467ac58cc4", role: EventEnumRole.INVITEE },
+        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
+        { user: id, role: EventEnumRole.INVITEE },
       ],
     };
-
     if (socket) {
       socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
     }
+  };
+
+  const renderLoader = () => {
+    return isLoading ? (
+      <View style={styles.loaderStyle}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    ) : null;
   };
 
   const getChatRooms = async () => {
@@ -83,6 +111,10 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     return () => {
       setState({ ...state, list: [], page: 1, hasNext: false });
     };
+  }, []);
+
+  useEffect(() => {
+    getFriendsSuggestions();
   }, []);
 
   return (
@@ -120,20 +152,34 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           />
 
           <View>
-            <FlatList
-              horizontal
-              data={HOME_SUGGESTION_DATA}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{ gap: 8 }}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item, index }) => (
-                <UserSuggestionCard
-                  item={item}
-                  onViewPress={() => navigation.navigate("publicProfile", { item, onAddFriendBtnPress })}
-                  onAddFriendBtnPress={onAddFriendBtnPress}
-                />
-              )}
-            />
+            {isLoading ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            ) : (
+              <FlatList
+                horizontal
+                data={suggestedFriends}
+                keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+                contentContainerStyle={{ gap: 8 }}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }: { item: UserI }) => (
+                  <UserSuggestionCard
+                    item={item}
+                    onViewPress={() => navigation.navigate("publicProfile", { item })}
+                    onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
+                  />
+                )}
+                ListEmptyComponent={() =>
+                  !isLoading &&
+                  suggestedFriends.length === 0 && (
+                    <View style={styles.emptyTextContainer}>
+                      <Text preset="heading">There are no messages yet. Start a conversation!</Text>
+                    </View>
+                  )
+                }
+              />
+            )}
           </View>
 
           <AppHeading title="Friends" />
@@ -143,14 +189,19 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             keyExtractor={(item: ListRoomItemI, index: number) => item?._id || index.toString()}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }: { item: ListRoomItemI }) => (
-              <ChatCard item={item} onPress={(fullName: string) => navigation.navigate("usermessaging", { roomId: item._id, friendName: fullName })} />
+              <ChatCard
+                item={item}
+                onPress={(fullName: string) =>
+                  navigation.navigate("usermessaging", { roomId: item._id, friendName: fullName })
+                }
+              />
             )}
             style={styles.listChatroom}
             contentContainerStyle={styles.listChatroomContainer}
             onEndReached={loadMoreItems}
+            ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
-            ListEmptyComponent={() => isLoading && <ActivityIndicator />}
           />
         </View>
       </View>

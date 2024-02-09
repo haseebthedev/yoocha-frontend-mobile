@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
   },
+  statusHeader: { zIndex: 1 },
   userInfo: {
     flexDirection: "row",
     alignItems: "center",

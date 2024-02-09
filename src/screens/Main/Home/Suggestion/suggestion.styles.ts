@@ -14,8 +14,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
-    // borderBottomColor: colors.lightShade,
-    // borderBottomWidth: 1,
   },
   topHeaderBlock: {
     flexDirection: "row",
@@ -42,6 +40,13 @@ const styles = StyleSheet.create({
   },
   selectedMenuText: {
     color: colors.white,
+  },
+  emptyTextContainer: {
+    paddingHorizontal: wp(5),
+    alignItems: "center",
+  },
+  loaderContainer: {
+    paddingTop: hp(5),
   },
 });
 

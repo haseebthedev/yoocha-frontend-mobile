@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
 import { View } from "react-native";
-import { AlertBox, Header, SettingListItem } from "components";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { logoutUser, useAppDispatch } from "store";
+import { AlertBox, Header, SettingListItem } from "components";
 import styles from "./settings.styles";
 
 const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
