@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View }
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
-import { MessageCard, Text } from "components";
+import { EmptyListText, MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { ListMessageI, SendMessagePayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -158,11 +158,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
             ListEmptyComponent={() =>
               !isLoading &&
-              state.list.length === 0 && (
-                <View style={styles.emptyTextContainer}>
-                  <Text preset="heading">There are no messages yet. Start a conversation!</Text>
-                </View>
-              )
+              state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
             }
           />
         </View>

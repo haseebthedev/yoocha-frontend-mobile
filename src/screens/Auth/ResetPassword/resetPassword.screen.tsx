@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
-import { AppButton, Button, Header, Text, TextInput } from "components";
+import { AppButton, Header, Text, TextInput } from "components";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { newPasswordValidation } from "utils/validations";
 import styles from "./resetPassword.styles";

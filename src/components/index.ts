@@ -37,3 +37,5 @@ export * from "./Modal/StatusModal/StatusModal";
 
 // Divider
 export * from "./Divider/Divider";
+
+export * from "./General/emptyListText/emptyListText";

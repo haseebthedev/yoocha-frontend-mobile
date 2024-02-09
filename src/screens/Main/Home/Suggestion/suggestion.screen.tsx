@@ -1,12 +1,12 @@
 import { FC, useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { hp } from "utils/responsive";
 import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
 import { SendFriendReqPayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { AddUserSuggestionCard, Header, SearchBar, Text } from "components";
+import { AddUserSuggestionCard, EmptyListText, Header, SearchBar, Text } from "components";
 import {
   GetFriendsSuggestionResponseI,
   RootState,
@@ -24,7 +24,7 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
   const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const onViewPress = (item) => navigation.navigate("publicProfile", { item });
+  const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
 
   const onAddFriendBtnPress = async (id: string) => {
     const payload: SendFriendReqPayloadI = {
@@ -61,27 +61,29 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
       <View style={{ flex: 1 }}>
         <SearchBar />
 
-        <FlatList
-          data={suggestedFriends}
-          keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-          style={{ marginTop: hp(2) }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <AddUserSuggestionCard
-              item={item}
-              onViewPress={() => onViewPress(item)}
-              onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
-            />
-          )}
-          ListEmptyComponent={() =>
-            !isLoading &&
-            suggestedFriends.length === 0 && (
-              <View style={styles.emptyTextContainer}>
-                <Text preset="heading">There are no messages yet. Start a conversation!</Text>
-              </View>
-            )
-          }
-        />
+        {isLoading ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator />
+          </View>
+        ) : (
+          <FlatList
+            data={suggestedFriends}
+            keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+            style={{ marginTop: hp(2) }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <AddUserSuggestionCard
+                item={item}
+                onViewPress={() => onViewPress(item)}
+                onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
+              />
+            )}
+            ListEmptyComponent={() =>
+              !isLoading &&
+              suggestedFriends.length === 0 && <EmptyListText text="You don't have any friends in suggestion!" />
+            }
+          />
+        )}
       </View>
     </View>
   );

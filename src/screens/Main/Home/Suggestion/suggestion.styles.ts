@@ -45,6 +45,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     alignItems: "center",
   },
+  loaderContainer: {
+    paddingTop: hp(5),
+  },
 });
 
 export default styles;
