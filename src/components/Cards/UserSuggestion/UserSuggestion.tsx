@@ -9,7 +9,7 @@ import styles from "./styles";
 
 interface UserSuggestionCardI {
   item: UserI;
-  onAddFriendBtnPress: (id: string | null) => void;
+  onAddFriendBtnPress: (id: string) => void;
   onViewPress?: () => void;
 }
 
