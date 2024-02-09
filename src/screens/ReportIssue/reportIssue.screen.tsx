@@ -14,7 +14,6 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">>
 
   const submit = ({ name, email, message }: ReportIssueI) => {
     Keyboard.dismiss();
-    console.log("Report: ", name, email, message);
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

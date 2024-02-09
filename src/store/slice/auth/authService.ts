@@ -122,8 +122,6 @@ export const changePasswordService: any = createAsyncThunk(
         newPassword: payload.newPassword,
       });
 
-      console.log("res", response.data.result);
-
       showFlashMessage({ type: "success", message: `${response.data.result.result}` });
 
       return response.data;

@@ -28,7 +28,6 @@ const LIMIT: number = 15;
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { loading } = useAppSelector((state: RootState) => state.chat);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
@@ -78,7 +77,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   const renderLoader = () => {
     return isLoading ? (
       <View style={styles.loaderStyle}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator color={colors.primary} />
       </View>
     ) : null;
   };
@@ -153,8 +152,10 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           />
 
           <View>
-            {loading ? (
-              <View></View>
+            {isLoading ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator color={colors.primary} />
+              </View>
             ) : (
               <FlatList
                 horizontal
@@ -169,6 +170,14 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
                     onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
                   />
                 )}
+                ListEmptyComponent={() =>
+                  !isLoading &&
+                  suggestedFriends.length === 0 && (
+                    <View style={styles.emptyTextContainer}>
+                      <Text preset="heading">There are no messages yet. Start a conversation!</Text>
+                    </View>
+                  )
+                }
               />
             )}
           </View>
@@ -193,7 +202,6 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
-            ListEmptyComponent={() => isLoading && <ActivityIndicator />}
           />
         </View>
       </View>

@@ -1,10 +1,12 @@
 export interface UserI {
-  profilePicture: string;
+  profilePicture: string | null;
   firstname: string;
   lastname: string;
   email: string;
   isEmailVerified: boolean;
   _id: string;
+  dateOfBirth: string | null;
+  country: string | null;
   createdAt: string;
   updatedAt: string;
 }

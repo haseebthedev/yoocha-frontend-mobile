@@ -52,7 +52,6 @@ export const getFriendsSuggestionService: any = createAsyncThunk(
   "chat/getFriendsSuggestion",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("ok");
       const response: AxiosResponse<GetFriendsSuggestionResponseI> = await AxiosInstance.get(
         `/chat/friend-suggestions`,
         {}

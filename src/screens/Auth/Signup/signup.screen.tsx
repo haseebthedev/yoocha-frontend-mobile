@@ -17,8 +17,6 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
   const initialValues: SignupI = { firstname: "", lastname: "", email: "", password: "", confirmPassword: "" };
 
   const submit = async () => {
-    console.log("form submitted...");
-
     Keyboard.dismiss();
     await dispatch(
       signupService({

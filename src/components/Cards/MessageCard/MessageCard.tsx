@@ -1,42 +1,44 @@
 import { Image, View } from "react-native";
 import { Text } from "components";
 import { colors } from "theme";
-import { MessageI } from "interfaces";
-import { RootState, useAppSelector } from "store";
+import { MessageItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
+import { hp } from "utils/responsive";
 
 interface MessageCardI {
-  item: MessageI;
+  item: MessageItemI;
   onPress?: () => void;
 }
 
 const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const isSentByUser: boolean = item?.sender?._id === user?._id;
+
   return (
     <View
       key={item?._id}
-      style={[styles.messageContainer, { justifyContent: item?.sender?._id === user?._id ? "flex-end" : "flex-start" }]}
+      style={[styles.messageContainer, { justifyContent: isSentByUser ? "flex-end" : "flex-start" }]}
     >
-      {item?.sender?._id !== user?._id && <Image source={personPlaceholder} style={styles.otherParticipantImage} />}
+      {!isSentByUser && <Image source={personPlaceholder} style={styles.otherParticipantImage} />}
 
       <View style={styles.messageTextContainer}>
-        {item?.sender?._id === user?._id && <Text text="12:05" style={styles.recieveTime} />}
+        {isSentByUser && <Text text="12:05" style={styles.recieveTime} />}
         <Text
           text={item?.message}
           style={[
             styles.messageText,
             {
-              backgroundColor: item?.sender?._id === user?._id ? colors.primaryLight : colors.white,
-              color: item?.sender?._id === user?._id ? colors.white : colors.textDim,
-              borderBottomRightRadius: item?.sender?._id != user?._id ? 20 : 5,
-              borderBottomLeftRadius: item?.sender?._id === user?._id ? 20 : 5,
+              backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
+              color: isSentByUser ? colors.white : colors.textDim,
+              borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
+              borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
             },
           ]}
         />
 
-        {item?.sender?._id != user?._id && <Text text="12:05" style={styles.recieveTime} />}
+        {!isSentByUser && <Text text="12:05" style={styles.recieveTime} />}
       </View>
     </View>
   );

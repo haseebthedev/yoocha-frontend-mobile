@@ -18,6 +18,8 @@ import {
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
+import { RefreshControl } from "react-native";
+import { Keyboard } from "react-native";
 
 const LIMIT: number = 15;
 
@@ -31,6 +33,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [state, setState] = useState<ListMessageI>({
     list: [],
     page: 1,
@@ -40,7 +43,26 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const lastSeen = "8:14 PM";
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await dispatch(getListMessageService({ roomId: roomId, page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListMessageResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListMessageI) => ({
+            ...prev,
+            list: response.result.docs,
+            page: 1 + prev.page,
+            hasNext: response.result.hasNextPage,
+          }));
+        }
+      })
+      .finally(() => setRefreshing(false));
+  };
+
   const sendMessage = () => {
+    Keyboard.dismiss();
     if (message) {
       const payload: SendMessagePayloadI = {
         chatRoomId: roomId,
@@ -98,7 +120,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   useEffect(() => {
     if (socket) {
       socket.on("receive_message", (payload: any) => {
-        console.log("payload === ", payload);
         setState((prev: ListMessageI) => ({
           ...prev,
           list: prev.list.concat([payload._doc]),
@@ -134,6 +155,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderLoader}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
             ListEmptyComponent={() =>
               !isLoading &&
               state.list.length === 0 && (

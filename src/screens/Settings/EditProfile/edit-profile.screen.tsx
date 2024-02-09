@@ -19,7 +19,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>("Pakistan");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
@@ -51,10 +51,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
-      <View style={styles.mainContainer}>
+      <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
           <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
@@ -87,17 +87,23 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
 
           <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.pickerInputField}>
-            <Text text={date ? formatDateToDMY(date) : "Select Date"} preset="inputText" />
+            <Text
+              text={user?.dateOfBirth ? formatDateToDMY(user?.dateOfBirth) : "Select Date"}
+              preset={user?.dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+            />
           </TouchableOpacity>
 
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
-            <Text text={selectedCountry} preset="inputText" />
+            <Text
+              text={user?.country ? user?.country : "Select Country"}
+              preset={user?.country ? "inputText" : "inputTextPlaceholder"}
+            />
           </TouchableOpacity>
         </View>
 
         <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
-      </View>
+      </ScrollView>
 
       <CountryPickerModal
         visible={countryModalVisible}
@@ -135,7 +141,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           setOpen((prev) => !prev);
         }}
       />
-    </ScrollView>
+    </View>
   );
 };
 

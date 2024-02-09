@@ -16,7 +16,6 @@ const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetP
 
   const submit = ({ newPassword, confirmPassword }) => {
     Keyboard.dismiss();
-    console.log("Passwords === ", newPassword, confirmPassword);
     navigation.navigate("signin");
   };
 
