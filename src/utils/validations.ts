@@ -1,8 +1,8 @@
 import * as yup from "yup";
 
 export const signupValidationSchema = yup.object().shape({
-  firstName: yup.string().min(3).required("First Name is required!").label("First Name"),
-  lastName: yup.string().min(3).required("Last Name is required!").label("Last Name"),
+  firstname: yup.string().min(3).required("First Name is required!").label("First Name"),
+  lastname: yup.string().min(3).required("Last Name is required!").label("Last Name"),
   email: yup.string().required("Email address is required!").email("Please enter a valid email").label("Email"),
   password: yup
     .string()
@@ -92,8 +92,8 @@ export const addAddressValidationSchema = yup.object().shape({
 });
 
 export const editAccountValidationSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required field!").label("First Name"),
-  lastName: yup.string().label("Last Name"),
+  firstname: yup.string().required("First name is required field!").label("First Name"),
+  lastname: yup.string().label("Last Name"),
 });
 
 export const forgotPasswordValidation = yup.object().shape({

@@ -5,10 +5,16 @@ import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
 import { MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
-import { SendMessagePayloadI } from "interfaces";
-import { ListChatI, MessageI } from "interfaces/chat";
+import { ListMessageI, SendMessagePayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { GetMessageListResponseI, RootState, getListMessageService, useAppDispatch, useAppSelector } from "store";
+import {
+  ListMessageResponseI,
+  MessageItemI,
+  RootState,
+  getListMessageService,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
@@ -25,7 +31,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [state, setState] = useState<ListChatI>({
+  const [state, setState] = useState<ListMessageI>({
     list: [],
     page: 1,
     hasNext: false,
@@ -39,7 +45,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
       const payload: SendMessagePayloadI = {
         chatRoomId: roomId,
         message: message,
-        sender: user?._id ?? null,
+        sender: user?._id ?? "",
       };
 
       if (socket) {
@@ -62,9 +68,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     setIsLoading(true);
     await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
       .unwrap()
-      .then((response: GetMessageListResponseI) => {
+      .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListChatI) => ({
+          setState((prev: ListMessageI) => ({
             ...prev,
             list: prev.list.concat(response.result.docs),
             page: 1 + prev.page,
@@ -93,7 +99,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     if (socket) {
       socket.on("receive_message", (payload: any) => {
         console.log("payload === ", payload);
-        setState((prev: ListChatI) => ({
+        setState((prev: ListMessageI) => ({
           ...prev,
           list: prev.list.concat([payload._doc]),
         }));
@@ -121,9 +127,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           <FlatList
             // inverted
             data={state.list}
-            keyExtractor={(item: MessageI) => String(item?._id)}
+            keyExtractor={(item: MessageItemI) => String(item?._id)}
             contentContainerStyle={styles.listContainer}
-            renderItem={({ item }: { item: MessageI }) => <MessageCard item={item} />}
+            renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
             ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.5}

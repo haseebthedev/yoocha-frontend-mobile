@@ -5,6 +5,9 @@ import { colors } from "theme";
 import { UserStatusI } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import logo from "assets/images/logo.png";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./public-profile.styles";
 
@@ -12,7 +15,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   navigation,
   route,
 }) => {
-  const { item, onAddFriendBtnPress } = route.params;
+  const { item } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -46,39 +49,42 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
       </View>
 
       <FlatList
-        data={item.posts}
-        keyExtractor={(item) => item.id}
+        data={["1", "2", "3", "1", "2", "3"]}
+        keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.containerStyle}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
           <View style={styles.container}>
             <View style={styles.mainContainer}>
               <View style={styles.roundedContainer}>
-                <Image source={{ uri: item.profilePic }} style={styles.profilePic} />
+                <Image source={personPlaceholder} style={styles.profilePic} />
                 <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
 
                 <View style={styles.location}>
                   <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-                  <Text text={item.city + ", " + item.country} preset="light" />
+                  <Text text={`City, Country`} preset="light" />
                 </View>
               </View>
               <View style={styles.infoContainer}>
                 <View style={styles.infoHeading}>
-                  <Text text={String(item.posts.length)} style={styles.info} />
+                  <Text text={String(45)} style={styles.info} />
                   <Text text="Posts" style={styles.infoText} />
                 </View>
                 <View style={styles.infoHeading}>
-                  <Text text={String(item.noOfFriends)} style={styles.info} />
+                  <Text text={String(145)} style={styles.info} />
                   <Text text="Friends" style={styles.infoText} />
                 </View>
                 <View style={styles.infoHeading}>
-                  <Text text={String(item.likes)} style={styles.info} />
+                  <Text text={String(125)} style={styles.info} />
                   <Text text="Likes" style={styles.infoText} />
                 </View>
               </View>
 
               <View style={styles.addFriendBtnContainer}>
-                <AddFriendButton title="Add Friend" onPress={onAddFriendBtnPress} />
+                <AddFriendButton
+                  title="Add Friend"
+                  // onPress={onAddFriendBtnPress}
+                />
               </View>
 
               <View>
@@ -93,7 +99,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
         )}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => onViewPress(item)} style={styles.imagesGrid}>
-            <Image source={{ uri: item.media }} style={styles.postImage} />
+            <Image source={logo} style={styles.postImage} />
           </TouchableOpacity>
         )}
         numColumns={3}

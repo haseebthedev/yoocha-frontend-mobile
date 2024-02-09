@@ -1,96 +1,70 @@
+import { UserI } from "../auth/types";
+
 export interface ListChatRoomPayloadI {
-  page?: number | null;
-  limit?: number | null;
+  page?: number;
+  limit?: number;
 }
 
-export interface UserI {
-  _id: string | null;
-  profilePicture: null;
-  firstname: string | null;
-  lastname: string | null;
-  email: string | null;
-  isEmailVerified: false;
-  dateOfBirth: string | null;
-  country: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
+export interface ListRoomItemI {
+  _id: string;
+  participants: {
+    user: UserI;
+    role: string;
+  }[];
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListRoomResponseI {
   result: {
-    docs: {
-      _id: string | null;
-      participants: {
-        user: UserI | null;
-        role: string | null;
-      }[];
-      status: string | null;
-      createdAt: string | null;
-      updatedAt: string | null;
-    }[];
-    totalDocs: number | null;
-    limit: number | null;
-    totalPages: number | null;
-    page: number | null;
-    pagingCounter: number | null;
-    hasPrevPage: boolean | null;
-    hasNextPage: boolean | null;
-    prevPage: boolean | null;
-    nextPage: boolean | null;
+    docs: ListRoomItemI[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
   };
 }
 
-export interface GetMessageListPayloadI {
-  roomId: string | null;
-  page?: number | null;
-  limit?: number | null;
+export interface ListMessagePayloadI {
+  roomId: string;
+  page?: number;
+  limit?: number;
 }
 
-export interface SenderI {
-  _id: string | null;
-  profilePicture: null;
-  firstname: string | null;
-  lastname: string | null;
-  email: string | null;
-  isEmailVerified: boolean | null;
-  dateOfBirth: string | null;
-  country: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-}
-
-export interface MessageList {
-  _id: string | null;
-  chatRoomId: string | null;
-  sender: SenderI | null;
+export interface MessageItemI {
+  _id: string;
+  chatRoomId: string;
+  sender: UserI;
   message: string | null;
-  link: null;
-  files: null;
-  createdAt: string | null;
-  updatedAt: string | null;
+  link: null | null;
+  files: null | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface GetMessageListResponseI {
+export interface ListMessageResponseI {
   result: {
-    docs: MessageList[];
-    totalDocs: number | null;
-    limit: number | null;
-    totalPages: number | null;
-    page: number | null;
-    pagingCounter: number | null;
-    hasPrevPage: boolean | null;
-    hasNextPage: boolean | null;
-    prevPage: null;
-    nextPage: null;
+    docs: MessageItemI[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
   };
 }
 
-export interface ChatI {
+export interface LoadingI {
   loading: boolean;
 }
 
 export interface GetFriendsSuggestionResponseI {
   result: {
-    docs: UserI[] | null;
+    doc: UserI[];
   };
 }

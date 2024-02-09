@@ -6,7 +6,7 @@ import { AppButton, Header, Text, TextInput } from "components";
 import { signinValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { signinService, useAppDispatch } from "store";
-import { SigninFormValues } from "interfaces/auth";
+import { SigninI } from "interfaces/auth";
 import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
@@ -14,9 +14,9 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
-  const initialValues: SigninFormValues = { email: "", password: "" };
+  const initialValues: SigninI = { email: "", password: "" };
 
-  const submit = async ({ email, password }: SigninFormValues) => await dispatch(signinService({ email, password }));
+  const submit = async ({ email, password }: SigninI) => await dispatch(signinService({ email, password }));
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
     submit,

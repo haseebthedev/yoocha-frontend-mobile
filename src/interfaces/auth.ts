@@ -1,21 +1,16 @@
-export interface SignupFormValues {
-  firstName: string;
-  lastName: string;
+export interface SignupI {
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-export interface SigninFormValues {
-  email: string;
-  password: string;
-}
+export type SigninI = Pick<SignupI, "email" | "password">;
 
-export interface ForgetPasswordFormValues {
-  email: string;
-}
+export type ForgetPasswordI = Pick<SignupI, "email">;
 
-export interface ReportIssueFormI {
+export interface ReportIssueI {
   name: string;
   email: string;
   message: string;

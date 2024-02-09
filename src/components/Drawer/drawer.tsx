@@ -1,9 +1,11 @@
-import { colors } from "theme";
-import { Text } from "components";
-import { MY_PROFILE_DATA } from "constant";
+import { useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { colors } from "theme";
+import { AlertBox, Text } from "components";
 import { NavigatorParamList } from "navigators";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { RootState, logoutUser, useAppDispatch, useAppSelector } from "store";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
@@ -12,17 +14,25 @@ type CustomHomeDrawerProps = {
 };
 
 const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+
+  const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
+  const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
+  const onConfirmLogoutPress = async () => await dispatch(logoutUser());
+
   return (
     <View style={styles.container}>
       <View style={styles.flexAlignCenter}>
-        <Image source={{ uri: MY_PROFILE_DATA.profilePic }} style={styles.profilePic} />
+        <Image
+          source={user?.profilePicture ? { uri: user?.profilePicture } : personPlaceholder}
+          style={styles.profilePic}
+        />
         <View style={styles.spacingTop}>
-          <Text
-            text={MY_PROFILE_DATA.firstname + " " + MY_PROFILE_DATA.lastname}
-            preset="bold"
-            style={styles.username}
-          />
-          <Text text={MY_PROFILE_DATA.email} preset="light" style={styles.useremail} />
+          <Text text={`${user?.firstname} ${user?.lastname}`} preset="bold" style={styles.username} />
+          <Text text={user?.email} preset="light" style={styles.useremail} />
         </View>
       </View>
 
@@ -64,13 +74,25 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
             <Text text="Report an Issue" style={styles.navText} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionBlock} onPress={() => navigation.navigate("signin")}>
+
+        <TouchableOpacity style={styles.optionBlock} onPress={onLogoutPress}>
           <View style={styles.innerLeftBlock}>
             <Ionicons name="log-out-outline" size={20} color={colors.white} />
             <Text text="Logout" style={styles.navText} />
           </View>
         </TouchableOpacity>
       </View>
+
+      <AlertBox
+        open={alertModalVisible}
+        title="Logout!"
+        description="Are you sure you want to logout?"
+        onClose={onCloseAlertBoxPress}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Logout"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={onConfirmLogoutPress}
+      />
     </View>
   );
 };

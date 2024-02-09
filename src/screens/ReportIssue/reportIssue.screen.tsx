@@ -5,14 +5,14 @@ import { NavigatorParamList } from "navigators";
 import { AppButton, Header, TextInput } from "components";
 import { reportAnIssueValidationSchema } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
-import { ReportIssueFormI } from "interfaces/auth";
+import { ReportIssueI } from "interfaces/auth";
 import styles from "./reportIssue.styles";
 
 const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">> = ({ navigation }) => {
   const validationSchema = reportAnIssueValidationSchema;
-  const initialValues: ReportIssueFormI = { name: "", email: "", message: "" };
+  const initialValues: ReportIssueI = { name: "", email: "", message: "" };
 
-  const submit = ({ name, email, message }: ReportIssueFormI) => {
+  const submit = ({ name, email, message }: ReportIssueI) => {
     Keyboard.dismiss();
     console.log("Report: ", name, email, message);
   };

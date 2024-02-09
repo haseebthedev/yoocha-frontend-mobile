@@ -1,3 +1,5 @@
+import { UserI } from "store";
+
 export interface UserStatusI {
   id: string;
   name: string;
@@ -6,21 +8,7 @@ export interface UserStatusI {
   statusImage: string;
 }
 
-export interface UserI {
-  profilePicture: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  isEmailVerified: boolean;
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UpdateUserI {
-  firstName: string | null | undefined;
-  lastName: string | null | undefined;
-}
+export type UpdateUserI = Pick<UserI, "firstname" | "lastname">;
 
 export interface ChangePasswordI {
   currentPassword: string;

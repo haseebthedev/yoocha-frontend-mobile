@@ -6,16 +6,16 @@ import { Header, Text, TextInput, AppButton } from "components";
 import { forgotPasswordValidation } from "utils/validations";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { forgetPasswordService, useAppDispatch } from "store";
-import { ForgetPasswordFormValues } from "interfaces/auth";
+import { ForgetPasswordI } from "interfaces/auth";
 import styles from "./forgetPassword.styles";
 
 const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forgetPassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const validationSchema = forgotPasswordValidation;
-  const initialValues: ForgetPasswordFormValues = { email: "" };
+  const initialValues: ForgetPasswordI = { email: "" };
 
-  const submit = async ({ email }: ForgetPasswordFormValues) => {
+  const submit = async ({ email }: ForgetPasswordI) => {
     Keyboard.dismiss();
     await dispatch(forgetPasswordService({ email }));
     navigation.navigate("otpVerification");
