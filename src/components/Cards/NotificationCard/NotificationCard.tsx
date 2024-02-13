@@ -1,6 +1,6 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
-import { formatDate } from "utils/formatDateAndTime";
+import { formatDate } from "utils/dateAndTime";
 import { colors } from "theme";
 import styles from "./styles";
 

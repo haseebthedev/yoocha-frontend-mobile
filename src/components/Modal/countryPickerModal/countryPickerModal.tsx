@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { wp } from "utils/responsive";
 import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
 
 interface CountryPickerModalI {
@@ -8,10 +7,15 @@ interface CountryPickerModalI {
   setCountryModalVisible: (any) => void;
 }
 
-const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelectedCountry, setCountryModalVisible }) => {
+const CountryPickerModal: React.FC<CountryPickerModalI> = ({
+  visible,
+  setSelectedCountry,
+  setCountryModalVisible,
+}) => {
   const [countryCode, setCountryCode] = useState<CountryCode>("FR");
   const [country, setCountry] = useState<any>(null);
-  const [withCountryNameButton, setWithCountryNameButton] = useState<boolean>(false);
+  const [withCountryNameButton, setWithCountryNameButton] =
+    useState<boolean>(false);
   const [withFlag, setWithFlag] = useState<boolean>(true);
   const [withEmoji, setWithEmoji] = useState<boolean>(true);
   const [withFilter, setWithFilter] = useState<boolean>(true);
@@ -35,11 +39,16 @@ const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelecte
           withCountryNameButton={false}
           withAlphaFilter={false}
           withCallingCode={false}
-          withEmoji={true}
           onSelect={onSelect}
           visible={visible}
-          containerButtonStyle={{ marginBottom: wp(5) }}
+          withEmoji={false}
           onClose={() => setCountryModalVisible(false)}
+          theme={{
+            fontSize: 16,
+            fontFamily: "Poppins-Regular",
+            activeOpacity: 1,
+            flagSize: 20,
+          }}
         />
       )}
     </>

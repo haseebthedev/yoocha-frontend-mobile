@@ -89,6 +89,7 @@ export const updateUserService: any = createAsyncThunk(
       const response: AxiosResponse<UpdateUserResponseI> = await AxiosInstance.patch(`/user/me`, {
         firstname: payload.firstname,
         lastname: payload.lastname,
+        dateOfBirth: payload.dateOfBirth
       });
 
       showFlashMessage({ type: "success", message: "User Successfully Updated!" });

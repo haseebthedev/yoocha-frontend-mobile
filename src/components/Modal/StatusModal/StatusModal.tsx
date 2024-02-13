@@ -3,7 +3,7 @@ import { Image, StatusBar, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { Text } from "components/General/text/text";
 import { colors } from "theme";
-import { formatDate } from "utils/formatDateAndTime";
+import { formatDate } from "utils/dateAndTime";
 import { ModalHoc } from "components/HOCModal/ModalScreen/ModalScreen";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
