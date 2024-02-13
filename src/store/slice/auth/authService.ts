@@ -86,7 +86,7 @@ export const updateUserService: any = createAsyncThunk(
   "auth/updateUser",
   async (payload: UpdateUserPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<UpdateUserResponseI> = await AxiosInstance.post(`/user/me`, {
+      const response: AxiosResponse<UpdateUserResponseI> = await AxiosInstance.patch(`/user/me`, {
         firstname: payload.firstname,
         lastname: payload.lastname,
       });
