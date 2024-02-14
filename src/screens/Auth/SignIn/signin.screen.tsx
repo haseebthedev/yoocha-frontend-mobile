@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, Text, TextInput } from "components";
@@ -11,13 +11,21 @@ import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
   const initialValues: SigninI = { email: "", password: "" };
 
-  const submit = async ({ email, password }: SigninI) => await dispatch(signinService({ email, password }));
-
+  const submit = async ({ email, password }: SigninI) => {
+    setLoading(true);
+    try {
+      await dispatch(signinService({ email, password }));
+    } finally {
+      setLoading(false);
+    }
+  };
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
     submit,
     validationSchema,
@@ -49,7 +57,13 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           visible={touched.password}
         />
 
-        <AppButton preset="filled" text="Login" onPress={handleSubmit} />
+        <AppButton
+          preset="filled"
+          text={loading ? "" : "Login"}
+          onPress={handleSubmit}
+          disabled={loading}
+          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+        />
 
         <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>
           <Text style={styles.forgetPasswordText} preset="heading">

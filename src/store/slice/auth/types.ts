@@ -46,8 +46,11 @@ export interface ForgetPasswordResponseI {
 }
 
 export interface UpdateUserPayloadI {
-  firstname: string;
-  lastname: string;
+  profilePicture?: string;
+  firstname?: string;
+  lastname?: string;
+  dateOfBirth?: string;
+  country?: string;
 }
 
 export interface UpdateUserResponseI {

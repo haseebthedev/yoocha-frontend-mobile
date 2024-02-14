@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   containerStyle: {
-    gap: wp(2),
+    gap: wp(1),
     backgroundColor: colors.white,
   },
   mainContainer: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: typography.semiBold,
     fontSize: hp(1.6),
-    color: colors.primary,
+    color: colors.grey,
   },
   divider: {
     width: wp(90),
@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
     borderRadius: hp(1.8),
   },
   imagesGrid: {
-    marginBottom: hp(2),
     flex: 1,
     margin: 0,
     alignItems: "center",
+    marginBottom: hp(2),
   },
 });
 

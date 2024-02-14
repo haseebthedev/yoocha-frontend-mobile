@@ -1,13 +1,13 @@
 import { FC, useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { UserI } from "store";
 import { colors } from "theme";
 import { UserStatusI } from "interfaces";
+import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import logo from "assets/images/logo.png";
-
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./public-profile.styles";
 
@@ -15,8 +15,9 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   navigation,
   route,
 }) => {
-  const { item } = route.params;
+  const { item }: { item: UserI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("Photos");
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
     name: "",
@@ -49,7 +50,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
       </View>
 
       <FlatList
-        data={["1", "2", "3", "1", "2", "3"]}
+        data={MY_PROFILE_DATA.myPosts}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.containerStyle}
         showsVerticalScrollIndicator={false}
@@ -57,25 +58,28 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
           <View style={styles.container}>
             <View style={styles.mainContainer}>
               <View style={styles.roundedContainer}>
-                <Image source={personPlaceholder} style={styles.profilePic} />
+                <Image
+                  source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
+                  style={styles.profilePic}
+                />
                 <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
 
                 <View style={styles.location}>
                   <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-                  <Text text={`City, Country`} preset="light" />
+                  <Text text={item.country ? item?.country : `City, Country`} preset="light" />
                 </View>
               </View>
               <View style={styles.infoContainer}>
                 <View style={styles.infoHeading}>
-                  <Text text={String(45)} style={styles.info} />
+                  <Text text={String(0)} style={styles.info} />
                   <Text text="Posts" style={styles.infoText} />
                 </View>
                 <View style={styles.infoHeading}>
-                  <Text text={String(145)} style={styles.info} />
+                  <Text text={String(0)} style={styles.info} />
                   <Text text="Friends" style={styles.infoText} />
                 </View>
                 <View style={styles.infoHeading}>
-                  <Text text={String(125)} style={styles.info} />
+                  <Text text={String(0)} style={styles.info} />
                   <Text text="Likes" style={styles.infoText} />
                 </View>
               </View>
@@ -89,8 +93,18 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
 
               <View>
                 <View style={styles.tabNav}>
-                  <Text text="Photos" style={styles.tabNavText} />
-                  <Text text="Likes" style={[styles.tabNavText, { color: colors.grey }]} />
+                  <TouchableOpacity onPress={() => setActiveTab("Photos")}>
+                    <Text
+                      text="Photos"
+                      style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setActiveTab("Likes")}>
+                    <Text
+                      text="Likes"
+                      style={[styles.tabNavText, activeTab === "Likes" && { color: colors.primary }]}
+                    />
+                  </TouchableOpacity>
                 </View>
                 <View style={styles.divider} />
               </View>
@@ -99,7 +113,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
         )}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => onViewPress(item)} style={styles.imagesGrid}>
-            <Image source={logo} style={styles.postImage} />
+            <Image source={{ uri: item.media }} style={styles.postImage} />
           </TouchableOpacity>
         )}
         numColumns={3}

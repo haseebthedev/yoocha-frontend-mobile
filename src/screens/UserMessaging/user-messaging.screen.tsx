@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, Platform, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
@@ -20,6 +20,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import { RefreshControl } from "react-native";
 import { Keyboard } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
 
 const LIMIT: number = 15;
 
@@ -129,54 +130,62 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, [socket]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.appHeader}>
-        <View style={styles.flexAlignCenter}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" color={colors.textDark} size={20} />
-          </TouchableOpacity>
-          <Image source={personPlaceholder} style={styles.profileImage} />
-          <View>
-            <Text text={friendName} preset="heading" />
-            <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
+      <View style={styles.container}>
+        <View style={styles.appHeader}>
+          <View style={styles.flexAlignCenter}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back" color={colors.textDark} size={20} />
+            </TouchableOpacity>
+            <Image source={personPlaceholder} style={styles.profileImage} />
+            <View>
+              <Text text={friendName} preset="heading" />
+              <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.bodyContainer}>
+          <View style={styles.listHeight}>
+            <FlatList
+              // inverted
+              data={state.list}
+              keyExtractor={(item: MessageItemI) => String(item?._id)}
+              contentContainerStyle={styles.listContainer}
+              renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
+              ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+              onEndReached={loadMoreItems}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={renderLoader}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+              }
+              ListEmptyComponent={() =>
+                !isLoading &&
+                state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
+              }
+            />
+          </View>
+
+          <View style={styles.inputFieldBlock}>
+            <TextInput
+              value={message}
+              placeholder="Type here..."
+              onChangeText={(text) => setMessage(text)}
+              placeholderTextColor={colors.textDim}
+              style={styles.inputfield}
+            />
+            <TouchableOpacity onPress={sendMessage}>
+              <Ionicons name="send" color={colors.primary} size={20} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
-
-      <View style={styles.bodyContainer}>
-        <View style={styles.listHeight}>
-          <FlatList
-            // inverted
-            data={state.list}
-            keyExtractor={(item: MessageItemI) => String(item?._id)}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
-            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
-            onEndReached={loadMoreItems}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderLoader}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
-            ListEmptyComponent={() =>
-              !isLoading &&
-              state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
-            }
-          />
-        </View>
-
-        <View style={styles.inputFieldBlock}>
-          <TextInput
-            value={message}
-            placeholder="Type here..."
-            onChangeText={(text) => setMessage(text)}
-            placeholderTextColor={colors.textDim}
-            style={styles.inputfield}
-          />
-          <TouchableOpacity onPress={sendMessage}>
-            <Ionicons name="send" color={colors.primary} size={20} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Keyboard, ScrollView, View } from "react-native";
+import { ActivityIndicator, Keyboard, ScrollView, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, Text, TextInput } from "components";
@@ -12,22 +12,30 @@ import styles from "./signup.styles";
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
   const initialValues: SignupI = { firstname: "", lastname: "", email: "", password: "", confirmPassword: "" };
 
   const submit = async () => {
     Keyboard.dismiss();
-    await dispatch(
-      signupService({
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        password: values.password,
-      })
-    )
-      .unwrap()
-      .then(() => navigation.navigate("signin"));
+    setLoading(true);
+    try {
+      await dispatch(
+        signupService({
+          firstname: values.firstname,
+          lastname: values.lastname,
+          email: values.email,
+          password: values.password,
+        })
+      );
+
+      navigation.navigate("signin");
+    } catch (error) {
+      console.error("Error occurred during sign-up:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -90,7 +98,13 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           visible={touched.confirmPassword}
         />
 
-        <AppButton preset="filled" text="Sign Up" onPress={handleSubmit} />
+        <AppButton
+          preset="filled"
+          text={loading ? "" : "Sign Up"}
+          onPress={handleSubmit}
+          disabled={loading}
+          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+        />
 
         <View style={styles.haveAccContainer}>
           <Text style={styles.haveAccText} preset="default">

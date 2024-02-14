@@ -1,5 +1,5 @@
-import { FC, useState } from "react";
-import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
+import { FC, useEffect, useRef, useState } from "react";
+import { Dimensions, Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
 import { UpdateUserI } from "interfaces/user";
 import { useFormikHook } from "hooks/UseFormikHook";
@@ -8,22 +8,35 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { editAccountValidationSchema } from "utils/validations";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import {
+  AlertBox,
+  AppButton,
+  BottomSheet,
+  BottomSheetRefProps,
+  CountryPickerModal,
+  Header,
+  ImagePickerModal,
+  Text,
+  TextInput,
+} from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
 
+const { height } = Dimensions.get("window");
+
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const bottomSheetRef = useRef<BottomSheetRefProps>(null);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date | null>(null);
   const [open, setOpen] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
@@ -37,11 +50,23 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     navigation.goBack();
   };
 
-  const uploadProfileImage = async () => setImageModalVisible((prev) => !prev);
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.scrollTo(-height / 1);
+    console.log(bottomSheetRef.current?.scrollTo(-height));
+  };
+
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.scrollTo(0);
+  };
+
+  const uploadProfileImage = async () => {
+    // setImageModalVisible((prev) => !prev)
+    openBottomSheet();
+  };
 
   const submit = async ({ firstname, lastname }: UpdateUserI) => {
+    await dispatch(updateUserService({ firstname, lastname, country: selectedCountry, dateOfBirth: date }));
     setSuccessModalVisible((prev) => !prev);
-    await dispatch(updateUserService({ firstname, lastname }));
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -49,6 +74,16 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     validationSchema,
     initialValues
   );
+
+  useEffect(() => {
+    if (user?.dateOfBirth) {
+      const dateOfBirth = new Date(user.dateOfBirth);
+      setDate(dateOfBirth);
+    } else {
+      setDate(null);
+    }
+    setSelectedCountry(user?.country ?? "");
+  }, [user]);
 
   return (
     <View style={styles.container}>
@@ -88,22 +123,47 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setOpen(true)} style={styles.pickerInputField}>
             <Text
-              text={user?.dateOfBirth ? formatDateToDMY(user?.dateOfBirth) : "Select Date"}
-              preset={user?.dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+              text={date ? formatDateToDMY(date) : user?.dateOfBirth ? user?.dateOfBirth : "Select Date"}
+              preset={date || user?.dateOfBirth ? "inputText" : "inputTextPlaceholder"}
             />
           </TouchableOpacity>
 
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
-              text={user?.country ? user?.country : "Select Country"}
-              preset={user?.country ? "inputText" : "inputTextPlaceholder"}
+              text={selectedCountry ? selectedCountry : user?.country ? user?.country : "Select Country"}
+              preset={selectedCountry || user?.country ? "inputText" : "inputTextPlaceholder"}
             />
           </TouchableOpacity>
         </View>
 
         <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
       </ScrollView>
+
+      {/* <BottomSheet
+        ref={bottomSheetRef}
+        height={height / 2}
+        closeBottomSheet={closeBottomSheet}
+        onClose={closeBottomSheet}
+      >
+        <View>
+          <Text text={"Select Image"} preset="heading" style={styles.heading} />
+
+          <View style={styles.body}>
+            <View style={styles.btnParentSection}>
+              <TouchableOpacity onPress={() => {}} style={styles.btnSection}>
+                <Ionicons name="camera" size={35} color={colors.primary} />
+                <Text text="Open Camera" preset="subheading" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => {}} style={styles.btnSection}>
+                <Ionicons name="image" size={35} color={colors.primary} />
+                <Text text="Open Gallery" preset="subheading" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </BottomSheet> */}
 
       <CountryPickerModal
         visible={countryModalVisible}
@@ -132,7 +192,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         mode="date"
         modal
         open={open}
-        date={date}
+        date={date ? date : new Date()}
+        // textColor={colors.primary}
+        // theme="dark"
         onConfirm={(date) => {
           setOpen((prev) => !prev);
           setDate(date);

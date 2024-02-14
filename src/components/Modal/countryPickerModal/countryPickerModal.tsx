@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { wp } from "utils/responsive";
-import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
+import CountryPicker, { CountryCode, DARK_THEME } from "react-native-country-picker-modal";
+import { colors, typography } from "theme";
+import { View } from "react-native";
 
 interface CountryPickerModalI {
   visible: boolean;
@@ -11,12 +13,6 @@ interface CountryPickerModalI {
 const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelectedCountry, setCountryModalVisible }) => {
   const [countryCode, setCountryCode] = useState<CountryCode>("FR");
   const [country, setCountry] = useState<any>(null);
-  const [withCountryNameButton, setWithCountryNameButton] = useState<boolean>(false);
-  const [withFlag, setWithFlag] = useState<boolean>(true);
-  const [withEmoji, setWithEmoji] = useState<boolean>(true);
-  const [withFilter, setWithFilter] = useState<boolean>(true);
-  const [withAlphaFilter, setWithAlphaFilter] = useState<boolean>(false);
-  const [withCallingCode, setWithCallingCode] = useState<boolean>(false);
 
   const onSelect = (country: any) => {
     let name = country.name;
@@ -28,19 +24,28 @@ const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelecte
   return (
     <>
       {visible && (
-        <CountryPicker
-          countryCode={countryCode}
-          withFilter={true}
-          withFlag={true}
-          withCountryNameButton={false}
-          withAlphaFilter={false}
-          withCallingCode={false}
-          withEmoji={true}
-          onSelect={onSelect}
-          visible={visible}
-          containerButtonStyle={{ marginBottom: wp(5) }}
-          onClose={() => setCountryModalVisible(false)}
-        />
+        <View style={{ paddingHorizontal: 20 }}>
+          <CountryPicker
+            countryCode={countryCode}
+            withFilter={true}
+            withFlag={true}
+            withCountryNameButton={false}
+            withAlphaFilter={false}
+            withCallingCode={false}
+            withEmoji={true}
+            onSelect={onSelect}
+            visible={visible}
+            containerButtonStyle={{ marginBottom: wp(5) }}
+            onClose={() => setCountryModalVisible(false)}
+            theme={{
+              backgroundColor: colors.white,
+              fontFamily: typography.regular,
+              activeOpacity: 1,
+              flagSize: 22,
+              filterPlaceholderTextColor: colors.darkGrey,
+            }}
+          />
+        </View>
       )}
     </>
   );

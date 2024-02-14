@@ -100,8 +100,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: typography.semiBold,
     fontSize: hp(1.6),
-    color: colors.primary,
+    color: colors.grey,
   },
+  tabContainer: { height: hp(20) },
   divider: {
     width: wp(90),
     height: 1,

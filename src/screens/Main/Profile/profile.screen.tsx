@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { FlatList, Image, RefreshControl, TouchableOpacity, View } from "react-native";
-import { Text } from "components";
+import { EmptyListText, Text } from "components";
 import { colors } from "theme";
 import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
@@ -15,9 +15,11 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const [activeTab, setActiveTab] = useState<string>("Photos");
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const userLocation: string = user?.country ? `${user?.country}` : `City, Country`;
+  const userName: string = user?.firstname || user?.lastname ? `${user?.firstname} ${user?.lastname}` : `Username`;
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -49,7 +51,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
       <View style={styles.mainContainer}>
         <View style={styles.roundedContainer}>
           <Image source={user?.profilePicture ? { uri: user.profilePicture } : noImage} style={styles.profilePic} />
-          <Text text={user?.firstname + " " + user?.lastname} preset="largeHeading" style={styles.name} />
+          <Text text={userName} preset="largeHeading" style={styles.name} />
 
           <View style={styles.location}>
             <Ionicons name="location-sharp" size={18} color={colors.textDark} />
@@ -80,20 +82,36 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
 
         <View style={styles.tabNavTopSpacing}>
           <View style={styles.tabNav}>
-            <Text text="Photos" style={styles.tabNavText} />
-            <Text text="Likes" style={[styles.tabNavText, { color: colors.grey }]} />
+            <TouchableOpacity onPress={() => setActiveTab("Photos")}>
+              <Text text="Photos" style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setActiveTab("Likes")}>
+              <Text text="Likes" style={[styles.tabNavText, activeTab === "Likes" && { color: colors.primary }]} />
+            </TouchableOpacity>
           </View>
           <View style={styles.divider} />
 
-          <FlatList
-            horizontal={true}
-            data={MY_PROFILE_DATA.myPosts}
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.listContainerStyle}
-            renderItem={({ item }) => <Image source={{ uri: item.media }} style={styles.postImage} />}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
-          />
+          <View style={styles.tabContainer}>
+            {activeTab === "Photos" && (
+              <FlatList
+                horizontal={true}
+                data={MY_PROFILE_DATA.myPosts}
+                keyExtractor={(item) => item.id}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.listContainerStyle}
+                renderItem={({ item }) => <Image source={{ uri: item.media }} style={styles.postImage} />}
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+                }
+              />
+            )}
+
+            {activeTab === "Likes" && (
+              <View>
+                <EmptyListText text="There are no Likes!" />
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </View>
