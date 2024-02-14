@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { wp } from "utils/responsive";
-import CountryPicker, { CountryCode, DARK_THEME } from "react-native-country-picker-modal";
-import { colors, typography } from "theme";
 import { View } from "react-native";
+import { wp } from "utils/responsive";
+import { colors, typography } from "theme";
+import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
 
 interface CountryPickerModalI {
   visible: boolean;
@@ -15,10 +15,9 @@ const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelecte
   const [country, setCountry] = useState<any>(null);
 
   const onSelect = (country: any) => {
-    let name = country.name;
     setCountryCode(country.cca2);
     setCountry(country);
-    setSelectedCountry(name);
+    setSelectedCountry(country.name);
     setCountryModalVisible((prev: boolean) => !prev);
   };
   return (
