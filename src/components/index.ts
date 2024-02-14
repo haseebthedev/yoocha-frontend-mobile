@@ -28,6 +28,7 @@ export * from "./Buttons/AppButton/AppButton";
 
 //Modal HOC
 export * from "./HOCModal/ModalScreen/ModalScreen";
+export * from "./HOCModal/BottomSheet/BottomSheet";
 
 // Modals
 export * from "./Modal/countryPickerModal/countryPickerModal";

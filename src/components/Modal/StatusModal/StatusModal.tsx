@@ -26,7 +26,10 @@ export const StatusModal = ({ isVisible = false, title, onPressClose, selectedIt
         </View>
         <View style={styles.topHeaderContainer}>
           <View style={styles.userInfo}>
-            <Image source={selectedItem.profilePic && { uri: selectedItem.profilePic }} style={styles.profileImage} />
+            <Image
+              source={selectedItem.profilePic != "" ? { uri: selectedItem.profilePic } : personPlaceholder}
+              style={styles.profileImage}
+            />
             <View>
               <Text text={selectedItem.name} preset="semiBold" style={styles.name} numberOfLines={1} />
               <Text text={formatDate(selectedItem.date)} preset="subheading" style={styles.dateAndTime} />
@@ -39,7 +42,7 @@ export const StatusModal = ({ isVisible = false, title, onPressClose, selectedIt
       </View>
       <Image
         source={
-          selectedItem.statusImage
+          selectedItem.statusImage != ""
             ? {
                 uri: selectedItem.statusImage,
               }

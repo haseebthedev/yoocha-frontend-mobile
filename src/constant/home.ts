@@ -15,7 +15,15 @@ export interface SUGGESTED_USER_DATA_I {
   }[];
 }
 
-export const HOME_STATUS_DATA = [
+export interface HOME_STATUS_DATA_I {
+  id: string;
+  name: string;
+  profilePic: string;
+  date: string;
+  statusImage: string;
+}
+
+export const HOME_STATUS_DATA: HOME_STATUS_DATA_I[] = [
   {
     id: "0",
     name: "You",

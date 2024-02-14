@@ -2,11 +2,12 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { colors } from "theme";
 import { hp } from "utils/responsive";
+import { HOME_STATUS_DATA_I } from "constant";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
 interface HomeUserStatusI {
-  item: any;
+  item: HOME_STATUS_DATA_I;
   onAddPress?: () => void;
   onViewPress?: () => void;
 }

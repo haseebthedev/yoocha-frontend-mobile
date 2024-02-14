@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
-import { HOME_STATUS_DATA } from "constant";
+import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
@@ -134,11 +134,11 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
         <View style={styles.sidebarContainer}>
           <FlatList
             data={HOME_STATUS_DATA}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: HOME_STATUS_DATA_I) => item.id}
             showsVerticalScrollIndicator={false}
             style={styles.sidebarList}
             contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: HOME_STATUS_DATA_I }) => (
               <HomeUserStatus key={item.id} item={item} onViewPress={() => onViewPress(item)} onAddPress={() => {}} />
             )}
           />
