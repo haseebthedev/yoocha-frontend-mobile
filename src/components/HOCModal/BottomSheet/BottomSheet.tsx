@@ -10,6 +10,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { colors } from "theme";
+import { hp, wp } from "utils/responsive";
 
 type BottomSheetProps = {
   children?: React.ReactNode;
@@ -45,15 +47,16 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
     const isActive = useCallback(() => {
       return active.value;
     }, []);
+
     const handleDismiss = () => {
       onClose && onClose();
     };
+
     useImperativeHandle(ref, () => ({ scrollTo, isActive }), [scrollTo, isActive]);
     const context = useSharedValue({ y: 0 });
     const gesture = Gesture.Pan()
       .onStart(() => {
         context.value = { y: translateY.value };
-        console.log(context.value);
       })
       .onUpdate((event) => {
         translateY.value = event.translationY + context.value.y;
@@ -84,6 +87,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         transform: [{ translateY: translateY.value }],
       };
     });
+
     const rBottomSheetOverlayContainerStyle = useAnimatedStyle(() => {
       const opacity = interpolate(
         translateY.value,
@@ -94,7 +98,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       const backgroundColor = interpolateColor(
         translateY.value,
         [0, MAX_TRANSLATE_Y + SCREEN_HEIGHT * 0.19],
-        ["transparent", "#000000"]
+        ["transparent", "#0000005E"]
       );
       const zIndex = interpolate(
         translateY.value,
@@ -108,18 +112,21 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         backgroundColor,
       };
     });
+
     function handleBackButtonClick() {
       closeBottomSheet && closeBottomSheet();
       return isOpen;
     }
+
     useEffect(() => {
       BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
       return () => {
         BackHandler.removeEventListener("hardwareBackPress", handleBackButtonClick);
       };
     }, [isOpen]);
+
     return (
-      <GestureHandlerRootView>
+      <>
         <TouchableWithoutFeedback onPress={closeBottomSheet}>
           <Animated.View style={[styles.overlayContainer, rBottomSheetOverlayContainerStyle]} />
         </TouchableWithoutFeedback>
@@ -138,7 +145,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
             {children}
           </Animated.View>
         </GestureDetector>
-      </GestureHandlerRootView>
+      </>
     );
   }
 );
@@ -159,12 +166,12 @@ const styles = StyleSheet.create({
     },
   },
   line: {
-    width: 75,
-    height: 4,
-    backgroundColor: "grey",
+    width: wp(13),
+    height: hp(0.4),
+    backgroundColor: colors.primary,
     alignSelf: "center",
-    marginVertical: 15,
-    borderRadius: 2,
+    marginVertical: hp(1.8),
+    borderRadius: hp(0.2),
   },
   overlayContainer: {
     backgroundColor: "transparent",
@@ -174,7 +181,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     zIndex: -9999,
-    opacity: 1,
+    opacity: 0.8,
   },
 });
 

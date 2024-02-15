@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Text } from "components/General/text/text";
-import { StickyBottomModalHoc } from "components/HOCModal/StickyBottomModal/StickyBottomModal";
-import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
 import { colors } from "theme";
+import { height } from "utils/responsive";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheet, BottomSheetRefProps } from "components/HOCModal/BottomSheet/BottomSheet";
+import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
@@ -22,6 +24,8 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   onModalClose,
   onBackdropPress,
 }: ImagePickerModalI) => {
+  const bottomSheetRef = useRef<BottomSheetRefProps>(null);
+
   const launchCameraHandler = () => {
     let options: any = {
       storageOptions: {
@@ -49,30 +53,36 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   };
 
   return (
-    <StickyBottomModalHoc
-      isVisible={isVisible}
-      onPressClose={onModalClose}
-      onBackdropPress={onBackdropPress}
-      // animationType="slide"
-    >
-      <View>
-        <Text text={title} preset="heading" style={styles.heading} />
+    <>
+      {isVisible && (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheet
+            ref={bottomSheetRef}
+            height={height - 110}
+            closeBottomSheet={onBackdropPress}
+            onClose={onModalClose}
+          >
+            <>
+              <Text text={title} preset="heading" style={styles.heading} />
 
-        <View style={styles.body}>
-          <View style={styles.btnParentSection}>
-            <TouchableOpacity onPress={launchCameraHandler} style={styles.btnSection}>
-              <Ionicons name="camera" size={35} color={colors.primary} />
-              <Text text="Open Camera" preset="subheading" />
-            </TouchableOpacity>
+              <View style={styles.body}>
+                <View style={styles.btnParentSection}>
+                  <TouchableOpacity onPress={launchCameraHandler} style={styles.btnSection}>
+                    <Ionicons name="camera" size={35} color={colors.primary} />
+                    <Text text="Open Camera" preset="subheading" />
+                  </TouchableOpacity>
 
-            <TouchableOpacity onPress={launchImageLibraryHandler} style={styles.btnSection}>
-              <Ionicons name="image" size={35} color={colors.primary} />
-              <Text text="Open Gallery" preset="subheading" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </StickyBottomModalHoc>
+                  <TouchableOpacity onPress={launchImageLibraryHandler} style={styles.btnSection}>
+                    <Ionicons name="image" size={35} color={colors.primary} />
+                    <Text text="Open Gallery" preset="subheading" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          </BottomSheet>
+        </GestureHandlerRootView>
+      )}
+    </>
   );
 };
 
