@@ -23,32 +23,18 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginLeft: wp(2),
+    width: wp(74),
   },
   notificationText: {
     color: colors.textDim,
     width: wp(60),
     marginTop: hp(-0.4),
   },
-  infoContainer: {
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  infoText: {
-    color: colors.textDim,
-    fontSize: hp(1.2),
-  },
-  unreadNotificationContainer: {
-    backgroundColor: colors.primary,
-    width: wp(5),
-    height: wp(5),
-    borderRadius: wp(5),
-    justifyContent: "center",
+  nameWithDate: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: hp(1),
-  },
-  unreadNotificationText: {
-    color: colors.white,
-    fontSize: hp(1.2),
+    marginBottom: hp(0.5),
   },
 });
 

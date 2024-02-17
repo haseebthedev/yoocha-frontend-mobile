@@ -1,10 +1,8 @@
-import React, { useRef } from "react";
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Text } from "components/General/text/text";
 import { colors } from "theme";
-import { height } from "utils/responsive";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheet, BottomSheetRefProps } from "components/HOCModal/BottomSheet/BottomSheet";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
@@ -13,19 +11,21 @@ interface ImagePickerModalI {
   isVisible: boolean;
   title?: string;
   setProfileImage: (any) => void;
-  onModalClose?: () => void;
-  onBackdropPress: () => void;
+  bottomSheetRef: any;
+  snapPoints: any;
+  handleSheetChanges: (index: any) => void;
+  renderBackdrop: any;
 }
 
 const ImagePickerModal: React.FC<ImagePickerModalI> = ({
-  isVisible = false,
+  isVisible,
   title,
   setProfileImage,
-  onModalClose,
-  onBackdropPress,
+  bottomSheetRef,
+  snapPoints,
+  handleSheetChanges,
+  renderBackdrop,
 }: ImagePickerModalI) => {
-  const bottomSheetRef = useRef<BottomSheetRefProps>(null);
-
   const launchCameraHandler = () => {
     let options: any = {
       storageOptions: {
@@ -55,12 +55,13 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   return (
     <>
       {isVisible && (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
           <BottomSheet
             ref={bottomSheetRef}
-            height={height - 110}
-            closeBottomSheet={onBackdropPress}
-            onClose={onModalClose}
+            index={1}
+            snapPoints={snapPoints}
+            backdropComponent={renderBackdrop}
+            onChange={handleSheetChanges}
           >
             <>
               <Text text={title} preset="heading" style={styles.heading} />
@@ -80,7 +81,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
               </View>
             </>
           </BottomSheet>
-        </GestureHandlerRootView>
+        </View>
       )}
     </>
   );

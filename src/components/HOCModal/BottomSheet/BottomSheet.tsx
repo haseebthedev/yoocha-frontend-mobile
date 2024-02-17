@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { StyleSheet, TouchableWithoutFeedback, View, BackHandler } from "react-native";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -68,7 +68,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         if (translateY.value > -SCREEN_HEIGHT / 1.5) {
           scrollTo(0);
           runOnJS(handleDismiss)();
-        } else if (translateY.value < -SCREEN_HEIGHT / 1.5) {
+        } else if (translateY.value < -SCREEN_HEIGHT / 1.9) {
           scrollTo(MAX_TRANSLATE_Y);
         }
       });

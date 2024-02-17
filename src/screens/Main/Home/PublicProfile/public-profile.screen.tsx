@@ -66,7 +66,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
 
                 <View style={styles.location}>
                   <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-                  <Text text={item.country ? item?.country : `City, Country`} preset="light" />
+                  <Text text={item.country ? item?.country : `Unknown`} preset="light" />
                 </View>
               </View>
               <View style={styles.infoContainer}>

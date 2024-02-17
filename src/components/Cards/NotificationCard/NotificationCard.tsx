@@ -18,18 +18,12 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
       <View style={styles.profileContainer}>
         <Image source={{ uri: item.profilePic }} style={styles.profileImage} />
         <View style={styles.textContainer}>
-          <Text preset="semiBold" text={item.name} numberOfLines={1} />
-          <Text text={item.notification} numberOfLines={1} style={styles.notificationText} />
-          <Text preset="semiBold" text={formatDate(item.notificationDateTime)} numberOfLines={1} />
-        </View>
-      </View>
-
-      <View style={styles.infoContainer}>
-        {item.unReadNotification && (
-          <View style={styles.unreadNotificationContainer}>
-            <Text text={item.noOfUnreadNotifications} style={styles.unreadNotificationText} preset="semiBold" />
+          <View style={styles.nameWithDate}>
+            <Text preset="semiBold" text={item.name} numberOfLines={1} />
+            <Text preset="light" text={formatDate(item.notificationDateTime)} numberOfLines={1} />
           </View>
-        )}
+          <Text text={item.notification} numberOfLines={1} style={styles.notificationText} />
+        </View>
       </View>
     </TouchableOpacity>
   );

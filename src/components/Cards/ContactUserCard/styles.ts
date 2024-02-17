@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
-    paddingHorizontal: wp(5),
+    // paddingHorizontal: wp(5),
     paddingBottom: 15,
   },
   leftContainer: {
