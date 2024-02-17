@@ -18,7 +18,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
   const [activeTab, setActiveTab] = useState<string>("Photos");
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const userLocation: string = user?.country ? `${user?.country}` : `City, Country`;
+  const userLocation: string = user?.country ? `${user?.country}` : `Known`;
   const userName: string = user?.firstname || user?.lastname ? `${user?.firstname} ${user?.lastname}` : `Username`;
 
   const onRefresh = () => {

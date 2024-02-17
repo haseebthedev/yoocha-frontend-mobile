@@ -23,7 +23,7 @@ const AddUserSuggestionCard = ({ item, onViewPress, onAddFriendBtnPress }: UserS
 
         <View>
           <Text preset="semiBold" text={`${item.firstname} ${item.lastname}`} numberOfLines={1} />
-          <Text text={`City, Country`} numberOfLines={1} />
+          <Text text={`Unknown`} numberOfLines={1} />
         </View>
       </View>
 

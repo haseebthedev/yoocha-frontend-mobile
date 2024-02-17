@@ -14,17 +14,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
-    // borderBottomColor: colors.lightShade,
-    // borderBottomWidth: 1,
   },
-  topHeaderBlock: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: hp(2),
+  suggestionsContainer: {
     paddingHorizontal: wp(5),
-    backgroundColor: colors.white,
   },
+  loaderContainer: {
+    height: hp(18),
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: hp(2.2),
+  },
+  exploreContainer: {
+    flex: 1,
+    paddingHorizontal: wp(5),
+    marginTop: hp(1),
+  },
+
   menuContainer: {
     backgroundColor: colors.white,
     width: wp(44),

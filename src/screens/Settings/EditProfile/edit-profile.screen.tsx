@@ -1,5 +1,5 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { Dimensions, Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
+import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
 import { UpdateUserI } from "interfaces/user";
 import { useFormikHook } from "hooks/UseFormikHook";
@@ -7,37 +7,39 @@ import { formatDateToDMY } from "utils/dateAndTime";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { editAccountValidationSchema } from "utils/validations";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import {
-  AlertBox,
-  AppButton,
-  BottomSheet,
-  BottomSheetRefProps,
-  CountryPickerModal,
-  Header,
-  ImagePickerModal,
-  Text,
-  TextInput,
-} from "components";
+import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
-import { height } from "utils/responsive";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const bottomSheetRef = useRef<BottomSheetRefProps>(null);
+
+  const [bottomSheetVisible, setBottomSheetVisible] = useState<boolean>(false);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
-  const [imageModalVisible, setImageModalVisible] = useState<boolean>(false);
-
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props) => <BottomSheetBackdrop {...props} disappearsOnIndex={1} appearsOnIndex={2} />,
+    []
+  );
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {
@@ -45,26 +47,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     lastname: user?.lastname ?? "",
   };
 
-  const closeModal = () => setImageModalVisible((prev) => !prev);
-  const handleImageBackdropPress = () => closeModal();
-
   const onCloseAlertBoxPress = () => {
     setSuccessModalVisible((prev) => !prev);
     navigation.goBack();
-  };
-
-  const openBottomSheet = () => {
-    bottomSheetRef.current?.scrollTo(-height / 1);
-    console.log(bottomSheetRef.current?.scrollTo(-height));
-  };
-
-  const closeBottomSheet = () => {
-    bottomSheetRef.current?.scrollTo(0);
-  };
-
-  const uploadProfileImage = async () => {
-    // setImageModalVisible((prev) => !prev)
-    openBottomSheet();
   };
 
   const submit = async ({ firstname, lastname }: UpdateUserI) => {
@@ -90,18 +75,18 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     if (user?.country) {
       setSelectedCountry(user?.country);
     } else {
-      setSelectedCountry("");
+      setSelectedCountry("Select Country");
     }
   }, [user]);
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
-          <TouchableOpacity style={styles.changeImageBtn} onPress={uploadProfileImage}>
+          <TouchableOpacity style={styles.changeImageBtn} onPress={() => setBottomSheetVisible(true)}>
             <Ionicons name="camera" size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
@@ -140,8 +125,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
-              text={selectedCountry ? selectedCountry : "Select Country"}
-              preset={selectedCountry || user?.country ? "inputText" : "inputTextPlaceholder"}
+              text={selectedCountry}
+              preset={selectedCountry === "Select Country" ? "inputTextPlaceholder" : "inputText"}
             />
           </TouchableOpacity>
         </View>
@@ -149,30 +134,15 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
       </ScrollView>
 
-      {/* <BottomSheet
-        ref={bottomSheetRef}
-        height={height / 2}
-        closeBottomSheet={closeBottomSheet}
-        onClose={closeBottomSheet}
-      >
-        <View>
-          <Text text={"Select Image"} preset="heading" style={styles.heading} />
-
-          <View style={styles.body}>
-            <View style={styles.btnParentSection}>
-              <TouchableOpacity onPress={() => {}} style={styles.btnSection}>
-                <Ionicons name="camera" size={35} color={colors.primary} />
-                <Text text="Open Camera" preset="subheading" />
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => {}} style={styles.btnSection}>
-                <Ionicons name="image" size={35} color={colors.primary} />
-                <Text text="Open Gallery" preset="subheading" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </BottomSheet> */}
+      <ImagePickerModal
+        isVisible={bottomSheetVisible}
+        title="Select an option!"
+        setProfileImage={setProfileImage}
+        bottomSheetRef={bottomSheetRef}
+        snapPoints={snapPoints}
+        handleSheetChanges={handleSheetChanges}
+        renderBackdrop={renderBackdrop}
+      />
 
       <CountryPickerModal
         visible={countryModalVisible}
@@ -188,14 +158,6 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         onClose={onCloseAlertBoxPress}
       />
 
-      <ImagePickerModal
-        title="Select an option!"
-        isVisible={imageModalVisible}
-        onModalClose={closeModal}
-        onBackdropPress={handleImageBackdropPress}
-        setProfileImage={setProfileImage}
-      />
-
       <DatePicker
         title={"Select Date"}
         mode="date"
@@ -208,7 +170,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         }}
         onCancel={() => setDateModalVisible((prev) => !prev)}
       />
-    </View>
+    </GestureHandlerRootView>
   );
 };
 

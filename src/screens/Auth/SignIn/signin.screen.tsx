@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Keyboard, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, Text, TextInput } from "components";
@@ -19,6 +19,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
   const initialValues: SigninI = { email: "", password: "" };
 
   const submit = async ({ email, password }: SigninI) => {
+    Keyboard.dismiss();
     setLoading(true);
     try {
       await dispatch(signinService({ email, password }));

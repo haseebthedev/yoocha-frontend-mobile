@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   },
   listHeight: {
     height: hp(80),
+    // flexGrow: 1,
   },
   loadingContainer: {
     flex: 1,
