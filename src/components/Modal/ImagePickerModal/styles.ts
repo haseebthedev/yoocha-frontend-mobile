@@ -4,7 +4,7 @@ import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: "rgba(0,0,0,.3)",
   },
   body: {

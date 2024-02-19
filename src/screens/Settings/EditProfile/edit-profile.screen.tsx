@@ -6,11 +6,12 @@ import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { editAccountValidationSchema } from "utils/validations";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { TranslationLanguageCodeMap } from "react-native-country-picker-modal";
+import { editAccountValidationSchema } from "utils/validations";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
 import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -20,32 +21,28 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [bottomSheetVisible, setBottomSheetVisible] = useState<boolean>(false);
-
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
+  const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
 
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
-
-  const renderBackdrop = useCallback(
-    (props) => <BottomSheetBackdrop {...props} disappearsOnIndex={1} appearsOnIndex={2} />,
-    []
-  );
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {
     firstname: user?.firstname ?? "",
     lastname: user?.lastname ?? "",
   };
+
+  const handleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    []
+  );
 
   const onCloseAlertBoxPress = () => {
     setSuccessModalVisible((prev) => !prev);
@@ -86,7 +83,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <Image source={profileImage} style={styles.profileImage} />
-          <TouchableOpacity style={styles.changeImageBtn} onPress={() => setBottomSheetVisible(true)}>
+          <TouchableOpacity style={styles.changeImageBtn} onPress={handleOpenPress}>
             <Ionicons name="camera" size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
@@ -125,7 +122,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
-              text={selectedCountry}
+              text={String(selectedCountry)}
               preset={selectedCountry === "Select Country" ? "inputTextPlaceholder" : "inputText"}
             />
           </TouchableOpacity>
@@ -135,12 +132,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
       </ScrollView>
 
       <ImagePickerModal
-        isVisible={bottomSheetVisible}
         title="Select an option!"
         setProfileImage={setProfileImage}
         bottomSheetRef={bottomSheetRef}
         snapPoints={snapPoints}
-        handleSheetChanges={handleSheetChanges}
         renderBackdrop={renderBackdrop}
       />
 

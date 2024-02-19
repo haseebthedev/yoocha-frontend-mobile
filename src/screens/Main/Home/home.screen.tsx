@@ -51,7 +51,6 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     await dispatch(getListRoomsService({ page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListRoomResponseI) => {
-        console.log(response?.result?.docs);
         if (response?.result?.docs) {
           setState((prev: ListRoomsI) => ({
             ...prev,
@@ -72,7 +71,6 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   };
 
   const onRefresh = () => {
-    setState({ ...state, listRefreshing: true });
     getChatRooms();
   };
 
@@ -131,7 +129,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
             ListEmptyComponent={() =>
-              !isLoading && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
+              !state.listRefreshing && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
             }
             refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
           />
