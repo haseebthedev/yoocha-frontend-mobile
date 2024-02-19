@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } from "react-native";
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ListRoomsI, UserStatusI } from "interfaces";
 import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
-import { Text, HomeUserStatus, AppHeading, ChatCard, StatusModal, Divider } from "components";
+import { Text, HomeUserStatus, ChatCard, StatusModal, Divider, EmptyListText } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -51,12 +51,14 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     await dispatch(getListRoomsService({ page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListRoomResponseI) => {
+        console.log(response?.result?.docs);
         if (response?.result?.docs) {
           setState((prev: ListRoomsI) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
             hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
           }));
         }
       })
@@ -67,6 +69,11 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     if (!isLoading && state.hasNext) {
       getChatRooms();
     }
+  };
+
+  const onRefresh = () => {
+    setState({ ...state, listRefreshing: true });
+    getChatRooms();
   };
 
   useEffect(() => {
@@ -123,6 +130,10 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
+            ListEmptyComponent={() =>
+              !isLoading && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
+            }
+            refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
           />
         </View>
       </View>

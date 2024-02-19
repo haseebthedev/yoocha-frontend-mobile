@@ -68,3 +68,59 @@ export interface GetFriendsSuggestionResponseI {
     doc: UserI[];
   };
 }
+
+export interface BlockUserPayloadI {
+  roomId: string;
+  userId: string;
+}
+
+export interface BlockUserResponseI {
+  result: {
+    message: string;
+  };
+}
+
+export interface ListBlockedUsersPayloadI {
+  page?: number;
+  limit?: number;
+}
+
+export interface BlockedUserInfo {
+  _id: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  blockedBy: string;
+  user: UserI;
+}
+
+export interface ListBlockedUsersResponseI {
+  result: {
+    docs: BlockedUserInfo[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
+export interface UnblockUserPayloadI {
+  userId: string;
+}
+
+export interface UnblockUserResponseI {
+  result: {
+    message: string;
+  };
+}
+
+export interface ListUserRequestsPayloadI {
+  role: string;
+  page?: number;
+  limit?: number;
+}
+
+export type ListUserRequestsResponseI = ListBlockedUsersResponseI;

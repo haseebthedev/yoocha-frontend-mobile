@@ -1,12 +1,11 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
-import { hp } from "utils/responsive";
 import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
 import { SendFriendReqPayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { AddUserSuggestionCard, EmptyListText, Header, SearchBar, Text } from "components";
+import { ContactUserCard, EmptyListText, Header, SearchBar, Text } from "components";
 import {
   GetFriendsSuggestionResponseI,
   RootState,
@@ -26,13 +25,14 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
 
   const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
 
-  const onAddFriendBtnPress = async (id: string) => {
+  const onAddBtnPress = async (id: string) => {
     const payload: SendFriendReqPayloadI = {
       participants: [
         { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
         { user: id, role: EventEnumRole.INVITEE },
       ],
     };
+
     if (socket) {
       socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
     }
@@ -69,13 +69,14 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
           <FlatList
             data={suggestedFriends}
             keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-            style={{ marginTop: hp(2) }}
+            contentContainerStyle={styles.listContainerStyle}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <AddUserSuggestionCard
+              <ContactUserCard
                 item={item}
+                btnTitle="Add"
+                onAddBtnPress={() => onAddBtnPress(item._id)}
                 onViewPress={() => onViewPress(item)}
-                onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
               />
             )}
             ListEmptyComponent={() =>

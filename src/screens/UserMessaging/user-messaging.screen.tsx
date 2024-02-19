@@ -1,18 +1,9 @@
 import { FC, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Platform,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Image, SafeAreaView, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
-import { EmptyListText, MessageCard, Text } from "components";
+import { AlertBox, EmptyListText, Menu, MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { ListMessageI, SendMessagePayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -20,6 +11,7 @@ import {
   ListMessageResponseI,
   MessageItemI,
   RootState,
+  blockUserService,
   getListMessageService,
   useAppDispatch,
   useAppSelector,
@@ -30,6 +22,7 @@ import styles from "./styles";
 import { RefreshControl } from "react-native";
 import { Keyboard } from "react-native";
 import { KeyboardAvoidingView } from "react-native";
+import { userMessageScreenOptions } from "constant";
 
 const LIMIT: number = 15;
 
@@ -40,6 +33,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const { roomId, friendName } = route.params;
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  // const [menuOption, setMenuOption] = useState<string>("");
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -52,6 +49,17 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   });
 
   const lastSeen = "8:14 PM";
+
+  const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
+
+  const blockUser = async () => {
+    confirmBlockUser();
+  };
+
+  const confirmBlockUser = async () => {
+    await dispatch(blockUserService({ roomId, userId: user?._id }));
+    navigation.goBack();
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -142,17 +150,22 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <View style={styles.container}>
-          <View style={styles.appHeader}>
-            <View style={styles.flexAlignCenter}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Ionicons name="chevron-back" color={colors.textDark} size={20} />
-              </TouchableOpacity>
-              <Image source={personPlaceholder} style={styles.profileImage} />
-              <View>
-                <Text text={friendName} preset="heading" />
-                <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
+          <View style={styles.headerContainer}>
+            <View style={styles.appHeader}>
+              <View style={styles.flexAlignCenter}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back" color={colors.textDark} size={20} />
+                </TouchableOpacity>
+                <Image source={personPlaceholder} style={styles.profileImage} />
+                <View>
+                  <Text text={friendName} preset="heading" />
+                  <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
+                </View>
               </View>
             </View>
+            <TouchableOpacity onPress={() => setAlertModalVisible((prev: boolean) => !prev)}>
+              <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
+            </TouchableOpacity>
           </View>
 
           <View style={styles.bodyContainer}>
@@ -193,6 +206,18 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {/* <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={userMessageScreenOptions} /> */}
+      <AlertBox
+        open={alertModalVisible}
+        title="Block!"
+        description="Are you sure you want to block."
+        onClose={onCloseAlertBoxPress}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Block"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={blockUser}
+      />
     </SafeAreaView>
   );
 };

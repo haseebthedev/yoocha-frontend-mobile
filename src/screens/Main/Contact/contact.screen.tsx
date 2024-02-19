@@ -4,7 +4,7 @@ import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Menu, Text, UserS
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
-import { CONTACTS_DATA } from "constant";
+import { CONTACTS_DATA, contactScreenOptions } from "constant";
 import styles from "./contact.styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
@@ -110,10 +110,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
 
         <FlatList
           data={CONTACTS_DATA}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <ContactUserCard item={item} btnTitle="Add" onBtnPress={() => console.log("join room")} />
+            <ContactUserCard item={item} btnTitle="Add" onAddBtnPress={() => console.log("join room")} />
           )}
         />
       </View>
@@ -128,7 +128,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
       />
 
-      <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} />
+      <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
     </View>
   );
 };

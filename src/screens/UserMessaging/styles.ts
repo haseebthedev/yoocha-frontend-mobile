@@ -12,10 +12,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: wp(5),
+    // paddingHorizontal: wp(5),
     paddingVertical: hp(2),
     borderBottomColor: colors.lightShade,
     borderBottomWidth: 1,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: wp(5),
   },
   profileImage: {
     width: wp(10),

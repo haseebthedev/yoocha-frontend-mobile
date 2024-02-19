@@ -48,6 +48,10 @@ const styles = StyleSheet.create({
   loaderContainer: {
     paddingTop: hp(5),
   },
+  listContainerStyle: {
+    marginTop: hp(2),
+    paddingHorizontal: wp(5),
+  },
 });
 
 export default styles;

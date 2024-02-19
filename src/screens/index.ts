@@ -15,6 +15,8 @@ export * from "./Auth/ResetPassword/resetPassword.screen";
 // Other Screens
 export * from "./UserMessaging/user-messaging.screen";
 export * from "./BlockedUsers/blocked-users.screen";
+export * from "./SendRequests/send-requests.screen";
+export * from "./RecieveRequests/recieve-requests.screen";
 
 export * from "./Settings/settings.screen";
 export * from "./Settings/EditProfile/edit-profile.screen";

@@ -21,6 +21,8 @@ import {
   SuggestionsScreen,
   PublicProfileScreen,
   ChangePasswordScreen,
+  SendRequestsScreen,
+  RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
 import { RootState, UserI, useAppSelector } from "store";
@@ -33,6 +35,8 @@ export type NavigatorParamList = {
 
   usermessaging: { roomId: string; friendName: string };
   blockedusers: undefined;
+  sendrequests: undefined;
+  recieverequests: undefined;
   settings: undefined;
   editprofile: undefined;
   appsettings: undefined;
@@ -69,6 +73,8 @@ const AppStack = () => {
       <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
       <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
+      <Stack.Screen name="sendrequests" component={SendRequestsScreen} />
+      <Stack.Screen name="recieverequests" component={RecieveRequestsScreen} />
       <Stack.Screen name="settings" component={SettingsScreen} />
       <Stack.Screen name="editprofile" component={EditProfileScreen} />
       <Stack.Screen name="appsettings" component={AppSettingsScreen} />
