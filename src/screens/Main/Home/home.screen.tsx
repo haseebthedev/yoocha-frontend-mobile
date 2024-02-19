@@ -7,8 +7,8 @@ import { ListRoomsI, UserStatusI } from "interfaces";
 import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
 import { Text, HomeUserStatus, ChatCard, StatusModal, Divider, EmptyListText } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./home.styles";
 
 const LIMIT: number = 15;

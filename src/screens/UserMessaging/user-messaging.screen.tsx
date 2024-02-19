@@ -1,12 +1,22 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, SafeAreaView, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Keyboard,
+  RefreshControl,
+  KeyboardAvoidingView,
+} from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
-import { AlertBox, EmptyListText, Menu, MessageCard, Text } from "components";
 import { NavigatorParamList } from "navigators";
-import { ListMessageI, SendMessagePayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ListMessageI, SendMessagePayloadI } from "interfaces";
+import { AlertBox, EmptyListText, MessageCard, Text } from "components";
 import {
   ListMessageResponseI,
   MessageItemI,
@@ -19,10 +29,6 @@ import {
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
-import { RefreshControl } from "react-native";
-import { Keyboard } from "react-native";
-import { KeyboardAvoidingView } from "react-native";
-import { userMessageScreenOptions } from "constant";
 
 const LIMIT: number = 15;
 
@@ -35,7 +41,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  // const [menuOption, setMenuOption] = useState<string>("");
+  const [menuOption, setMenuOption] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -147,66 +153,61 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, [socket]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.appHeader}>
-              <View style={styles.flexAlignCenter}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Ionicons name="chevron-back" color={colors.textDark} size={20} />
-                </TouchableOpacity>
-                <Image source={personPlaceholder} style={styles.profileImage} />
-                <View>
-                  <Text text={friendName} preset="heading" />
-                  <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
-                </View>
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => setAlertModalVisible((prev: boolean) => !prev)}>
-              <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <View style={styles.appHeader}>
+          <View style={styles.flexAlignCenter}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back" color={colors.textDark} size={20} />
             </TouchableOpacity>
-          </View>
-
-          <View style={styles.bodyContainer}>
-            <View style={styles.listHeight}>
-              <KeyboardAvoidingView behavior="position">
-                <FlatList
-                  data={state.list}
-                  keyExtractor={(item: MessageItemI) => String(item?._id)}
-                  contentContainerStyle={styles.listContainer}
-                  renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
-                  ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
-                  onEndReached={loadMoreItems}
-                  onEndReachedThreshold={0.5}
-                  ListFooterComponent={renderLoader}
-                  refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
-                  }
-                  ListEmptyComponent={() =>
-                    !isLoading &&
-                    state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
-                  }
-                />
-              </KeyboardAvoidingView>
-            </View>
-
-            <View style={styles.inputFieldBlock}>
-              <TextInput
-                value={message}
-                placeholder="Type here..."
-                onChangeText={(text) => setMessage(text)}
-                placeholderTextColor={colors.textDim}
-                style={styles.inputfield}
-              />
-              <TouchableOpacity onPress={sendMessage}>
-                <Ionicons name="send" color={colors.primary} size={20} />
-              </TouchableOpacity>
+            <Image source={personPlaceholder} style={styles.profileImage} />
+            <View>
+              <Text text={friendName} preset="heading" />
+              <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
             </View>
           </View>
         </View>
-      </KeyboardAvoidingView>
+        <TouchableOpacity onPress={() => setAlertModalVisible((prev: boolean) => !prev)}>
+          <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
+        </TouchableOpacity>
+      </View>
 
+      <View style={styles.bodyContainer}>
+        <View style={styles.listHeight}>
+          <KeyboardAvoidingView behavior="position">
+            <FlatList
+              data={state.list}
+              keyExtractor={(item: MessageItemI) => String(item?._id)}
+              contentContainerStyle={styles.listContainer}
+              renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
+              ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+              onEndReached={loadMoreItems}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={renderLoader}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+              }
+              ListEmptyComponent={() =>
+                !isLoading &&
+                state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
+              }
+            />
+          </KeyboardAvoidingView>
+        </View>
+
+        <View style={styles.inputFieldBlock}>
+          <TextInput
+            value={message}
+            placeholder="Type here..."
+            onChangeText={(text) => setMessage(text)}
+            placeholderTextColor={colors.textDim}
+            style={styles.inputfield}
+          />
+          <TouchableOpacity onPress={sendMessage}>
+            <Ionicons name="send" color={colors.primary} size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
       {/* <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={userMessageScreenOptions} /> */}
       <AlertBox
         open={alertModalVisible}
@@ -218,7 +219,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
         primaryOnClick={blockUser}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

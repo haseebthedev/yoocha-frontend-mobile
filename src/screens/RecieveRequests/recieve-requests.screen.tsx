@@ -1,13 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
+import { EventEnumRole } from "enums";
 import { UserRequestsI } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
 import styles from "./recieve-requests.styles";
-import { EventEnumRole } from "enums";
 
 const LIMIT: number = 10;
 
@@ -28,13 +28,13 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const unblockUser = async (userId: string) => {
+  const removeRequest = async (userId: string) => setAlertModalVisible((prev) => !prev);
+
+  const acceptRequest = async (userId: string) => {
     setAlertModalVisible((prev) => !prev);
   };
 
-  const confirmUnblockUser = async () => {
-    setAlertModalVisible((prev) => !prev);
-  };
+  const confirmRemoveRequest = async () => setAlertModalVisible((prev) => !prev);
 
   const getUserRequests = async () => {
     setIsLoading(true);
@@ -92,7 +92,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
           renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => unblockUser(item?.user?._id)} btnTitle="Unblock" />
+            <ContactUserCard item={item?.user} onAddBtnPress={() => acceptRequest(item?.user?._id)} btnTitle="Accept" />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
@@ -103,13 +103,13 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
       <AlertBox
         open={alertModalVisible}
-        title="Unblock!"
-        description="Are you sure you want to unblock."
+        title="Accept Request!"
+        description="Are you sure you want to accept request."
         onClose={onCloseAlertBoxPress}
         secondaryButtonText="Cancel"
-        primaryButtonText="Unblock"
+        primaryButtonText="Accept"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
-        primaryOnClick={confirmUnblockUser}
+        primaryOnClick={confirmRemoveRequest}
       />
     </View>
   );

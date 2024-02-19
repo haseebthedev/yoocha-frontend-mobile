@@ -5,8 +5,8 @@ import { EventEnumRole } from "enums";
 import { UserRequestsI } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
 import styles from "./send-requests.styles";
 
 const LIMIT: number = 10;
@@ -25,13 +25,9 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const unblockUser = async (userId: string) => {
-    setAlertModalVisible((prev) => !prev);
-  };
+  const removeRequest = async (userId: string) => setAlertModalVisible((prev) => !prev);
 
-  const confirmUnblockUser = async () => {
-    setAlertModalVisible((prev) => !prev);
-  };
+  const confirmRemoveRequest = async () => setAlertModalVisible((prev) => !prev);
 
   const getUserRequests = async () => {
     setIsLoading(true);
@@ -89,7 +85,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
           renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => unblockUser(item?.user?._id)} btnTitle="Cancel" />
+            <ContactUserCard item={item?.user} onAddBtnPress={() => removeRequest(item?.user?._id)} btnTitle="Remove" />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
@@ -100,13 +96,13 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
 
       <AlertBox
         open={alertModalVisible}
-        title="Unblock!"
-        description="Are you sure you want to unblock."
+        title="Remove request!"
+        description="Are you sure you want to remove request."
         onClose={onCloseAlertBoxPress}
         secondaryButtonText="Cancel"
-        primaryButtonText="Unblock"
+        primaryButtonText="Remove"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
-        primaryOnClick={confirmUnblockUser}
+        primaryOnClick={confirmRemoveRequest}
       />
     </View>
   );
