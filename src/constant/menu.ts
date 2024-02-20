@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 export const contactScreenOptions: MenuOptionsI[] = [
   {
     id: 1,
-    title: "Send Request",
+    title: "Sent Requests",
     screenName: "sendrequests",
     onPress: () => {
       Alert.alert("Send Request");
@@ -12,7 +12,7 @@ export const contactScreenOptions: MenuOptionsI[] = [
   },
   {
     id: 2,
-    title: "Recieve Request",
+    title: "Recieved Requests",
     screenName: "recieverequests",
     onPress: () => {
       Alert.alert("Recieve Request");

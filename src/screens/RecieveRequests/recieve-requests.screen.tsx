@@ -1,12 +1,21 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
-import { EventEnumRole } from "enums";
+import { socket } from "socket";
+import { showMessage } from "react-native-flash-message";
+import { EventEnum, EventEnumRole } from "enums";
 import { UserRequestsI } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
-import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
+import {
+  BlockedUserInfo,
+  ListUserRequestsResponseI,
+  RootState,
+  getUsersRequestsService,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import styles from "./recieve-requests.styles";
 
 const LIMIT: number = 10;
@@ -16,6 +25,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   route,
 }) => {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
@@ -30,8 +40,21 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
   const removeRequest = async (userId: string) => setAlertModalVisible((prev) => !prev);
 
-  const acceptRequest = async (userId: string) => {
-    setAlertModalVisible((prev) => !prev);
+  const acceptRequest = async (roomId: string) => {
+    //setAlertModalVisible((prev) => !prev);
+
+    const payload = {
+      roomId: roomId,
+      inviteeId: user?._id,
+    };
+
+    console.log("payload === ", payload);
+
+    if (socket) {
+      socket.emit(EventEnum.JOIN_ROOM, payload);
+    }
+
+    // navigation.goBack();
   };
 
   const confirmRemoveRequest = async () => setAlertModalVisible((prev) => !prev);
@@ -81,7 +104,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         headerText="Friend Requests"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: colors.white }}
+        titleStyle={styles.headerTitle}
         iconStyle={colors.white}
       />
 
@@ -92,7 +115,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
           renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => acceptRequest(item?.user?._id)} btnTitle="Accept" />
+            <ContactUserCard item={item?.user} onAddBtnPress={() => acceptRequest(item?._id)} btnTitle="Accept" />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}

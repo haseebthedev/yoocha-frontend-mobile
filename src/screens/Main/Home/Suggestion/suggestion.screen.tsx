@@ -58,7 +58,7 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
     <View style={styles.container}>
       <Header headerText="Suggestions" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.subContainer}>
         <SearchBar />
 
         {isLoading ? (

@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
   suggestionsContainer: {
     paddingHorizontal: wp(5),
   },
+  suggestionListContainer: {
+    gap: 8,
+  },
   loaderContainer: {
     height: hp(18),
     alignItems: "center",

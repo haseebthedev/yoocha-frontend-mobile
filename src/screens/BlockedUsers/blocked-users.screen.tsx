@@ -87,7 +87,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
         headerText="Blocked Users"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: colors.white }}
+        titleStyle={styles.headerTitle}
         iconStyle={colors.white}
       />
 

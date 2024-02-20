@@ -37,18 +37,22 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       ],
     };
     if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload, (response) => {
+        console.log("Friend request sent successfully", response);
+      });
     }
   };
 
   const getFriendsSuggestions = async () => {
+    setIsLoading(true);
     await dispatch(getFriendsSuggestionService())
       .unwrap()
       .then((response: GetFriendsSuggestionResponseI) => {
         if (response?.result?.doc) {
           setSuggestedFriends(response?.result?.doc);
         }
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
@@ -84,7 +88,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
               horizontal
               data={suggestedFriends}
               keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-              contentContainerStyle={{ gap: 8 }}
+              contentContainerStyle={styles.suggestionListContainer}
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }: { item: UserI }) => (
                 <UserSuggestionCard

@@ -67,6 +67,8 @@ const AppStack = () => {
       }}
       initialRouteName="main"
     >
+      <Stack.Screen name="signin" component={SignInScreen} />
+
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="notifications" component={NotificationScreen} />
       <Stack.Screen name="suggestions" component={SuggestionsScreen} />

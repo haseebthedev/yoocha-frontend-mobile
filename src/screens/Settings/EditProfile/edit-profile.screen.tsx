@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { colors } from "theme";
 import { UpdateUserI } from "interfaces/user";
 import { useFormikHook } from "hooks/UseFormikHook";
@@ -19,7 +19,7 @@ import styles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state: RootState) => state.auth);
+  const { user, loading } = useAppSelector((state: RootState) => state.auth);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
@@ -30,6 +30,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
+  const [imagePickerVisible, setImagePickerVisible] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {
@@ -37,7 +38,10 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     lastname: user?.lastname ?? "",
   };
 
-  const handleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
+  const handleOpenPress = () => {
+    setImagePickerVisible(true);
+    bottomSheetRef.current?.snapToIndex(0);
+  };
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
@@ -115,7 +119,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <TouchableOpacity onPress={() => setDateModalVisible(true)} style={styles.pickerInputField}>
             <Text
               text={dateOfBirth ? formatDateToDMY(dateOfBirth) : "Select Date"}
-              preset={user?.dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+              preset={dateOfBirth ? "inputText" : "inputTextPlaceholder"}
             />
           </TouchableOpacity>
 
@@ -128,10 +132,17 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           </TouchableOpacity>
         </View>
 
-        <AppButton preset="filled" text={"Save Changes"} onPress={handleSubmit} />
+        <AppButton
+          preset="filled"
+          text={loading ? "" : "Save Changes"}
+          onPress={handleSubmit}
+          disabled={loading}
+          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+        />
       </ScrollView>
 
       <ImagePickerModal
+        isVisible={imagePickerVisible}
         title="Select an option!"
         setProfileImage={setProfileImage}
         bottomSheetRef={bottomSheetRef}

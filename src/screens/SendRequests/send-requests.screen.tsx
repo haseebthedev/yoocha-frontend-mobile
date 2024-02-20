@@ -74,7 +74,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
         headerText="Friend Requests"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: colors.white }}
+        titleStyle={styles.headerTitle}
         iconStyle={colors.white}
       />
 

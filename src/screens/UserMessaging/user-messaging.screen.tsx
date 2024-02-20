@@ -59,10 +59,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
   const blockUser = async () => {
-    confirmBlockUser();
-  };
-
-  const confirmBlockUser = async () => {
     await dispatch(blockUserService({ roomId, userId: user?._id }));
     navigation.goBack();
   };

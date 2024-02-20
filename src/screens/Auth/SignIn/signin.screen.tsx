@@ -21,11 +21,10 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
   const submit = async ({ email, password }: SigninI) => {
     Keyboard.dismiss();
     setLoading(true);
-    try {
-      await dispatch(signinService({ email, password }));
-    } finally {
-      setLoading(false);
-    }
+    await dispatch(signinService({ email, password }))
+      .unwrap()
+      .then((response) => navigation.navigate("main"))
+      .finally(() => setLoading(false));
   };
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
     submit,

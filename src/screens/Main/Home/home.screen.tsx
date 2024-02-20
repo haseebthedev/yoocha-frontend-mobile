@@ -1,6 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } from "react-native";
 import { colors } from "theme";
+import { useFocusEffect } from "@react-navigation/native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ListRoomsI, UserStatusI } from "interfaces";
@@ -74,13 +75,23 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     getChatRooms();
   };
 
-  useEffect(() => {
-    getChatRooms();
+  // useEffect(() => {
+  //   getChatRooms();
 
-    return () => {
-      setState({ ...state, list: [], page: 1, hasNext: false });
-    };
-  }, []);
+  //   return () => {
+  //     setState({ ...state, list: [], page: 1, hasNext: false });
+  //   };
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getChatRooms();
+
+      return () => {
+        setState({ ...state, list: [], page: 1, hasNext: false });
+      };
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

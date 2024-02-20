@@ -8,6 +8,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
 interface ImagePickerModalI {
+  isVisible: boolean;
   title?: string;
   setProfileImage: (uri: ImageSourcePropType) => void;
   bottomSheetRef: any;
@@ -16,6 +17,7 @@ interface ImagePickerModalI {
 }
 
 const ImagePickerModal: React.FC<ImagePickerModalI> = ({
+  isVisible,
   title,
   setProfileImage,
   bottomSheetRef,
@@ -51,31 +53,35 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   };
 
   return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      index={0}
-      snapPoints={snapPoints}
-      enablePanDownToClose={true}
-      backdropComponent={renderBackdrop}
-    >
-      <>
-        <Text text={title} preset="heading" style={styles.heading} />
+    <>
+      {isVisible && (
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          backdropComponent={renderBackdrop}
+        >
+          <>
+            <Text text={title} preset="heading" style={styles.heading} />
 
-        <View style={styles.body}>
-          <View style={styles.btnParentSection}>
-            <TouchableOpacity onPress={launchCameraHandler} style={styles.btnSection}>
-              <Ionicons name="camera" size={35} color={colors.primary} />
-              <Text text="Open Camera" preset="subheading" />
-            </TouchableOpacity>
+            <View style={styles.body}>
+              <View style={styles.btnParentSection}>
+                <TouchableOpacity onPress={launchCameraHandler} style={styles.btnSection}>
+                  <Ionicons name="camera" size={35} color={colors.primary} />
+                  <Text text="Open Camera" preset="subheading" />
+                </TouchableOpacity>
 
-            <TouchableOpacity onPress={launchImageLibraryHandler} style={styles.btnSection}>
-              <Ionicons name="image" size={35} color={colors.primary} />
-              <Text text="Open Gallery" preset="subheading" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </>
-    </BottomSheet>
+                <TouchableOpacity onPress={launchImageLibraryHandler} style={styles.btnSection}>
+                  <Ionicons name="image" size={35} color={colors.primary} />
+                  <Text text="Open Gallery" preset="subheading" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        </BottomSheet>
+      )}
+    </>
   );
 };
 

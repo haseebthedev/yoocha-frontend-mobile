@@ -32,7 +32,7 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forge
       <Header headerText="Forget Password" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.form}>
-        <View style={{ alignItems: "center" }}>
+        <View style={styles.centerContent}>
           <Text text="Recover Your Account" preset="largeHeading" />
           <Text
             text="Enter the email address associated with your account."

@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
   },
+  headerTitle: {
+    color: colors.white,
+  },
   loaderStyle: {
     marginVertical: 16,
     alignItems: "center",
