@@ -1,37 +1,31 @@
-import { MenuOptionsI } from "interfaces";
-import { Alert } from "react-native";
+import { MenuOptionI } from "interfaces";
+import { navigate } from "navigators";
 
-export const contactScreenOptions: MenuOptionsI[] = [
+export const contactScreenOptions: MenuOptionI[] = [
   {
     id: 1,
     title: "Sent Requests",
-    screenName: "sendrequests",
-    onPress: () => {
-      Alert.alert("Send Request");
-    },
+    onPress: () => navigate("sendrequests"),
   },
   {
     id: 2,
     title: "Recieved Requests",
-    screenName: "recieverequests",
-    onPress: () => {
-      Alert.alert("Recieve Request");
-    },
+    onPress: () => navigate("recieverequests"),
   },
   {
     id: 3,
     title: "Blocked Users",
-    screenName: "blockedusers",
-    onPress: () => {
-      Alert.alert("Blocked Users");
-    },
+    onPress: () => navigate("blockedusers"),
   },
 ];
 
-export const userMessageScreenOptions: MenuOptionsI[] = [
+export const userMessageScreenOptions: MenuOptionI[] = [
   {
     id: 1,
     title: "Block user",
-    screenName: "",
+  },
+  {
+    id: 2,
+    title: "Remove chat",
   },
 ];

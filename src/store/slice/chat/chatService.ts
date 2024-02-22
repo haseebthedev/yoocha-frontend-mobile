@@ -79,7 +79,7 @@ export const blockUserService: any = createAsyncThunk(
   async (payload: BlockUserPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<BlockUserResponseI> = await AxiosInstance.patch(
-        `/chat/block-user?id=${payload.userId}`,
+        `/chat/block-user?id=${payload.userIdToBlock}`,
         {
           roomId: payload.roomId,
         }

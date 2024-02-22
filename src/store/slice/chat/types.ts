@@ -5,12 +5,14 @@ export interface ListChatRoomPayloadI {
   limit?: number;
 }
 
+export interface ParticipantI {
+  user: UserI;
+  role: string;
+}
+
 export interface ListRoomItemI {
   _id: string;
-  participants: {
-    user: UserI;
-    role: string;
-  }[];
+  participants: ParticipantI[];
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -71,7 +73,7 @@ export interface GetFriendsSuggestionResponseI {
 
 export interface BlockUserPayloadI {
   roomId: string;
-  userId: string;
+  userIdToBlock: string;
 }
 
 export interface BlockUserResponseI {

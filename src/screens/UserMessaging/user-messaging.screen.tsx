@@ -8,24 +8,25 @@ import {
   View,
   Keyboard,
   RefreshControl,
-  KeyboardAvoidingView,
 } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { EventEnum } from "enums";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListMessageI, SendMessagePayloadI } from "interfaces";
-import { AlertBox, EmptyListText, MessageCard, Text } from "components";
+import { ListMessageI, MenuOptionI, SendMessagePayloadI } from "interfaces";
+import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
 import {
   ListMessageResponseI,
   MessageItemI,
+  ParticipantI,
   RootState,
   blockUserService,
   getListMessageService,
   useAppDispatch,
   useAppSelector,
 } from "store";
+import { userMessageScreenOptions } from "constant";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
@@ -36,14 +37,20 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   navigation,
   route,
 }) => {
-  const { roomId, friendName } = route.params;
+  const { roomId, friendName, participants } = route.params;
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [menuOption, setMenuOption] = useState<string>("");
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+  const [otherUser, setOtherUser] = useState<ParticipantI>();
 
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [menuOption, setMenuOption] = useState<MenuOptionI>({
+    id: 0,
+    title: "",
+  });
+
+  const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
+  const [removeChatModalVisible, setRemoveChatModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -56,12 +63,13 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const lastSeen = "8:14 PM";
 
-  const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
-
   const blockUser = async () => {
-    await dispatch(blockUserService({ roomId, userId: user?._id }));
-    navigation.goBack();
+    await dispatch(blockUserService({ roomId, userIdToBlock: otherUser?.user._id }))
+      .unwrap()
+      .then(() => navigation.goBack());
   };
+
+  const removeChat = async () => console.log("Remove Chat");
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -142,11 +150,24 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
       socket.on("receive_message", (payload: any) => {
         setState((prev: ListMessageI) => ({
           ...prev,
-          list: prev.list.concat([payload._doc]),
+          list: prev.list.concat(payload._doc),
         }));
       });
     }
   }, [socket]);
+
+  useEffect(() => {
+    if (menuOption.title === "Block user") {
+      setBlockModalVisible(true);
+    } else if (menuOption.title === "Remove chat") {
+      setRemoveChatModalVisible(true);
+    }
+  }, [menuOption]);
+
+  useEffect(() => {
+    const otherUser: ParticipantI[] = participants.filter((item) => item.user._id !== user?._id);
+    setOtherUser(otherUser[0]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -163,32 +184,36 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             </View>
           </View>
         </View>
-        <TouchableOpacity onPress={() => setAlertModalVisible((prev: boolean) => !prev)}>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
           <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
         </TouchableOpacity>
+
+        <PopupMenu
+          isVisible={menuVisible}
+          setMenuVisible={setMenuVisible}
+          menuOptions={userMessageScreenOptions}
+          setMenuOption={setMenuOption}
+        />
       </View>
 
       <View style={styles.bodyContainer}>
         <View style={styles.listHeight}>
-          <KeyboardAvoidingView behavior="position">
-            <FlatList
-              data={state.list}
-              keyExtractor={(item: MessageItemI) => String(item?._id)}
-              contentContainerStyle={styles.listContainer}
-              renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
-              ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
-              onEndReached={loadMoreItems}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={renderLoader}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
-              }
-              ListEmptyComponent={() =>
-                !isLoading &&
-                state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
-              }
-            />
-          </KeyboardAvoidingView>
+          <FlatList
+            data={state.list}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item: MessageItemI) => String(item?._id)}
+            contentContainerStyle={styles.listContainer}
+            renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
+            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+            onEndReached={loadMoreItems}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderLoader}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
+            ListEmptyComponent={() =>
+              !isLoading &&
+              state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
+            }
+          />
         </View>
 
         <View style={styles.inputFieldBlock}>
@@ -204,15 +229,26 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           </TouchableOpacity>
         </View>
       </View>
-      {/* <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={userMessageScreenOptions} /> */}
+
       <AlertBox
-        open={alertModalVisible}
+        open={removeChatModalVisible}
+        title="Remove Chat!"
+        description="Are you sure you want to remove chat."
+        onClose={() => setRemoveChatModalVisible((prev) => !prev)}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Remove"
+        secondaryOnClick={() => setRemoveChatModalVisible((prev) => !prev)}
+        primaryOnClick={removeChat}
+      />
+
+      <AlertBox
+        open={blockModalVisible}
         title="Block!"
         description="Are you sure you want to block."
-        onClose={onCloseAlertBoxPress}
+        onClose={() => setBlockModalVisible((prev) => !prev)}
         secondaryButtonText="Cancel"
         primaryButtonText="Block"
-        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        secondaryOnClick={() => setBlockModalVisible((prev) => !prev)}
         primaryOnClick={blockUser}
       />
     </View>

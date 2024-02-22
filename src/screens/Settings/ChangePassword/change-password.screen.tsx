@@ -1,16 +1,19 @@
 import { FC, useState } from "react";
 import { Keyboard, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { AppButton, Header, TextInput } from "components";
 import { useFormikHook } from "hooks/UseFormikHook";
-import { changePasswordValidationSchema } from "utils/validations";
-import styles from "./change-password.styles";
-import { changePasswordService, useAppDispatch } from "store";
 import { ChangePasswordI } from "interfaces/user";
+import { ActivityIndicator } from "react-native";
+import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AppButton, Header, TextInput } from "components";
+import { changePasswordValidationSchema } from "utils/validations";
+import { RootState, changePasswordService, useAppDispatch, useAppSelector } from "store";
+import styles from "./change-password.styles";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state: RootState) => state.auth);
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
@@ -68,7 +71,14 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
         />
-        <AppButton preset="filled" text="Submit" onPress={handleSubmit} />
+
+        <AppButton
+          preset="filled"
+          text={loading ? "" : "Save"}
+          onPress={handleSubmit}
+          disabled={loading}
+          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+        />
       </View>
     </View>
   );

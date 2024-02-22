@@ -41,5 +41,5 @@ export * from "./Divider/Divider";
 export * from "./General/emptyListText/emptyListText";
 
 // Menu
-
 export * from "./Menu/menu";
+export * from "./PopupMenu/PopupMenu";

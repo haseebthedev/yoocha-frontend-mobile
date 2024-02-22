@@ -34,7 +34,13 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
     };
 
     if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload, (response) => {
+        if (response.error) {
+          console.error("Error:", response.error);
+        } else {
+          console.log("RESPONSE === ", response);
+        }
+      });
     }
   };
 

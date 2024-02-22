@@ -25,7 +25,7 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { RootState, UserI, useAppSelector } from "store";
+import { ParticipantI, RootState, UserI, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -33,7 +33,12 @@ export type NavigatorParamList = {
   contacts: undefined;
   profile: undefined;
 
-  usermessaging: { roomId: string; friendName: string };
+  usermessaging: {
+    roomId: string;
+    friendName: string;
+    participants: ParticipantI[];
+  };
+
   blockedusers: undefined;
   sendrequests: undefined;
   recieverequests: undefined;

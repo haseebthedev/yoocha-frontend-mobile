@@ -3,11 +3,11 @@ import { ActivityIndicator, FlatList, TouchableOpacity, View } from "react-nativ
 import { colors } from "theme";
 import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
-import { SendFriendReqPayloadI } from "interfaces";
+import { MenuOptionI, SendFriendReqPayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
 import { CONTACTS_DATA, contactScreenOptions } from "constant";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Menu, Text, UserSuggestionCard } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   GetFriendsSuggestionResponseI,
@@ -26,6 +26,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
 
   const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [menuOption, setMenuOption] = useState<MenuOptionI>({
+    id: 0,
+    title: "",
+  });
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -70,6 +74,13 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
         </TouchableOpacity>
+
+        <PopupMenu
+          isVisible={menuVisible}
+          setMenuVisible={setMenuVisible}
+          menuOptions={contactScreenOptions}
+          setMenuOption={setMenuOption}
+        />
       </View>
 
       <View style={styles.suggestionsContainer}>
@@ -130,8 +141,6 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         primaryButtonText="Remove"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
       />
-
-      <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
     </View>
   );
 };
