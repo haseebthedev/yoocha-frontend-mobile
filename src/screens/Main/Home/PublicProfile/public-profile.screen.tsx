@@ -1,11 +1,13 @@
 import { FC, useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { UserI } from "store";
+import { socket } from "socket";
 import { colors } from "theme";
-import { UserStatusI } from "interfaces";
 import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EventEnum, EventEnumRole } from "enums";
+import { RootState, UserI, useAppSelector } from "store";
+import { SendFriendReqPayloadI, UserStatusI } from "interfaces";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -15,6 +17,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   navigation,
   route,
 }) => {
+  const { user } = useAppSelector((state: RootState) => state.auth);
   const { item }: { item: UserI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Photos");
@@ -35,6 +38,19 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
       profilePic: selectedItem.profilePic,
     });
     setViewStatus((prev) => !prev);
+  };
+
+  const onAddFriendBtnPress = async () => {
+    const payload: SendFriendReqPayloadI = {
+      participants: [
+        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
+        { user: item._id, role: EventEnumRole.INVITEE },
+      ],
+    };
+
+    if (socket) {
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+    }
   };
 
   return (
@@ -85,10 +101,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
               </View>
 
               <View style={styles.addFriendBtnContainer}>
-                <AddFriendButton
-                  title="Add Friend"
-                  // onPress={onAddFriendBtnPress}
-                />
+                <AddFriendButton title="Add Friend" onPress={onAddFriendBtnPress} />
               </View>
 
               <View>

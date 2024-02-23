@@ -20,7 +20,7 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
         <View style={styles.textContainer}>
           <View style={styles.nameWithDate}>
             <Text preset="semiBold" text={item.name} numberOfLines={1} />
-            <Text preset="light" text={formatDate(item.notificationDateTime)} numberOfLines={1} />
+            <Text preset="light" style={styles.time} text={formatDate(item.notificationDateTime)} numberOfLines={1} />
           </View>
           <Text text={item.notification} numberOfLines={1} style={styles.notificationText} />
         </View>

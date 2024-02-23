@@ -11,7 +11,6 @@ export * from "./Outputs/app-header/app-header";
 export * from "./Cards/HomeUserStatus/HomeUserStatus";
 export * from "./Cards/UserSuggestion/UserSuggestion";
 export * from "./Cards/ChatCard/ChatCard";
-export * from "./Cards/AddUserSuggestionCard/AddUserSuggestionCard";
 export * from "./Cards/NotificationCard/NotificationCard";
 export * from "./Cards/MessageCard/MessageCard";
 export * from "./Cards/ContactUserCard/ContactUserCard";
@@ -42,5 +41,5 @@ export * from "./Divider/Divider";
 export * from "./General/emptyListText/emptyListText";
 
 // Menu
-
 export * from "./Menu/menu";
+export * from "./PopupMenu/PopupMenu";

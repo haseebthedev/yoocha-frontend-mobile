@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
     color: colors.textDim,
     marginBottom: hp(2),
   },
+  centerContent: {
+    alignItems: "center",
+  },
 });
 
 export default styles;

@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: wp(5),
-    paddingVertical: wp(1.2),
+    paddingVertical: hp(0.7),
   },
   profileContainer: {
     flexDirection: "row",
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     width: wp(14),
-    height: wp(14),
+    height: hp(7),
     borderRadius: wp(7),
   },
   textContainer: {
@@ -35,6 +35,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: hp(0.5),
+  },
+  time: {
+    fontSize: hp(1.3),
   },
 });
 

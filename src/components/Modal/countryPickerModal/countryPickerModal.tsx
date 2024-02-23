@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import CountryPicker, { CountryCode } from "react-native-country-picker-modal";
+import CountryPicker, { Country, CountryCode, TranslationLanguageCodeMap } from "react-native-country-picker-modal";
 
 interface CountryPickerModalI {
   visible: boolean;
-  setSelectedCountry: (name: string) => void;
-  setCountryModalVisible: (any) => void;
+  setSelectedCountry: (name: string | TranslationLanguageCodeMap) => void;
+  setCountryModalVisible: (value: boolean) => void;
 }
 
 const CountryPickerModal: React.FC<CountryPickerModalI> = ({ visible, setSelectedCountry, setCountryModalVisible }) => {
   const [countryCode, setCountryCode] = useState<CountryCode>("FR");
-  const [country, setCountry] = useState<any>(null);
+  const [country, setCountry] = useState<Country | null>(null);
 
-  const onSelect = (country: any) => {
+  const onSelect = (country: Country) => {
     setCountryCode(country.cca2);
     setCountry(country);
     setSelectedCountry(country.name);
-    setCountryModalVisible((prev: boolean) => !prev);
+    setCountryModalVisible(false);
   };
   return (
     <>

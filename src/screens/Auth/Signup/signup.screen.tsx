@@ -12,6 +12,8 @@ import styles from "./signup.styles";
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = signupValidationSchema;
@@ -28,9 +30,10 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           email: values.email,
           password: values.password,
         })
-      );
-
-      navigation.navigate("signin");
+      )
+        .unwrap()
+        .then((response) => {})
+        .catch((error) => console.log("error: ", error));
     } catch (error) {
       console.error("Error occurred during sign-up:", error);
     } finally {
@@ -89,9 +92,9 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
         <TextInput
           label="Confirm password"
           placeholder="Enter Confirm Password"
-          isPassword={showPassword}
-          rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
-          onRightPress={() => setShowPassword((prev) => !prev)}
+          isPassword={showConfirmPassword}
+          rightIcon={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+          onRightPress={() => setShowConfirmPassword((prev) => !prev)}
           onBlur={() => setFieldTouched("confirmPassword")}
           onChangeText={handleChange("confirmPassword")}
           error={errors.confirmPassword}

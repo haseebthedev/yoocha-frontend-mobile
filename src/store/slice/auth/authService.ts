@@ -94,7 +94,7 @@ export const updateUserService: any = createAsyncThunk(
         country: payload.country,
       });
 
-      showFlashMessage({ type: "success", message: "User Successfully Updated!" });
+      // showFlashMessage({ type: "success", message: "User Successfully Updated!" });
 
       return response.data;
     } catch (error: any) {

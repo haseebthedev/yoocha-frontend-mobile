@@ -1,4 +1,4 @@
-import { ListRoomItemI, MessageItemI } from "store";
+import { BlockedUserInfo, ListRoomItemI, MessageItemI } from "store";
 
 export interface ListMessageI {
   list: MessageItemI[];
@@ -13,3 +13,12 @@ export interface ListRoomsI {
   hasNext: boolean;
   listRefreshing: boolean;
 }
+
+export interface BlockedUsersI {
+  list: BlockedUserInfo[];
+  page: number;
+  hasNext: boolean;
+  listRefreshing: boolean;
+}
+
+export type UserRequestsI = BlockedUsersI;

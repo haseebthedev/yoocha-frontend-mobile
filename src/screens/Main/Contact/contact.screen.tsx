@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, TouchableOpacity, View } from "react-native";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Menu, Text, UserSuggestionCard } from "components";
-import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
-import { CONTACTS_DATA } from "constant";
-import styles from "./contact.styles";
+import { socket } from "socket";
+import { NavigatorParamList } from "navigators";
+import { MenuOptionI, SendFriendReqPayloadI } from "interfaces";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EventEnum, EventEnumRole } from "enums";
+import { CONTACTS_DATA, contactScreenOptions } from "constant";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   GetFriendsSuggestionResponseI,
@@ -15,20 +17,21 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { EventEnum, EventEnumRole } from "enums";
-import { SendFriendReqPayloadI } from "interfaces";
-import { socket } from "socket";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import styles from "./contact.styles";
 
 const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
+  const [menuOption, setMenuOption] = useState<MenuOptionI>({
+    id: 0,
+    title: "",
+  });
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
 
   const onAddFriendBtnPress = async (id: string) => {
     const payload: SendFriendReqPayloadI = {
@@ -38,18 +41,22 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       ],
     };
     if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload, (response) => {
+        console.log("Friend request sent successfully", response);
+      });
     }
   };
 
   const getFriendsSuggestions = async () => {
+    setIsLoading(true);
     await dispatch(getFriendsSuggestionService())
       .unwrap()
       .then((response: GetFriendsSuggestionResponseI) => {
         if (response?.result?.doc) {
           setSuggestedFriends(response?.result?.doc);
         }
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   useEffect(() => {
@@ -67,6 +74,13 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
           <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
         </TouchableOpacity>
+
+        <PopupMenu
+          isVisible={menuVisible}
+          setMenuVisible={setMenuVisible}
+          menuOptions={contactScreenOptions}
+          setMenuOption={setMenuOption}
+        />
       </View>
 
       <View style={styles.suggestionsContainer}>
@@ -85,7 +99,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
               horizontal
               data={suggestedFriends}
               keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-              contentContainerStyle={{ gap: 8 }}
+              contentContainerStyle={styles.suggestionListContainer}
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }: { item: UserI }) => (
                 <UserSuggestionCard
@@ -110,10 +124,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
 
         <FlatList
           data={CONTACTS_DATA}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <ContactUserCard item={item} btnTitle="Add" onBtnPress={() => console.log("join room")} />
+            <ContactUserCard item={item} btnTitle="Add" onAddBtnPress={() => console.log("join room")} />
           )}
         />
       </View>
@@ -127,8 +141,6 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         primaryButtonText="Remove"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
       />
-
-      <Menu isVisible={menuVisible} setMenuVisible={setMenuVisible} />
     </View>
   );
 };

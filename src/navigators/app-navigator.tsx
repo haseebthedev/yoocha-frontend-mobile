@@ -21,9 +21,11 @@ import {
   SuggestionsScreen,
   PublicProfileScreen,
   ChangePasswordScreen,
+  SendRequestsScreen,
+  RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { RootState, UserI, useAppSelector } from "store";
+import { ParticipantI, RootState, UserI, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -31,8 +33,15 @@ export type NavigatorParamList = {
   contacts: undefined;
   profile: undefined;
 
-  usermessaging: { roomId: string; friendName: string };
+  usermessaging: {
+    roomId: string;
+    friendName: string;
+    participants: ParticipantI[];
+  };
+
   blockedusers: undefined;
+  sendrequests: undefined;
+  recieverequests: undefined;
   settings: undefined;
   editprofile: undefined;
   appsettings: undefined;
@@ -63,12 +72,16 @@ const AppStack = () => {
       }}
       initialRouteName="main"
     >
+      <Stack.Screen name="signin" component={SignInScreen} />
+
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="notifications" component={NotificationScreen} />
       <Stack.Screen name="suggestions" component={SuggestionsScreen} />
       <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
       <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
+      <Stack.Screen name="sendrequests" component={SendRequestsScreen} />
+      <Stack.Screen name="recieverequests" component={RecieveRequestsScreen} />
       <Stack.Screen name="settings" component={SettingsScreen} />
       <Stack.Screen name="editprofile" component={EditProfileScreen} />
       <Stack.Screen name="appsettings" component={AppSettingsScreen} />

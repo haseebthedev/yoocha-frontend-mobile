@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
   },
+  subContainer: { flex: 1 },
   topHeaderBlock: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -47,6 +48,10 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     paddingTop: hp(5),
+  },
+  listContainerStyle: {
+    marginTop: hp(2),
+    paddingHorizontal: wp(5),
   },
 });
 

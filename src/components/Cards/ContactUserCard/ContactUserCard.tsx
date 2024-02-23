@@ -1,29 +1,38 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
+import { UserI } from "store";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
 
 interface ContactUserCardI {
-  item: any;
+  item: UserI;
   btnTitle: string;
-  onBtnPress: () => void;
+  onViewPress?: () => void;
+  onAddBtnPress: (id: string) => void;
 }
 
-const ContactUserCard = ({ item, btnTitle, onBtnPress }: ContactUserCardI) => {
+const ContactUserCard = ({ item, btnTitle, onAddBtnPress, onViewPress }: ContactUserCardI) => {
+  const username = `${item.firstname} ${item.lastname}`;
+  const location = item.country ? item.country : "Unknown";
+
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity style={styles.cardContainer} onPress={onViewPress}>
       <View style={styles.leftContainer}>
-        <Image source={{ uri: item.profilePic }} style={styles.profileImage} />
+        <Image
+          source={item.profilePicture ? { uri: item.profilePicture } : personPlaceholder}
+          style={styles.profileImage}
+        />
 
         <View>
-          <Text preset="semiBold" text={item.name} numberOfLines={1} />
-          <Text text={item.country} numberOfLines={1} />
+          <Text preset="semiBold" text={username} numberOfLines={1} />
+          <Text text={location} numberOfLines={1} />
         </View>
       </View>
 
-      <TouchableOpacity style={styles.sideBtn} onPress={onBtnPress}>
+      <TouchableOpacity style={styles.sideBtn} onPress={() => onAddBtnPress(item?._id)}>
         <Text text={btnTitle} />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
 

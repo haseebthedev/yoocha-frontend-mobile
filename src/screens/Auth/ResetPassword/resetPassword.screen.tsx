@@ -30,7 +30,7 @@ const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetP
       <Header headerText="Reset Password" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
 
       <View style={styles.form}>
-        <View style={{ alignItems: "center" }}>
+        <View style={styles.centerContent}>
           <Text text="Enter New Password" preset="largeHeading" />
           <Text
             text="Your new password must be different from previous password."
