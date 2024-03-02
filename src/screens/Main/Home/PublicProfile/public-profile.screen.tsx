@@ -53,7 +53,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
     if (socket) {
       socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
       setSentRequest(true);
-      showFlashMessage({ type: "success", message: "Friend Req has been sent." });
+      showFlashMessage({ type: "success", message: "Friend Req has been sent" });
     }
   };
 
