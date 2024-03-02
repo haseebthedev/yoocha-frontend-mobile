@@ -53,6 +53,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const [removeChatModalVisible, setRemoveChatModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [state, setState] = useState<ListMessageI>({
     list: [],
@@ -66,7 +67,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const blockUser = async () => {
     await dispatch(blockUserService({ roomId, userIdToBlock: otherUser?.user._id }))
       .unwrap()
-      .then(() => navigation.goBack());
+      .then(() => {
+        setIsUserBlock(true);
+        setBlockModalVisible((prev) => !prev);
+      });
   };
 
   const removeChat = async () => console.log("Remove Chat");
@@ -216,18 +220,22 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           />
         </View>
 
-        <View style={styles.inputFieldBlock}>
-          <TextInput
-            value={message}
-            placeholder="Type here..."
-            onChangeText={(text) => setMessage(text)}
-            placeholderTextColor={colors.textDim}
-            style={styles.inputfield}
-          />
-          <TouchableOpacity onPress={sendMessage}>
-            <Ionicons name="send" color={colors.primary} size={20} />
-          </TouchableOpacity>
-        </View>
+        {isUserBlock ? (
+          <EmptyListText text="User is Blocked!" />
+        ) : (
+          <View style={styles.inputFieldBlock}>
+            <TextInput
+              value={message}
+              placeholder="Type here..."
+              onChangeText={(text) => setMessage(text)}
+              placeholderTextColor={colors.textDim}
+              style={styles.inputfield}
+            />
+            <TouchableOpacity onPress={sendMessage}>
+              <Ionicons name="send" color={colors.primary} size={20} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <AlertBox

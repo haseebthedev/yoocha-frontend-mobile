@@ -1,10 +1,11 @@
+import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
+import { hp } from "utils/responsive";
 import { Text } from "components";
 import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
-import { hp } from "utils/responsive";
 
 interface MessageCardI {
   item: MessageItemI;
@@ -13,8 +14,11 @@ interface MessageCardI {
 
 const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const [isSentByUser, setIsSentByUser] = useState<boolean>(false);
 
-  const isSentByUser: boolean = item?.sender?._id === user?._id;
+  useEffect(() => {
+    setIsSentByUser(item?.sender?._id === user?._id || item?.sender === user?._id);
+  }, []);
 
   return (
     <View

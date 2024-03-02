@@ -27,6 +27,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
     hasNext: false,
     listRefreshing: false,
   });
+
   const [unblockUserId, setUnblockUserId] = useState<string>("");
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
@@ -39,7 +40,14 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   const confirmUnblockUser = async () => {
     await dispatch(unblockUserService({ userId: unblockUserId }));
     setAlertModalVisible((prev) => !prev);
-    navigation.goBack();
+
+    const filteredUsers = state.list.filter((user) => user.user?._id != unblockUserId);
+    setState((prev: BlockedUsersI) => ({
+      ...prev,
+      list: filteredUsers,
+      page: 1 + prev?.page,
+      hasNext: prev?.hasNext,
+    }));
   };
 
   const getBlockedUsers = async () => {
@@ -103,7 +111,9 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
           onEndReachedThreshold={0.4}
-          ListEmptyComponent={() => !isLoading && <EmptyListText text="Block List is Empty!" />}
+          ListEmptyComponent={() =>
+            !isLoading && state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
+          }
         />
       </View>
 
