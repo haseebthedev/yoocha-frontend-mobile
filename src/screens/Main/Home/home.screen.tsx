@@ -17,6 +17,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -70,8 +71,25 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     }
   };
 
-  const onRefresh = () => {
-    getChatRooms();
+  const onRefresh = async () => {
+    setState((prev: ListRoomsI) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+
+    await dispatch(getListRoomsService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListRoomResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListRoomsI) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
   };
 
   useEffect(() => {
@@ -133,7 +151,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
             ListEmptyComponent={() =>
-              !state.listRefreshing && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
+              !isLoading && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
             }
             refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
           />

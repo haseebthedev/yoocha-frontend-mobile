@@ -85,7 +85,11 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
           renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => removeRequest(item?.user?._id)} btnTitle="Remove" />
+            <ContactUserCard
+              item={item?.user}
+              onAddBtnPress={() => removeRequest(item?.user?._id)}
+              btnTitle="Pending"
+            />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}

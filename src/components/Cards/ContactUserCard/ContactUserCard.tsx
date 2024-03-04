@@ -8,7 +8,7 @@ interface ContactUserCardI {
   item: UserI;
   btnTitle: string;
   onViewPress?: () => void;
-  onAddBtnPress: (id: string) => void;
+  onAddBtnPress: () => void;
 }
 
 const ContactUserCard = ({ item, btnTitle, onAddBtnPress, onViewPress }: ContactUserCardI) => {
@@ -29,7 +29,7 @@ const ContactUserCard = ({ item, btnTitle, onAddBtnPress, onViewPress }: Contact
         </View>
       </View>
 
-      <TouchableOpacity style={styles.sideBtn} onPress={() => onAddBtnPress(item?._id)}>
+      <TouchableOpacity style={styles.sideBtn} onPress={() => onAddBtnPress()}>
         <Text text={btnTitle} />
       </TouchableOpacity>
     </TouchableOpacity>

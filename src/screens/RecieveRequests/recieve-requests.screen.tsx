@@ -4,7 +4,7 @@ import { colors } from "theme";
 import { socket } from "socket";
 import { showMessage } from "react-native-flash-message";
 import { EventEnum, EventEnumRole } from "enums";
-import { UserRequestsI } from "interfaces";
+import { BlockedUsersI, UserRequestsI } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
@@ -27,8 +27,10 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const [friendId, setFriendId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+
   const [state, setState] = useState<UserRequestsI>({
     list: [],
     page: 1,
@@ -38,26 +40,30 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const removeRequest = async (userId: string) => setAlertModalVisible((prev) => !prev);
-
-  const acceptRequest = async (roomId: string) => {
-    //setAlertModalVisible((prev) => !prev);
-
+  const acceptRequest = async (roomId: string, fId: string) => {
+    setAlertModalVisible((prev) => !prev);
+    setFriendId(fId);
     const payload = {
       roomId: roomId,
       inviteeId: user?._id,
     };
 
-    console.log("payload === ", payload);
-
     if (socket) {
       socket.emit(EventEnum.JOIN_ROOM, payload);
     }
-
-    // navigation.goBack();
   };
 
-  const confirmRemoveRequest = async () => setAlertModalVisible((prev) => !prev);
+  const confirmAcceptRequest = async () => {
+    const filteredUsers = state.list.filter((user) => user.user?._id != friendId);
+    setState((prev: BlockedUsersI) => ({
+      ...prev,
+      list: filteredUsers,
+      page: 1 + prev?.page,
+      hasNext: prev?.hasNext,
+    }));
+
+    setAlertModalVisible((prev) => !prev);
+  };
 
   const getUserRequests = async () => {
     setIsLoading(true);
@@ -115,7 +121,11 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
           renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => acceptRequest(item?._id)} btnTitle="Accept" />
+            <ContactUserCard
+              item={item?.user}
+              onAddBtnPress={() => acceptRequest(item?._id, item?.user?._id)}
+              btnTitle="Accept"
+            />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
@@ -132,7 +142,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         secondaryButtonText="Cancel"
         primaryButtonText="Accept"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
-        primaryOnClick={confirmRemoveRequest}
+        primaryOnClick={confirmAcceptRequest}
       />
     </View>
   );

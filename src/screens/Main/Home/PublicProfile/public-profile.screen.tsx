@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { socket } from "socket";
 import { colors } from "theme";
@@ -12,6 +12,7 @@ import { AddFriendButton, Header, StatusModal, Text } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./public-profile.styles";
+import { showFlashMessage } from "utils/flashMessage";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "publicProfile">> = ({
   navigation,
@@ -21,6 +22,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   const { item }: { item: UserI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Photos");
+  const [sentRequest, setSentRequest] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
     name: "",
@@ -50,6 +52,8 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
 
     if (socket) {
       socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+      setSentRequest(true);
+      showFlashMessage({ type: "success", message: "Friend Req has been sent" });
     }
   };
 
@@ -101,7 +105,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
               </View>
 
               <View style={styles.addFriendBtnContainer}>
-                <AddFriendButton title="Add Friend" onPress={onAddFriendBtnPress} />
+                <AddFriendButton title={sentRequest ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
               </View>
 
               <View>
