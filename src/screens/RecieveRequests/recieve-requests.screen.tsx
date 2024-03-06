@@ -2,11 +2,11 @@ import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
 import { socket } from "socket";
-import { showMessage } from "react-native-flash-message";
-import { EventEnum, EventEnumRole } from "enums";
-import { BlockedUsersI, UserRequestsI } from "interfaces";
+import { showFlashMessage } from "utils/flashMessage";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EventEnum, EventEnumRole } from "enums";
+import { BlockedUsersI, UserRequestsI } from "interfaces";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import {
   BlockedUserInfo,
@@ -50,6 +50,8 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
     if (socket) {
       socket.emit(EventEnum.JOIN_ROOM, payload);
+
+      showFlashMessage({ type: "success", message: "Request is Accepted!" });
     }
   };
 

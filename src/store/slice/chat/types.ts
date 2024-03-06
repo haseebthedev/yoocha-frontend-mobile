@@ -67,7 +67,7 @@ export interface LoadingI {
 
 export interface GetFriendsSuggestionResponseI {
   result: {
-    doc: UserI[];
+    users: UserI[];
   };
 }
 
@@ -95,6 +95,8 @@ export interface BlockedUserInfo {
   blockedBy: string;
   user: UserI;
 }
+
+export type UserInfo = BlockedUserInfo;
 
 export interface ListBlockedUsersResponseI {
   result: {

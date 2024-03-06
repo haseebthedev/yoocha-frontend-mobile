@@ -2,6 +2,8 @@ export interface SendFriendReqPayloadI {
   participants: { user: string; role: string }[];
 }
 
+export type CancelFriendReqPayloadI = SendFriendReqPayloadI;
+
 export interface JoinRoomPayloadI {
   roomId: string;
   inviteeId: string;

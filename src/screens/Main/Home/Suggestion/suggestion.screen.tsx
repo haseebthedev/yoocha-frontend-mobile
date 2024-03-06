@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
-import { SendFriendReqPayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { ContactUserCard, EmptyListText, Header, SearchBar, Text } from "components";
+import { SendFriendReqPayloadI, SuggestedFriendI } from "interfaces";
+import { ContactUserCard, EmptyListText, Header, SearchBar } from "components";
 import {
   GetFriendsSuggestionResponseI,
   RootState,
@@ -15,12 +15,13 @@ import {
   useAppSelector,
 } from "store";
 import styles from "./suggestion.styles";
+import { showFlashMessage } from "utils/flashMessage";
 
 const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggestions">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
+  const [suggestedFriends, setSuggestedFriends] = useState<SuggestedFriendI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
@@ -34,13 +35,17 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
     };
 
     if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload, (response) => {
-        if (response.error) {
-          console.error("Error:", response.error);
-        } else {
-          console.log("RESPONSE === ", response);
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
+      showFlashMessage({ type: "success", message: "Friend Request has been sent!" });
+
+      const updatedSuggestedFriends = suggestedFriends.map((suggestedFriend) => {
+        if (suggestedFriend.user._id === id) {
+          return { ...suggestedFriend, reqSent: true };
         }
+        return suggestedFriend;
       });
+
+      setSuggestedFriends(updatedSuggestedFriends);
     }
   };
 
@@ -49,8 +54,13 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
     await dispatch(getFriendsSuggestionService())
       .unwrap()
       .then((response: GetFriendsSuggestionResponseI) => {
-        if (response?.result?.doc) {
-          setSuggestedFriends(response?.result?.doc);
+        if (response?.result?.users) {
+          const suggestedUsers = response.result.users.map((user: UserI) => ({
+            user,
+            reqSent: false,
+          }));
+
+          setSuggestedFriends(suggestedUsers);
         }
       })
       .finally(() => setIsLoading(false));
@@ -74,15 +84,15 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
         ) : (
           <FlatList
             data={suggestedFriends}
-            keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+            keyExtractor={(item: SuggestedFriendI, index: number) => item?.user._id || index.toString()}
             contentContainerStyle={styles.listContainerStyle}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: SuggestedFriendI }) => (
               <ContactUserCard
-                item={item}
-                btnTitle="Add"
-                onAddBtnPress={() => onAddBtnPress(item._id)}
-                onViewPress={() => onViewPress(item)}
+                item={item.user}
+                btnTitle={item.reqSent ? "Pending" : "Add"}
+                onAddBtnPress={() => onAddBtnPress(item.user._id)}
+                onViewPress={() => onViewPress(item.user)}
               />
             )}
             ListEmptyComponent={() =>
