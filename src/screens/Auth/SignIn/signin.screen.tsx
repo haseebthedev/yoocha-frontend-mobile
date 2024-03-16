@@ -24,6 +24,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
     await dispatch(signinService({ email, password }))
       .unwrap()
       .then((response) => navigation.navigate("main"))
+      .catch((error) => console.log(error.message))
       .finally(() => setLoading(false));
   };
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

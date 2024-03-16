@@ -1,4 +1,4 @@
-import { BlockedUserInfo, ListRoomItemI, MessageItemI } from "store";
+import { BlockedUserInfo, ListRoomItemI, MessageItemI, UserI } from "store";
 
 export interface ListMessageI {
   list: MessageItemI[];
@@ -22,3 +22,8 @@ export interface BlockedUsersI {
 }
 
 export type UserRequestsI = BlockedUsersI;
+
+export interface SuggestedFriendI {
+  user: UserI;
+  reqSent: boolean;
+}

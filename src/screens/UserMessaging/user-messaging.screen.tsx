@@ -42,7 +42,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [otherUser, setOtherUser] = useState<ParticipantI>();
-
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
     id: 0,
@@ -151,7 +150,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   useEffect(() => {
     if (socket) {
-      socket.on("receive_message", (payload: any) => {
+      socket.on(EventEnum.RECIEVE_MESSAGE, (payload: any) => {
         setState((prev: ListMessageI) => ({
           ...prev,
           list: prev.list.concat(payload._doc),

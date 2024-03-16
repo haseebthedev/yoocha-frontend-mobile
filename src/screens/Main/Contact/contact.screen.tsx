@@ -3,9 +3,9 @@ import { ActivityIndicator, FlatList, TouchableOpacity, View } from "react-nativ
 import { colors } from "theme";
 import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
-import { MenuOptionI, SendFriendReqPayloadI } from "interfaces";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
+import { MenuOptionI, SendFriendReqPayloadI } from "interfaces";
 import { CONTACTS_DATA, contactScreenOptions } from "constant";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -41,10 +41,11 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       ],
     };
     if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload, (response) => {
-        console.log("Friend request sent successfully", response);
-      });
+      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
     }
+
+    const filteredSuggestedFriends = suggestedFriends.filter((user) => user._id != id);
+    setSuggestedFriends(filteredSuggestedFriends);
   };
 
   const getFriendsSuggestions = async () => {
@@ -52,8 +53,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     await dispatch(getFriendsSuggestionService())
       .unwrap()
       .then((response: GetFriendsSuggestionResponseI) => {
-        if (response?.result?.doc) {
-          setSuggestedFriends(response?.result?.doc);
+        if (response?.result?.users) {
+          setSuggestedFriends(response?.result?.users);
         }
       })
       .finally(() => setIsLoading(false));
@@ -109,10 +110,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 />
               )}
               ListEmptyComponent={() =>
-                !isLoading &&
-                suggestedFriends.length === 0 && (
-                  <EmptyListText text="There are no messages yet. Start a conversation!" />
-                )
+                !isLoading && suggestedFriends.length === 0 && <EmptyListText text="No Suggestions!" />
               }
             />
           )}

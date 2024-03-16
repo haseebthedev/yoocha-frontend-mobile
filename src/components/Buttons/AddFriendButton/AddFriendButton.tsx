@@ -6,13 +6,14 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 interface ButtonI extends ButtonProps {
   onPress?: () => void;
+  title: string;
 }
 
-const AddFriendButton = ({ onPress }: ButtonI) => {
+const AddFriendButton = ({ onPress, title }: ButtonI) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.addFriendBlock}>
       <Ionicons name="person-add-outline" color={colors.white} size={13} />
-      <Text text="Add Friend" style={styles.addFriendText} />
+      <Text text={title} style={styles.addFriendText} />
     </TouchableOpacity>
   );
 };

@@ -14,11 +14,8 @@ interface MessageCardI {
 
 const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const [isSentByUser, setIsSentByUser] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsSentByUser(item?.sender?._id === user?._id || item?.sender === user?._id);
-  }, []);
+  const isSentByUser: boolean = item?.sender?._id === user?._id;
 
   return (
     <View

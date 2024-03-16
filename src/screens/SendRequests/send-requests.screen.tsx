@@ -1,19 +1,31 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
-import { EventEnumRole } from "enums";
-import { UserRequestsI } from "interfaces";
+import { socket } from "socket";
+import { RefreshControl } from "react-native";
+import { showFlashMessage } from "utils/flashMessage";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EventEnum, EventEnumRole } from "enums";
+import { CancelFriendReqPayloadI, UserRequestsI } from "interfaces";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
-import { BlockedUserInfo, ListUserRequestsResponseI, getUsersRequestsService, useAppDispatch } from "store";
+import {
+  ListUserRequestsResponseI,
+  RootState,
+  UserInfo,
+  getUsersRequestsService,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import styles from "./send-requests.styles";
 
 const LIMIT: number = 10;
 
 const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendrequests">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const [friendId, setFriendId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [state, setState] = useState<UserRequestsI>({
@@ -25,9 +37,34 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const removeRequest = async (userId: string) => setAlertModalVisible((prev) => !prev);
+  const removeRequest = async (userId: string) => {
+    setAlertModalVisible((prev) => !prev);
+    setFriendId(userId);
+  };
 
-  const confirmRemoveRequest = async () => setAlertModalVisible((prev) => !prev);
+  const confirmRemoveRequest = async () => {
+    const payload: CancelFriendReqPayloadI = {
+      participants: [
+        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
+        { user: friendId, role: EventEnumRole.INVITEE },
+      ],
+    };
+
+    if (socket) {
+      socket.emit(EventEnum.CANCEL_FRIEND_REQUEST, payload);
+      showFlashMessage({ type: "success", message: "Request is removed!" });
+    }
+
+    const filteredUsers = state.list.filter((user) => user.user?._id != friendId);
+    setState((prev: UserRequestsI) => ({
+      ...prev,
+      list: filteredUsers,
+      page: 1 + prev?.page,
+      hasNext: prev?.hasNext,
+    }));
+
+    setAlertModalVisible((prev) => !prev);
+  };
 
   const getUserRequests = async () => {
     setIsLoading(true);
@@ -50,6 +87,27 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
     if (!isLoading && state.hasNext) {
       getUserRequests();
     }
+  };
+
+  const onRefresh = async () => {
+    setState((prev: UserRequestsI) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+
+    await dispatch(getUsersRequestsService({ role: EventEnumRole.INITIATOR, page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListUserRequestsResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: UserRequestsI) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
   };
 
   const renderLoader = () => {
@@ -83,8 +141,8 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
 
         <FlatList
           data={state.list}
-          keyExtractor={(item: BlockedUserInfo) => item._id}
-          renderItem={({ item }: { item: BlockedUserInfo }) => (
+          keyExtractor={(item: UserInfo) => item._id}
+          renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
               item={item?.user}
               onAddBtnPress={() => removeRequest(item?.user?._id)}
@@ -95,6 +153,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           ListFooterComponent={renderLoader}
           onEndReachedThreshold={0.4}
           ListEmptyComponent={() => !isLoading && <EmptyListText text="Requests List is Empty!" />}
+          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
         />
       </View>
 

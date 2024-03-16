@@ -13,6 +13,7 @@ import {
 } from "store";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import styles from "./blocked-users.styles";
+import { RefreshControl } from "react-native";
 
 const LIMIT: number = 10;
 
@@ -73,6 +74,27 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
     }
   };
 
+  const onRefresh = async () => {
+    setState((prev: BlockedUsersI) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+
+    await dispatch(getBlockedUsersService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListBlockedUsersResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: BlockedUsersI) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
+  };
+
   const renderLoader = () => {
     return isLoading ? (
       <View style={styles.loaderStyle}>
@@ -114,6 +136,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           ListEmptyComponent={() =>
             !isLoading && state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
           }
+          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
         />
       </View>
 
