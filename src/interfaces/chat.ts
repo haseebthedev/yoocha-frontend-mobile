@@ -1,29 +1,15 @@
-import { BlockedUserInfo, ListRoomItemI, MessageItemI, UserI } from "store";
+import { UserInfo } from "store";
 
-export interface ListMessageI {
-  list: MessageItemI[];
+export interface UserRequestsI {
+  list: UserInfo[];
   page: number;
   hasNext: boolean;
   listRefreshing: boolean;
 }
 
-export interface ListRoomsI {
-  list: ListRoomItemI[];
+export interface ListWithPagination<T> {
+  list: T[];
   page: number;
   hasNext: boolean;
   listRefreshing: boolean;
-}
-
-export interface BlockedUsersI {
-  list: BlockedUserInfo[];
-  page: number;
-  hasNext: boolean;
-  listRefreshing: boolean;
-}
-
-export type UserRequestsI = BlockedUsersI;
-
-export interface SuggestedFriendI {
-  user: UserI;
-  reqSent: boolean;
 }

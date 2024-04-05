@@ -43,35 +43,33 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   };
 
   const confirmRemoveRequest = async () => {
-    const payload: CancelFriendReqPayloadI = {
-      participants: [
-        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
-        { user: friendId, role: EventEnumRole.INVITEE },
-      ],
-    };
-
-    if (socket) {
-      socket.emit(EventEnum.CANCEL_FRIEND_REQUEST, payload);
-      showFlashMessage({ type: "success", message: "Request is removed!" });
-    }
-
-    const filteredUsers = state.list.filter((user) => user.user?._id != friendId);
-    setState((prev: UserRequestsI) => ({
-      ...prev,
-      list: filteredUsers,
-      page: 1 + prev?.page,
-      hasNext: prev?.hasNext,
-    }));
-
-    setAlertModalVisible((prev) => !prev);
+    // const payload: CancelFriendReqPayloadI = {
+    //   participants: [
+    //     { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
+    //     { user: friendId, role: EventEnumRole.INVITEE },
+    //   ],
+    // };
+    // if (socket) {
+    //   socket.emit(EventEnum.CANCEL_FRIEND_REQUEST, payload);
+    //   showFlashMessage({ type: "success", message: "Request is removed!" });
+    // }
+    // const filteredUsers = state.list.filter((user) => user.user?._id != friendId);
+    // setState((prev: UserRequestsI) => ({
+    //   ...prev,
+    //   list: filteredUsers,
+    //   page: 1 + prev?.page,
+    //   hasNext: prev?.hasNext,
+    // }));
+    // setAlertModalVisible((prev) => !prev);
   };
 
   const getUserRequests = async () => {
     setIsLoading(true);
-    await dispatch(getUsersRequestsService({ role: EventEnumRole.INITIATOR, page: state.page, limit: LIMIT }))
+    await dispatch(getUsersRequestsService({ type: EventEnumRole.INITIATOR, page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListUserRequestsResponseI) => {
         if (response?.result?.docs) {
+          console.log("send reqs === ", response?.result?.docs);
           setState((prev: UserRequestsI) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
@@ -144,8 +142,10 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           keyExtractor={(item: UserInfo) => item._id}
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
-              item={item?.user}
-              onAddBtnPress={() => removeRequest(item?.user?._id)}
+              item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
+              onAddBtnPress={() => {
+                // removeRequest(item?.user?._id);
+              }}
               btnTitle="Pending"
             />
           )}

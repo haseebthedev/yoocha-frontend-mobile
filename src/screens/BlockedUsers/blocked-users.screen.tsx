@@ -1,15 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
-import { BlockedUsersI } from "interfaces";
+import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
   BlockedUserInfo,
   ListBlockedUsersResponseI,
+  RootState,
+  UserInfo,
   getBlockedUsersService,
   unblockUserService,
   useAppDispatch,
+  useAppSelector,
 } from "store";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import styles from "./blocked-users.styles";
@@ -19,10 +22,11 @@ const LIMIT: number = 10;
 
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [state, setState] = useState<BlockedUsersI>({
+  const [state, setState] = useState<ListWithPagination<BlockedUserInfo>>({
     list: [],
     page: 1,
     hasNext: false,
@@ -34,21 +38,23 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
   const unblockUser = async (userId: string) => {
+    console.log("id === ", userId);
+
     setAlertModalVisible((prev) => !prev);
     setUnblockUserId(userId);
   };
 
   const confirmUnblockUser = async () => {
-    await dispatch(unblockUserService({ userId: unblockUserId }));
+    await dispatch(unblockUserService({ id: unblockUserId }));
     setAlertModalVisible((prev) => !prev);
 
-    const filteredUsers = state.list.filter((user) => user.user?._id != unblockUserId);
-    setState((prev: BlockedUsersI) => ({
-      ...prev,
-      list: filteredUsers,
-      page: 1 + prev?.page,
-      hasNext: prev?.hasNext,
-    }));
+    // const filteredUsers = state.list.filter((user) => user.user?._id != unblockUserId);
+    // setState((prev: ListWithPagination<BlockedUserInfo>) => ({
+    //   ...prev,
+    //   list: filteredUsers,
+    //   page: 1 + prev?.page,
+    //   hasNext: prev?.hasNext,
+    // }));
   };
 
   const getBlockedUsers = async () => {
@@ -57,7 +63,8 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
       .unwrap()
       .then((response: ListBlockedUsersResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: BlockedUsersI) => ({
+          console.log("res === ", response?.result?.docs);
+          setState((prev: ListWithPagination<BlockedUserInfo>) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
@@ -75,7 +82,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const onRefresh = async () => {
-    setState((prev: BlockedUsersI) => ({
+    setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
       listRefreshing: true,
     }));
@@ -84,7 +91,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
       .unwrap()
       .then((response: ListBlockedUsersResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: BlockedUsersI) => ({
+          setState((prev: ListWithPagination<BlockedUserInfo>) => ({
             ...prev,
             list: response?.result?.docs,
             page: 1 + prev?.page,
@@ -127,8 +134,12 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
         <FlatList
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
-          renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => unblockUser(item?.user?._id)} btnTitle="Unblock" />
+          renderItem={({ item }: { item: UserInfo }) => (
+            <ContactUserCard
+              item={item?.initiator?._id === user?._id ? item.invitee : item.initiator}
+              onAddBtnPress={() => unblockUser(item?._id)}
+              btnTitle="Unblock"
+            />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}

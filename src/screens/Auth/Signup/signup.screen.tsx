@@ -32,7 +32,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
         })
       )
         .unwrap()
-        .then((response) => {})
+        .then((response) => navigation.navigate("signin"))
         .catch((error) => console.log("error: ", error));
     } catch (error) {
       console.error("Error occurred during sign-up:", error);

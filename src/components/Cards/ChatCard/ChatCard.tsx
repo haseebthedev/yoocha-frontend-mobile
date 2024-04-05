@@ -11,9 +11,9 @@ interface ChatCardI {
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const friend = item.participants.find((participant) => participant.user?._id !== user?._id);
-  const fullName: string = friend?.user ? `${friend.user.firstname} ${friend.user.lastname}` : "Friend Name Here...";
-  const profileImage = friend?.user?.profilePicture;
+  const friend = item.initiator._id === user?._id ? item.invitee : item.initiator;
+  const fullName: string = friend ? `${friend.firstname} ${friend.lastname}` : "Friend Name Here...";
+  const profileImage = friend?.profilePicture;
 
   return (
     <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)}>

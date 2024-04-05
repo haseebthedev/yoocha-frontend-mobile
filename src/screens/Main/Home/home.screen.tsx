@@ -3,7 +3,7 @@ import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } f
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListRoomsI, UserStatusI } from "interfaces";
+import { ListWithPagination, UserStatusI } from "interfaces";
 import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
 import { Text, HomeUserStatus, ChatCard, StatusModal, Divider, EmptyListText } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
@@ -17,7 +17,6 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   const dispatch = useAppDispatch();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -27,7 +26,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     statusImage: "",
   });
 
-  const [state, setState] = useState<ListRoomsI>({
+  const [state, setState] = useState<ListWithPagination<ListRoomItemI>>({
     list: [],
     page: 1,
     hasNext: false,
@@ -53,7 +52,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListRoomsI) => ({
+          setState((prev: ListWithPagination<ListRoomItemI>) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
@@ -72,7 +71,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   };
 
   const onRefresh = async () => {
-    setState((prev: ListRoomsI) => ({
+    setState((prev: ListWithPagination<ListRoomItemI>) => ({
       ...prev,
       listRefreshing: true,
     }));
@@ -81,7 +80,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListRoomsI) => ({
+          setState((prev: ListWithPagination<ListRoomItemI>) => ({
             ...prev,
             list: response?.result?.docs,
             page: 1 + prev?.page,
@@ -139,7 +138,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
                   navigation.navigate("usermessaging", {
                     roomId: item._id,
                     friendName: fullName,
-                    participants: item.participants,
+                    item: item,
                   })
                 }
               />

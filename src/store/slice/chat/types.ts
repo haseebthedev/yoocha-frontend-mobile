@@ -12,8 +12,10 @@ export interface ParticipantI {
 
 export interface ListRoomItemI {
   _id: string;
-  participants: ParticipantI[];
   status: string;
+  initiator: UserI;
+  invitee: UserI;
+  blockedBy: null;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,11 +32,27 @@ export interface ListRoomResponseI {
     hasNextPage: boolean;
   };
 }
-
 export interface ListMessagePayloadI {
   roomId: string;
   page?: number;
   limit?: number;
+}
+
+export interface SendMessagePayloadI {
+  roomId: string;
+  message: string;
+}
+
+export interface SendMessageResponseI {
+  result: {
+    chatRoomId: string;
+    sender: string;
+    message: string;
+    files: string[] | null;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }
 
 export interface MessageItemI {
@@ -67,18 +85,24 @@ export interface LoadingI {
 
 export interface GetFriendsSuggestionResponseI {
   result: {
-    users: UserI[];
+    docs: UserI[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
   };
 }
 
 export interface BlockUserPayloadI {
-  roomId: string;
-  userIdToBlock: string;
+  id: string;
 }
 
 export interface BlockUserResponseI {
   result: {
-    message: string;
+    status: string;
   };
 }
 
@@ -87,16 +111,27 @@ export interface ListBlockedUsersPayloadI {
   limit?: number;
 }
 
+export type SuggestedFriendsPayloadI = ListBlockedUsersPayloadI;
+
 export interface BlockedUserInfo {
   _id: string;
   status: string;
   createdAt: string;
   updatedAt: string;
   blockedBy: string;
-  user: UserI;
+  initiator: UserI;
+  invitee: UserI;
 }
 
-export type UserInfo = BlockedUserInfo;
+export interface UserInfo {
+  _id: string;
+  status: string;
+  initiator: UserI;
+  invitee: UserI;
+  createdAt: string;
+  updatedAt: string;
+  blockedBy: string;
+}
 
 export interface ListBlockedUsersResponseI {
   result: {
@@ -112,7 +147,7 @@ export interface ListBlockedUsersResponseI {
 }
 
 export interface UnblockUserPayloadI {
-  userId: string;
+  id: string;
 }
 
 export interface UnblockUserResponseI {
@@ -122,9 +157,45 @@ export interface UnblockUserResponseI {
 }
 
 export interface ListUserRequestsPayloadI {
-  role: string;
+  type: string;
   page?: number;
   limit?: number;
 }
 
-export type ListUserRequestsResponseI = ListBlockedUsersResponseI;
+export interface ListUserRequestsResponseI {
+  result: {
+    docs: UserInfo[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
+export type ExplorePeoplePayloadI = ListBlockedUsersPayloadI;
+
+export interface ExplorePeopleResponseI {
+  result: {
+    docs: UserI[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
+export interface sendFriendReqPayloadI {
+  inviteeId: string;
+}
+
+export interface sendFriendReqResponseI {
+  result: {
+    status: string;
+  };
+}

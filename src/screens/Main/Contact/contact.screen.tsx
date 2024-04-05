@@ -1,67 +1,158 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
-import { socket } from "socket";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { EventEnum, EventEnumRole } from "enums";
-import { MenuOptionI, SendFriendReqPayloadI } from "interfaces";
-import { CONTACTS_DATA, contactScreenOptions } from "constant";
+import { ListWithPagination, MenuOptionI } from "interfaces";
+import { contactScreenOptions } from "constant";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
+  ExplorePeopleResponseI,
   GetFriendsSuggestionResponseI,
   RootState,
   UserI,
+  getExplorePeopleService,
   getFriendsSuggestionService,
+  sendFriendRequest,
   useAppDispatch,
   useAppSelector,
 } from "store";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./contact.styles";
 
+const LIMIT: number = 10;
+
 const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [suggestedFriends, setSuggestedFriends] = useState<UserI[]>([]);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [menuOption, setMenuOption] = useState<MenuOptionI>({
-    id: 0,
-    title: "",
-  });
+  const [menuOption, setMenuOption] = useState<MenuOptionI>({ id: 0, title: "" });
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [explorePeople, setExplorePeople] = useState<ListWithPagination<UserI>>({
+    list: [],
+    page: 1,
+    hasNext: false,
+    listRefreshing: false,
+  });
+  const [suggestedFriends, setSuggestedFriends] = useState<ListWithPagination<UserI>>({
+    list: [],
+    page: 1,
+    hasNext: false,
+    listRefreshing: false,
+  });
 
-  const onAddFriendBtnPress = async (id: string) => {
-    const payload: SendFriendReqPayloadI = {
-      participants: [
-        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
-        { user: id, role: EventEnumRole.INVITEE },
-      ],
-    };
-    if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
-    }
+  const onAddFriendBtnPress = async (id: string, state: any, setState: Function) => {
+    await dispatch(sendFriendRequest({ inviteeId: id }))
+      .unwrap()
+      .then((response) => {
+        if (response?.result?.status) {
+          const updatedList = state.list.filter((user) => user._id !== id);
+          setState((prevState) => ({
+            ...prevState,
+            list: updatedList,
+          }));
+        }
+      })
+      .catch((error) => console.log("Error sending friend request:", error));
+  };
 
-    const filteredSuggestedFriends = suggestedFriends.filter((user) => user._id != id);
-    setSuggestedFriends(filteredSuggestedFriends);
+  const onFriendSuggestionRefresh = async () => {
+    setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: GetFriendsSuggestionResponseI) => {
+        if (response?.result?.docs) {
+          setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
+  };
+
+  const onExplorePeopleRefresh = async () => {
+    setExplorePeople((prev: ListWithPagination<UserI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+
+    await dispatch(getExplorePeopleService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ExplorePeopleResponseI) => {
+        if (response?.result?.docs) {
+          setExplorePeople((prev: ListWithPagination<UserI>) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
   };
 
   const getFriendsSuggestions = async () => {
-    setIsLoading(true);
-    await dispatch(getFriendsSuggestionService())
+    setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+    await dispatch(getFriendsSuggestionService({ page: suggestedFriends.page, limit: LIMIT }))
       .unwrap()
       .then((response: GetFriendsSuggestionResponseI) => {
-        if (response?.result?.users) {
-          setSuggestedFriends(response?.result?.users);
+        if (response?.result?.docs) {
+          setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+            ...prev,
+            list: prev.list.concat(response?.result?.docs),
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
         }
-      })
-      .finally(() => setIsLoading(false));
+      });
+  };
+
+  const getExplorePeople = async () => {
+    setExplorePeople((prev: ListWithPagination<UserI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
+
+    await dispatch(getExplorePeopleService({ page: explorePeople.page, limit: LIMIT }))
+      .unwrap()
+      .then((response: ExplorePeopleResponseI) => {
+        if (response?.result?.docs) {
+          setExplorePeople((prev: ListWithPagination<UserI>) => ({
+            ...prev,
+            list: prev.list.concat(response?.result?.docs),
+            page: 1 + prev?.page,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
   };
 
   useEffect(() => {
     getFriendsSuggestions();
+
+    return () => {
+      setSuggestedFriends({ ...suggestedFriends, list: [], page: 1, hasNext: false });
+    };
+  }, []);
+
+  useEffect(() => {
+    getExplorePeople();
+
+    return () => {
+      setExplorePeople({ ...explorePeople, list: [], page: 1, hasNext: false });
+    };
   }, []);
 
   return (
@@ -91,14 +182,14 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           onRightPress={() => navigation.navigate("suggestions")}
         />
         <>
-          {isLoading ? (
+          {suggestedFriends.listRefreshing ? (
             <View style={styles.loaderContainer}>
               <ActivityIndicator color={colors.primary} />
             </View>
           ) : (
             <FlatList
               horizontal
-              data={suggestedFriends}
+              data={suggestedFriends.list}
               keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
               contentContainerStyle={styles.suggestionListContainer}
               showsHorizontalScrollIndicator={false}
@@ -106,11 +197,15 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 <UserSuggestionCard
                   item={item}
                   onViewPress={() => navigation.navigate("publicProfile", { item })}
-                  onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
+                  onAddFriendBtnPress={() => onAddFriendBtnPress(item._id, suggestedFriends, setSuggestedFriends)}
                 />
               )}
               ListEmptyComponent={() =>
-                !isLoading && suggestedFriends.length === 0 && <EmptyListText text="No Suggestions!" />
+                !suggestedFriends.listRefreshing &&
+                suggestedFriends.list.length === 0 && <EmptyListText text="No Suggestions!" />
+              }
+              refreshControl={
+                <RefreshControl refreshing={suggestedFriends.listRefreshing} onRefresh={onFriendSuggestionRefresh} />
               }
             />
           )}
@@ -120,14 +215,32 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       <View style={styles.exploreContainer}>
         <AppHeading title="Explore" />
 
-        <FlatList
-          data={CONTACTS_DATA}
-          keyExtractor={(item) => item._id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <ContactUserCard item={item} btnTitle="Add" onAddBtnPress={() => console.log("join room")} />
-          )}
-        />
+        {explorePeople.listRefreshing ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : (
+          <FlatList
+            data={explorePeople.list}
+            keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <ContactUserCard
+                item={item}
+                btnTitle={"Add"}
+                onAddBtnPress={() => onAddFriendBtnPress(item._id, explorePeople, setExplorePeople)}
+                onViewPress={() => navigation.navigate("publicProfile", { item })}
+              />
+            )}
+            ListEmptyComponent={() =>
+              !explorePeople.listRefreshing &&
+              explorePeople.list.length === 0 && <EmptyListText text="No People to Explore!" />
+            }
+            refreshControl={
+              <RefreshControl refreshing={explorePeople.listRefreshing} onRefresh={onExplorePeopleRefresh} />
+            }
+          />
+        )}
       </View>
 
       <AlertBox

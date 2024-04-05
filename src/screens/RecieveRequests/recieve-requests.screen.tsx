@@ -12,6 +12,7 @@ import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
   RootState,
+  UserInfo,
   getUsersRequestsService,
   useAppDispatch,
   useAppSelector,
@@ -73,6 +74,8 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
       .unwrap()
       .then((response: ListUserRequestsResponseI) => {
         if (response?.result?.docs) {
+          console.log("recieve reqs === ", response?.result?.docs);
+
           setState((prev: UserRequestsI) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
@@ -122,9 +125,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         <FlatList
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
-          renderItem={({ item }: { item: BlockedUserInfo }) => (
+          renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
-              item={item?.user}
+              item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
               onAddBtnPress={() => acceptRequest(item?._id, item?.user?._id)}
               btnTitle="Accept"
             />

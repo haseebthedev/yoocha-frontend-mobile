@@ -25,7 +25,7 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { ParticipantI, RootState, UserI, useAppSelector } from "store";
+import { ListRoomItemI, ParticipantI, RootState, UserI, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -36,7 +36,7 @@ export type NavigatorParamList = {
   usermessaging: {
     roomId: string;
     friendName: string;
-    participants: ParticipantI[];
+    item: ListRoomItemI;
   };
 
   blockedusers: undefined;
@@ -73,6 +73,7 @@ const AppStack = () => {
       initialRouteName="main"
     >
       <Stack.Screen name="signin" component={SignInScreen} />
+      <Stack.Screen name="signup" component={SignUpScreen} />
 
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="notifications" component={NotificationScreen} />

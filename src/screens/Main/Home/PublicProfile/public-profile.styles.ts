@@ -113,6 +113,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: hp(2),
   },
+  postContainer: {
+    height: hp(19.65),
+    backgroundColor: colors.white,
+  },
 });
 
 export default styles;

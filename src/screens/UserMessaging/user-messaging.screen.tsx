@@ -10,19 +10,19 @@ import {
   RefreshControl,
 } from "react-native";
 import { colors } from "theme";
-import { socket } from "socket/socketIo";
-import { EventEnum } from "enums";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListMessageI, MenuOptionI, SendMessagePayloadI } from "interfaces";
+import { ListWithPagination, MenuOptionI } from "interfaces";
 import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
 import {
   ListMessageResponseI,
   MessageItemI,
-  ParticipantI,
   RootState,
+  SendMessageResponseI,
+  UserI,
   blockUserService,
   getListMessageService,
+  sendMessageService,
   useAppDispatch,
   useAppSelector,
 } from "store";
@@ -37,11 +37,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   navigation,
   route,
 }) => {
-  const { roomId, friendName, participants } = route.params;
+  const { roomId, friendName, item } = route.params;
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [otherUser, setOtherUser] = useState<ParticipantI>();
+  const [otherUser, setOtherUser] = useState<UserI>();
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
     id: 0,
@@ -53,8 +53,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [state, setState] = useState<ListMessageI>({
+  const [state, setState] = useState<ListWithPagination<MessageItemI>>({
     list: [],
     page: 1,
     hasNext: false,
@@ -64,48 +63,49 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const lastSeen = "8:14 PM";
 
   const blockUser = async () => {
-    await dispatch(blockUserService({ roomId, userIdToBlock: otherUser?.user._id }))
+    await dispatch(blockUserService({ id: otherUser?._id }))
       .unwrap()
       .then(() => {
         setIsUserBlock(true);
         setBlockModalVisible((prev) => !prev);
-      });
+      })
+      .catch((error) => console.log("error: ", error));
   };
 
   const removeChat = async () => console.log("Remove Chat");
 
   const onRefresh = async () => {
-    setRefreshing(true);
+    setState((prev: ListWithPagination<MessageItemI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
 
     await dispatch(getListMessageService({ roomId: roomId, page: 1, limit: LIMIT }))
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListMessageI) => ({
+          setState((prev: ListWithPagination<MessageItemI>) => ({
             ...prev,
             list: response.result.docs,
             page: 1 + prev.page,
             hasNext: response.result.hasNextPage,
+            listRefreshing: false,
           }));
         }
-      })
-      .finally(() => setRefreshing(false));
+      });
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     Keyboard.dismiss();
     if (message) {
-      const payload: SendMessagePayloadI = {
-        chatRoomId: roomId,
-        message: message,
-        sender: user?._id ?? "",
-      };
-
-      if (socket) {
-        socket.emit(EventEnum.SEND_MESSAGE, payload);
-      }
-
-      setMessage("");
+      await dispatch(sendMessageService({ roomId: roomId, message: message }))
+        .unwrap()
+        .then((response: SendMessageResponseI) => {
+          if (response?.result) {
+            onRefresh();
+          }
+        })
+        .finally(() => setMessage(""));
     }
   };
 
@@ -123,7 +123,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListMessageI) => ({
+          setState((prev: ListWithPagination<MessageItemI>) => ({
             ...prev,
             list: prev.list.concat(response.result.docs),
             page: 1 + prev.page,
@@ -149,17 +149,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      socket.on(EventEnum.RECIEVE_MESSAGE, (payload: any) => {
-        setState((prev: ListMessageI) => ({
-          ...prev,
-          list: prev.list.concat(payload._doc),
-        }));
-      });
-    }
-  }, [socket]);
-
-  useEffect(() => {
     if (menuOption.title === "Block user") {
       setBlockModalVisible(true);
     } else if (menuOption.title === "Remove chat") {
@@ -168,8 +157,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, [menuOption]);
 
   useEffect(() => {
-    const otherUser: ParticipantI[] = participants.filter((item) => item.user._id !== user?._id);
-    setOtherUser(otherUser[0]);
+    const otherUser: any = item.initiator._id === user?._id ? item.invitee : item.initiator;
+    setOtherUser(otherUser);
   }, []);
 
   return (
@@ -211,7 +200,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderLoader}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
+            refreshControl={
+              <RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+            }
             ListEmptyComponent={() =>
               !isLoading &&
               state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />

@@ -4,13 +4,13 @@ import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     maxWidth: wp(50),
   },
   profileImage: {
@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
     color: colors.textDim,
   },
   infoContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+    flexDirection: "column",
+    alignItems: "flex-end",
   },
   infoText: {
     color: colors.textDim,
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
     width: wp(5),
     height: wp(5),
     borderRadius: wp(5),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: hp(1),
   },
   unreadMessageText: {
