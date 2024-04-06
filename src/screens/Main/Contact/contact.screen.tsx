@@ -9,13 +9,11 @@ import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, 
 import {
   ExplorePeopleResponseI,
   GetFriendsSuggestionResponseI,
-  RootState,
   UserI,
   getExplorePeopleService,
   getFriendsSuggestionService,
   sendFriendRequest,
   useAppDispatch,
-  useAppSelector,
 } from "store";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -174,6 +172,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           setMenuOption={setMenuOption}
         />
       </View>
+
+      <View>{/* <FlatList /> */}</View>
 
       <View style={styles.suggestionsContainer}>
         <AppHeading

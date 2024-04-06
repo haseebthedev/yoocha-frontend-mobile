@@ -25,7 +25,7 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { ListRoomItemI, ParticipantI, RootState, UserI, useAppSelector } from "store";
+import { ListRoomItemI, RootState, UserI, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;

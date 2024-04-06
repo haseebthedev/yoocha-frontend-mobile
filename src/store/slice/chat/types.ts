@@ -1,13 +1,27 @@
 import { UserI } from "../auth/types";
 
+export interface PaginationListResultI<T> {
+  result: {
+    docs: T[];
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
+export interface ResponseWithStatus {
+  result: {
+    status: string;
+  };
+}
+
 export interface ListChatRoomPayloadI {
   page?: number;
   limit?: number;
-}
-
-export interface ParticipantI {
-  user: UserI;
-  role: string;
 }
 
 export interface ListRoomItemI {
@@ -20,18 +34,7 @@ export interface ListRoomItemI {
   updatedAt: string;
 }
 
-export interface ListRoomResponseI {
-  result: {
-    docs: ListRoomItemI[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
+export type ListRoomResponseI = PaginationListResultI<ListRoomItemI>;
 export interface ListMessagePayloadI {
   roomId: string;
   page?: number;
@@ -66,19 +69,7 @@ export interface MessageItemI {
   updatedAt: string;
 }
 
-export interface ListMessageResponseI {
-  result: {
-    docs: MessageItemI[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
-
+export type ListMessageResponseI = PaginationListResultI<MessageItemI>;
 export interface LoadingI {
   loading: boolean;
 }
@@ -100,11 +91,7 @@ export interface BlockUserPayloadI {
   id: string;
 }
 
-export interface BlockUserResponseI {
-  result: {
-    status: string;
-  };
-}
+export type BlockUserResponseI = ResponseWithStatus;
 
 export interface ListBlockedUsersPayloadI {
   page?: number;
@@ -133,18 +120,7 @@ export interface UserInfo {
   blockedBy: string;
 }
 
-export interface ListBlockedUsersResponseI {
-  result: {
-    docs: BlockedUserInfo[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
+export type ListBlockedUsersResponseI = PaginationListResultI<BlockedUserInfo>;
 
 export interface UnblockUserPayloadI {
   id: string;
@@ -162,40 +138,20 @@ export interface ListUserRequestsPayloadI {
   limit?: number;
 }
 
-export interface ListUserRequestsResponseI {
-  result: {
-    docs: UserInfo[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
-
+export type ListUserRequestsResponseI = PaginationListResultI<UserInfo>;
 export type ExplorePeoplePayloadI = ListBlockedUsersPayloadI;
-
-export interface ExplorePeopleResponseI {
-  result: {
-    docs: UserI[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
+export type ExplorePeopleResponseI = PaginationListResultI<UserI>;
 
 export interface sendFriendReqPayloadI {
   inviteeId: string;
 }
 
-export interface sendFriendReqResponseI {
-  result: {
-    status: string;
-  };
+export type sendFriendReqResponseI = ResponseWithStatus;
+export type RemoveFriendReqPayloadI = Pick<sendFriendReqPayloadI, "inviteeId">;
+export type RemoveFriendReqResponseI = ResponseWithStatus;
+
+export interface AcceptFriendReqPayloadI {
+  roomId: string;
 }
+
+export type AcceptFriendReqResponseI = ResponseWithStatus;
