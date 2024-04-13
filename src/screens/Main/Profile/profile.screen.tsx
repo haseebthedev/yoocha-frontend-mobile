@@ -80,7 +80,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
           </TouchableOpacity>
         </View>
 
-        <View style={styles.tabNavTopSpacing}>
+        {/* <View style={styles.tabNavTopSpacing}>
           <View style={styles.tabNav}>
             <TouchableOpacity onPress={() => setActiveTab("Photos")}>
               <Text text="Photos" style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]} />
@@ -112,7 +112,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
               </View>
             )}
           </View>
-        </View>
+        </View> */}
       </View>
     </View>
   );

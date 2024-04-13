@@ -11,14 +11,14 @@ export const PopupMenu = ({ isVisible, menuOptions, setMenuVisible, setMenuOptio
     Animated.timing(scale, {
       toValue: to,
       useNativeDriver: true,
-      duration: 200,
+      duration: 170,
       easing: Easing.linear,
     }).start(() => to === 0 && setMenuVisible(false));
   };
 
   const onPressMenuOption = (item: MenuOptionI) => {
     item.onPress && item.onPress();
-    setMenuOption(item);
+    setMenuOption?.(item);
   };
 
   return (

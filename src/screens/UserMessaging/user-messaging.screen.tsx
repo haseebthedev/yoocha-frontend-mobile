@@ -50,7 +50,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
   const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
   const [removeChatModalVisible, setRemoveChatModalVisible] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
@@ -75,9 +76,15 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const removeChat = async () => console.log("Remove Chat");
 
   const onRefresh = async () => {
+    if (state.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
     setState((prev: ListWithPagination<MessageItemI>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getListMessageService({ roomId: roomId, page: 1, limit: LIMIT }))
@@ -87,12 +94,13 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           setState((prev: ListWithPagination<MessageItemI>) => ({
             ...prev,
             list: response.result.docs,
-            page: 1 + prev.page,
+            page: 2,
             hasNext: response.result.hasNextPage,
             listRefreshing: false,
           }));
         }
-      });
+      })
+      .then(() => setRefreshing(false));
   };
 
   const sendMessage = async () => {
@@ -110,7 +118,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   };
 
   const renderLoader = () => {
-    return isLoading ? (
+    return state.listRefreshing ? (
       <View style={styles.loaderStyle}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
@@ -118,7 +126,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   };
 
   const getMessages = async () => {
-    setIsLoading(true);
+    setState((prev: ListWithPagination<MessageItemI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
     await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListMessageResponseI) => {
@@ -128,14 +139,14 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             list: prev.list.concat(response.result.docs),
             page: 1 + prev.page,
             hasNext: response.result.hasNextPage,
+            listRefreshing: false,
           }));
         }
-      })
-      .finally(() => setIsLoading(false));
+      });
   };
 
   const loadMoreItems = () => {
-    if (!isLoading && state.hasNext) {
+    if (!state.listRefreshing && state.hasNext) {
       getMessages();
     }
   };
@@ -200,13 +211,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderLoader}
-            refreshControl={
-              <RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} colors={[colors.primary]} />
-            }
             ListEmptyComponent={() =>
-              !isLoading &&
+              !state.listRefreshing &&
               state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
             }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
           />
         </View>
 

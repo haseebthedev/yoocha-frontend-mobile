@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
 import { colors } from "theme";
 import { EventEnumRole } from "enums";
-import { UserRequestsI } from "interfaces";
+import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
@@ -30,8 +30,8 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-
-  const [state, setState] = useState<UserRequestsI>({
+  const [refreshing, setRefreshing] = useState(false);
+  const [state, setState] = useState<ListWithPagination<UserInfo>>({
     list: [],
     page: 1,
     hasNext: false,
@@ -48,20 +48,20 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 
   const confirmAcceptRequest = async () => {
     const filteredUsers = state.list.filter((user) => user?.initiator._id != friendId);
-    setState((prev: UserRequestsI) => ({
+    setAlertModalVisible((prev) => !prev);
+
+    setState((prev: ListWithPagination<UserInfo>) => ({
       ...prev,
       list: filteredUsers,
       page: 1 + prev?.page,
       hasNext: prev?.hasNext,
     }));
 
-    await dispatch(acceptFriendRequest({ roomId: roomId }))
-      .unwrap()
-      .then(() => setAlertModalVisible((prev) => !prev));
+    await dispatch(acceptFriendRequest({ roomId: roomId }));
   };
 
   const getUserRequests = async () => {
-    setState((prev: UserRequestsI) => ({
+    setState((prev: ListWithPagination<UserInfo>) => ({
       ...prev,
       listRefreshing: true,
     }));
@@ -70,7 +70,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
       .unwrap()
       .then((response: ListUserRequestsResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: UserRequestsI) => ({
+          setState((prev: ListWithPagination<UserInfo>) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
@@ -88,23 +88,33 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   };
 
   const onRefresh = async () => {
-    setState((prev: UserRequestsI) => ({
+    if (state.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
+    setState((prev: ListWithPagination<UserInfo>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getUsersRequestsService({ type: EventEnumRole.INVITEE, page: 1, limit: LIMIT }))
       .unwrap()
       .then((response: ListUserRequestsResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: UserRequestsI) => ({
+          setState((prev: ListWithPagination<UserInfo>) => ({
             ...prev,
             list: response?.result?.docs,
-            page: 1 + prev?.page,
+            page: 2,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
+      })
+      .finally(() => {
+        setRefreshing(false);
       });
   };
 
@@ -152,9 +162,10 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           onEndReachedThreshold={0.4}
           ListEmptyComponent={() =>
             !state.listRefreshing &&
+            !refreshing &&
             state.list.length === 0 && <EmptyListText text="You don't have any Friend Requests!" />
           }
-          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </View>
 

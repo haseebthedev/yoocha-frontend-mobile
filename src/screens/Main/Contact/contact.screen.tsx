@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, RefreshControl, TouchableOpacity, View } f
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListWithPagination, MenuOptionI } from "interfaces";
+import { ListWithPagination } from "interfaces";
 import { contactScreenOptions } from "constant";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import {
@@ -25,8 +25,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   const dispatch = useAppDispatch();
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
-  const [menuOption, setMenuOption] = useState<MenuOptionI>({ id: 0, title: "" });
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [explorePeople, setExplorePeople] = useState<ListWithPagination<UserI>>({
     list: [],
     page: 1,
@@ -55,30 +55,22 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       .catch((error) => console.log("Error sending friend request:", error));
   };
 
-  const onFriendSuggestionRefresh = async () => {
-    setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
-      ...prev,
-      listRefreshing: true,
-    }));
-    await dispatch(getFriendsSuggestionService({ page: 1, limit: LIMIT }))
-      .unwrap()
-      .then((response: GetFriendsSuggestionResponseI) => {
-        if (response?.result?.docs) {
-          setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
-            ...prev,
-            list: response?.result?.docs,
-            page: 1 + prev?.page,
-            hasNext: response?.result?.hasNextPage,
-            listRefreshing: false,
-          }));
-        }
-      });
-  };
+  const onRefresh = async () => {
+    // if (explorePeople.listRefreshing || suggestedFriends.listRefreshing || refreshing) {
+    //   return;
+    // }
 
-  const onExplorePeopleRefresh = async () => {
+    setRefreshing(true);
     setExplorePeople((prev: ListWithPagination<UserI>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
+    }));
+
+    setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+      ...prev,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getExplorePeopleService({ page: 1, limit: LIMIT }))
@@ -88,12 +80,28 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           setExplorePeople((prev: ListWithPagination<UserI>) => ({
             ...prev,
             list: response?.result?.docs,
-            page: 1 + prev?.page,
+            page: 2,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
       });
+
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: GetFriendsSuggestionResponseI) => {
+        if (response?.result?.docs) {
+          setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 2,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      });
+
+    setRefreshing(false);
   };
 
   const getFriendsSuggestions = async () => {
@@ -153,6 +161,37 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     };
   }, []);
 
+  const ListHeader = () => {
+    return (
+      <>
+        {suggestedFriends.list.length === 0 && !suggestedFriends.listRefreshing ? (
+          <EmptyListText text="No Suggestions!" />
+        ) : (
+          <>
+            <AppHeading
+              title="People may know"
+              rightTitle="View All"
+              onRightPress={() => navigation.navigate("suggestions")}
+            />
+            {suggestedFriends.list.map((item) => {
+              return (
+                <View key={item._id}>
+                  <UserSuggestionCard
+                    item={item}
+                    onViewPress={() => navigation.navigate("publicProfile", { item })}
+                    onAddFriendBtnPress={() => onAddFriendBtnPress(item._id, suggestedFriends, setSuggestedFriends)}
+                  />
+                </View>
+              );
+            })}
+          </>
+        )}
+
+        <AppHeading title="Explore" />
+      </>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.appHeader}>
@@ -165,56 +204,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
         </TouchableOpacity>
 
-        <PopupMenu
-          isVisible={menuVisible}
-          setMenuVisible={setMenuVisible}
-          menuOptions={contactScreenOptions}
-          setMenuOption={setMenuOption}
-        />
-      </View>
-
-      <View>{/* <FlatList /> */}</View>
-
-      <View style={styles.suggestionsContainer}>
-        <AppHeading
-          title="People may know"
-          rightTitle="View All"
-          onRightPress={() => navigation.navigate("suggestions")}
-        />
-        <>
-          {suggestedFriends.listRefreshing ? (
-            <View style={styles.loaderContainer}>
-              <ActivityIndicator color={colors.primary} />
-            </View>
-          ) : (
-            <FlatList
-              horizontal
-              data={suggestedFriends.list}
-              keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-              contentContainerStyle={styles.suggestionListContainer}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }: { item: UserI }) => (
-                <UserSuggestionCard
-                  item={item}
-                  onViewPress={() => navigation.navigate("publicProfile", { item })}
-                  onAddFriendBtnPress={() => onAddFriendBtnPress(item._id, suggestedFriends, setSuggestedFriends)}
-                />
-              )}
-              ListEmptyComponent={() =>
-                !suggestedFriends.listRefreshing &&
-                suggestedFriends.list.length === 0 && <EmptyListText text="No Suggestions!" />
-              }
-              refreshControl={
-                <RefreshControl refreshing={suggestedFriends.listRefreshing} onRefresh={onFriendSuggestionRefresh} />
-              }
-            />
-          )}
-        </>
+        <PopupMenu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
       </View>
 
       <View style={styles.exploreContainer}>
-        <AppHeading title="Explore" />
-
         {explorePeople.listRefreshing ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator color={colors.primary} />
@@ -224,6 +217,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             data={explorePeople.list}
             keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={ListHeader}
             renderItem={({ item }) => (
               <ContactUserCard
                 item={item}
@@ -236,9 +230,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
               !explorePeople.listRefreshing &&
               explorePeople.list.length === 0 && <EmptyListText text="No People to Explore!" />
             }
-            refreshControl={
-              <RefreshControl refreshing={explorePeople.listRefreshing} onRefresh={onExplorePeopleRefresh} />
-            }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
         )}
       </View>

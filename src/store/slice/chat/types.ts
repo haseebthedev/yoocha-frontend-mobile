@@ -48,11 +48,11 @@ export interface SendMessagePayloadI {
 
 export interface SendMessageResponseI {
   result: {
+    _id: string;
     chatRoomId: string;
     sender: string;
     message: string;
     files: string[] | null;
-    _id: string;
     createdAt: string;
     updatedAt: string;
   };
@@ -74,18 +74,7 @@ export interface LoadingI {
   loading: boolean;
 }
 
-export interface GetFriendsSuggestionResponseI {
-  result: {
-    docs: UserI[];
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    pagingCounter: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
+export type GetFriendsSuggestionResponseI = PaginationListResultI<UserI>;
 
 export interface BlockUserPayloadI {
   id: string;
@@ -138,8 +127,9 @@ export interface ListUserRequestsPayloadI {
   limit?: number;
 }
 
-export type ListUserRequestsResponseI = PaginationListResultI<UserInfo>;
 export type ExplorePeoplePayloadI = ListBlockedUsersPayloadI;
+
+export type ListUserRequestsResponseI = PaginationListResultI<UserInfo>;
 export type ExplorePeopleResponseI = PaginationListResultI<UserI>;
 
 export interface sendFriendReqPayloadI {

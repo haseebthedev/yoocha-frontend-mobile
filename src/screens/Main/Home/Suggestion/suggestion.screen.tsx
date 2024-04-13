@@ -18,6 +18,7 @@ const LIMIT: number = 10;
 const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggestions">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [suggestedFriends, setSuggestedFriends] = useState<ListWithPagination<UserI>>({
     list: [],
     page: 1,
@@ -42,9 +43,16 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
   };
 
   const onRefresh = async () => {
+    if (suggestedFriends.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
     setSuggestedFriends((prev: ListWithPagination<UserI>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getFriendsSuggestionService({ page: 1, limit: LIMIT }))
@@ -59,7 +67,8 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
             listRefreshing: false,
           }));
         }
-      });
+      })
+      .then(() => setRefreshing(false));
   };
 
   const getFriendsSuggestions = async () => {
@@ -117,9 +126,10 @@ const SuggestionsScreen: FC<NativeStackScreenProps<NavigatorParamList, "suggesti
             )}
             ListEmptyComponent={() =>
               !suggestedFriends.listRefreshing &&
-              suggestedFriends.list.length === 0 && <EmptyListText text="You don't have any friends in suggestion!" />
+              !refreshing &&
+              suggestedFriends.list.length === 0 && <EmptyListText text="You don't have any friends suggestion!" />
             }
-            refreshControl={<RefreshControl refreshing={suggestedFriends.listRefreshing} onRefresh={onRefresh} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
         )}
       </View>

@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   listHeading: {
     color: colors.textDim,
     fontSize: 14,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   headerTitle: {
     color: colors.white,

@@ -24,14 +24,14 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [unblockUserId, setUnblockUserId] = useState<string>("");
   const [state, setState] = useState<ListWithPagination<BlockedUserInfo>>({
     list: [],
     page: 1,
     hasNext: false,
     listRefreshing: false,
   });
-
-  const [unblockUserId, setUnblockUserId] = useState<string>("");
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
@@ -43,12 +43,12 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const confirmUnblockUser = async () => {
-    // need changes
     const filteredUsers = state.list.filter((user) => {
       let userIdToBeBlocked = user.initiator._id === user?._id ? user?.invitee?._id : user.initiator._id;
-
       return userIdToBeBlocked != unblockUserId;
     });
+
+    setAlertModalVisible((prev) => !prev);
 
     setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
@@ -57,9 +57,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
       hasNext: prev?.hasNext,
     }));
 
-    await dispatch(unblockUserService({ id: unblockUserId }))
-      .unwrap()
-      .then(() => setAlertModalVisible((prev) => !prev));
+    await dispatch(unblockUserService({ id: unblockUserId }));
   };
 
   const getBlockedUsers = async () => {
@@ -90,9 +88,16 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const onRefresh = async () => {
+    if (state.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
     setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getBlockedUsersService({ page: 1, limit: LIMIT }))
@@ -102,11 +107,14 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           setState((prev: ListWithPagination<BlockedUserInfo>) => ({
             ...prev,
             list: response?.result?.docs,
-            page: 1 + prev?.page,
+            page: 2,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
+      })
+      .finally(() => {
+        setRefreshing(false);
       });
   };
 
@@ -153,9 +161,11 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           ListFooterComponent={renderLoader}
           onEndReachedThreshold={0.4}
           ListEmptyComponent={() =>
-            !state.listRefreshing && state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
+            !state.listRefreshing &&
+            !refreshing &&
+            state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
           }
-          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </View>
 
