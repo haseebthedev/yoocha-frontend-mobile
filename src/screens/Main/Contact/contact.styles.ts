@@ -51,6 +51,10 @@ const styles = StyleSheet.create({
   selectedMenuText: {
     color: colors.white,
   },
+  loaderStyle: {
+    marginVertical: 16,
+    alignItems: "center",
+  },
 });
 
 export default styles;

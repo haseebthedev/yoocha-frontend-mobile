@@ -86,6 +86,14 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
     }
   };
 
+  const renderLoader = () => {
+    return state.listRefreshing ? (
+      <View style={styles.loaderStyle}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    ) : null;
+  };
+
   const onRefresh = async () => {
     if (state.listRefreshing || refreshing) {
       return;
@@ -115,14 +123,6 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
       .finally(() => {
         setRefreshing(false);
       });
-  };
-
-  const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    ) : null;
   };
 
   useEffect(() => {

@@ -11,12 +11,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./home.styles";
 
-const LIMIT: number = 15;
+const LIMIT: number = 10;
 
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
@@ -39,15 +39,24 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   };
 
   const renderLoader = () => {
-    return isLoading ? (
+    return state.listRefreshing ? (
       <View style={styles.loaderStyle}>
         <ActivityIndicator color={colors.primary} />
       </View>
     ) : null;
   };
 
+  const loadMoreItems = () => {
+    if (!state.listRefreshing && state.hasNext) {
+      getChatRooms();
+    }
+  };
+
   const getChatRooms = async () => {
-    setIsLoading(true);
+    setState((prev: ListWithPagination<ListRoomItemI>) => ({
+      ...prev,
+      listRefreshing: true,
+    }));
     await dispatch(getListRoomsService({ page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListRoomResponseI) => {
@@ -60,20 +69,15 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             listRefreshing: false,
           }));
         }
-      })
-      .finally(() => setIsLoading(false));
-  };
-
-  const loadMoreItems = () => {
-    if (!isLoading && state.hasNext) {
-      getChatRooms();
-    }
+      });
   };
 
   const onRefresh = async () => {
+    setRefreshing(true);
     setState((prev: ListWithPagination<ListRoomItemI>) => ({
       ...prev,
-      listRefreshing: true,
+      page: 1,
+      hasNext: false,
     }));
 
     await dispatch(getListRoomsService({ page: 1, limit: LIMIT }))
@@ -83,12 +87,13 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           setState((prev: ListWithPagination<ListRoomItemI>) => ({
             ...prev,
             list: response?.result?.docs,
-            page: 1 + prev?.page,
+            page: 2,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
-      });
+      })
+      .finally(() => setRefreshing(false));
   };
 
   useEffect(() => {
@@ -150,9 +155,11 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
             ListEmptyComponent={() =>
-              !isLoading && state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
+              !refreshing &&
+              !state.listRefreshing &&
+              state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
             }
-            refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
         </View>
       </View>

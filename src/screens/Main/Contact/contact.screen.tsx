@@ -56,9 +56,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   };
 
   const onRefresh = async () => {
-    // if (explorePeople.listRefreshing || suggestedFriends.listRefreshing || refreshing) {
-    //   return;
-    // }
+    if (explorePeople.listRefreshing || suggestedFriends.listRefreshing || refreshing) {
+      return;
+    }
 
     setRefreshing(true);
     setExplorePeople((prev: ListWithPagination<UserI>) => ({
@@ -145,6 +145,20 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       });
   };
 
+  const loadMoreItems = () => {
+    if (!explorePeople.listRefreshing && explorePeople.hasNext) {
+      getExplorePeople();
+    }
+  };
+
+  const renderLoader = () => {
+    return explorePeople.listRefreshing ? (
+      <View style={styles.loaderStyle}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    ) : null;
+  };
+
   useEffect(() => {
     getFriendsSuggestions();
 
@@ -226,6 +240,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 onViewPress={() => navigation.navigate("publicProfile", { item })}
               />
             )}
+            onEndReached={loadMoreItems}
+            ListFooterComponent={renderLoader}
+            onEndReachedThreshold={0.4}
             ListEmptyComponent={() =>
               !explorePeople.listRefreshing &&
               explorePeople.list.length === 0 && <EmptyListText text="No People to Explore!" />

@@ -30,6 +30,7 @@ import { userMessageScreenOptions } from "constant";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
+import { Button } from "react-native";
 
 const LIMIT: number = 15;
 
@@ -162,8 +163,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   useEffect(() => {
     if (menuOption.title === "Block user") {
       setBlockModalVisible(true);
-    } else if (menuOption.title === "Remove chat") {
-      setRemoveChatModalVisible(true);
     }
   }, [menuOption]);
 

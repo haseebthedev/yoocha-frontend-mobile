@@ -24,8 +24,4 @@ export const userMessageScreenOptions: MenuOptionI[] = [
     id: 1,
     title: "Block user",
   },
-  {
-    id: 2,
-    title: "Remove chat",
-  },
 ];

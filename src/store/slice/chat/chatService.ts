@@ -168,6 +168,8 @@ export const getExplorePeopleService: any = createAsyncThunk(
         `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
       );
 
+      console.log("res === ", response.data);
+
       return response.data;
     } catch (error: any) {
       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });

@@ -43,10 +43,13 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const confirmUnblockUser = async () => {
+    // need changes here
     const filteredUsers = state.list.filter((user) => {
-      let userIdToBeBlocked = user.initiator._id === user?._id ? user?.invitee?._id : user.initiator._id;
-      return userIdToBeBlocked != unblockUserId;
+      let userIdToBeUnblocked = user.initiator._id === user?._id ? user?.invitee?._id : user.initiator._id;
+      return userIdToBeUnblocked !== unblockUserId;
     });
+
+    // console.log("filteredUsers === ", filteredUsers);
 
     setAlertModalVisible((prev) => !prev);
 
