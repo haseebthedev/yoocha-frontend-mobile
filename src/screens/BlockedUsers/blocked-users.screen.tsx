@@ -26,6 +26,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
   const [unblockUserId, setUnblockUserId] = useState<string>("");
+  const [itemIdToBeUnblocked, setItemIdToBeUnblocked] = useState<string>("");
   const [state, setState] = useState<ListWithPagination<BlockedUserInfo>>({
     list: [],
     page: 1,
@@ -37,22 +38,14 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
 
   const unblockUser = async (item: UserInfo) => {
     let userIdToBeBlocked = item.initiator._id === user?._id ? item?.invitee?._id : item.initiator._id;
-
     setAlertModalVisible((prev) => !prev);
     setUnblockUserId(userIdToBeBlocked);
+    setItemIdToBeUnblocked(item._id);
   };
 
   const confirmUnblockUser = async () => {
-    // need changes here
-    const filteredUsers = state.list.filter((user) => {
-      let userIdToBeUnblocked = user.initiator._id === user?._id ? user?.invitee?._id : user.initiator._id;
-      return userIdToBeUnblocked !== unblockUserId;
-    });
-
-    // console.log("filteredUsers === ", filteredUsers);
-
+    const filteredUsers = state.list.filter((item) => itemIdToBeUnblocked !== item._id);
     setAlertModalVisible((prev) => !prev);
-
     setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
       list: filteredUsers,

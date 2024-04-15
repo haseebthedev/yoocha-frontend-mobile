@@ -23,18 +23,16 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
     setLoading(true);
     await dispatch(signinService({ email, password }))
       .unwrap()
-      .then((response) => {
-        navigation.navigate("main");
-      })
+      .then((response) => navigation.navigate("main"))
       .catch((error) => console.log(error.message))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        // resetForm();
+        setLoading(false);
+      });
   };
 
-  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values, setFieldValue } = useFormikHook(
-    submit,
-    validationSchema,
-    initialValues
-  );
+  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values, setFieldValue, resetForm } =
+    useFormikHook(submit, validationSchema, initialValues);
 
   return (
     <View style={styles.container}>

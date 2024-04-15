@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    // paddingHorizontal: wp(5),
     paddingVertical: hp(2),
     borderBottomColor: colors.lightShade,
     borderBottomWidth: 1,
@@ -32,7 +31,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingVertical: 20,
-    flexGrow: 1,
   },
   messageContainer: {
     flexDirection: "row",

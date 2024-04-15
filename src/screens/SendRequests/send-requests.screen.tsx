@@ -165,7 +165,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           ListEmptyComponent={() =>
             !state.listRefreshing &&
             !refreshing &&
-            state.list.length === 0 && <EmptyListText text="Requests List is Empty!" />
+            state.list.length === 0 && <EmptyListText text="No requests are sent!" />
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

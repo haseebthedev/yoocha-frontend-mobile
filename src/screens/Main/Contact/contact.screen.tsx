@@ -99,9 +99,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             listRefreshing: false,
           }));
         }
-      });
-
-    setRefreshing(false);
+      })
+      .finally(() => setRefreshing(false));
   };
 
   const getFriendsSuggestions = async () => {
@@ -178,7 +177,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   const ListHeader = () => {
     return (
       <>
-        {suggestedFriends.list.length === 0 && !suggestedFriends.listRefreshing ? (
+        {suggestedFriends.list.length === 0 && !refreshing && !suggestedFriends.listRefreshing ? (
           <EmptyListText text="No Suggestions!" />
         ) : (
           <>
@@ -245,6 +244,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             onEndReachedThreshold={0.4}
             ListEmptyComponent={() =>
               !explorePeople.listRefreshing &&
+              !refreshing &&
               explorePeople.list.length === 0 && <EmptyListText text="No People to Explore!" />
             }
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
