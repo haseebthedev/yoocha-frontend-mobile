@@ -37,7 +37,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import { EventEnum } from "enums";
 
-const LIMIT: number = 20;
+const LIMIT: number = 50;
 
 const UserMessagingScreen: FC<
   NativeStackScreenProps<NavigatorParamList, "usermessaging">
@@ -170,10 +170,7 @@ const UserMessagingScreen: FC<
             />
             <View>
               <Text text={friendName} preset="heading" />
-              <Text
-                text={`Last seen: 4:20pm`}
-                style={styles.lastSeenText}
-              />
+              <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
             </View>
           </View>
         </View>
@@ -214,7 +211,9 @@ const UserMessagingScreen: FC<
             ListEmptyComponent={() =>
               !state.listRefreshing &&
               state.list.length === 0 && (
-                <EmptyListText text="There are no messages yet. Start a conversation!" />
+                <View style={{ transform: [{ scaleY: -1 }] }}>
+                  <EmptyListText text="There are no messages yet. Start a conversation!" />
+                </View>
               )
             }
             onLayout={scrollToTop} // Scrolls to bottom when layout changes (initial render)

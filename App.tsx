@@ -7,6 +7,7 @@ import { persistor, store } from "./src/store/store";
 import { initSocketIO, disconnectSocketIO } from "./src/socket/socketIo";
 import BootSplash from "react-native-bootsplash";
 import FlashMessage from "react-native-flash-message";
+import { StatusBar } from "react-native";
 
 const App = () => {
   // Hiding splash screen
@@ -27,6 +28,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
+        <StatusBar barStyle={"dark-content"} />
         <AppNavigator />
         <FlashMessage position="bottom" style={{ marginTop: 20 }} />
       </PersistGate>
