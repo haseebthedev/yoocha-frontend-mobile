@@ -30,12 +30,12 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
+import { EventEnum } from "enums";
 import { socket } from "socket/socketIo";
 import { userMessageScreenOptions } from "constant";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
-import { EventEnum } from "enums";
 
 const LIMIT: number = 50;
 
@@ -47,6 +47,7 @@ const UserMessagingScreen: FC<
   const dispatch = useAppDispatch();
 
   const flatListRef = useRef<FlatList>(null);
+  const messageInputRef = useRef<TextInput>(null);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
   const [otherUser, setOtherUser] = useState<UserI>();
@@ -78,7 +79,7 @@ const UserMessagingScreen: FC<
 
   const sendMessage = async () => {
     await dispatch(sendMessageService({ roomId: roomId, message: message }));
-    setMessage("");
+    messageInputRef.current?.clear()
   };
 
   const renderLoader = () => {
@@ -225,6 +226,7 @@ const UserMessagingScreen: FC<
         ) : (
           <View style={styles.inputFieldBlock}>
             <TextInput
+              ref={messageInputRef}
               value={message}
               placeholder="Type here..."
               onChangeText={(text) => setMessage(text)}
