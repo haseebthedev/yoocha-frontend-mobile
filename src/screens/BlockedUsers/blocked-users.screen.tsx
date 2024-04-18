@@ -1,92 +1,74 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View, RefreshControl } from "react-native";
 import { colors } from "theme";
-import { BlockedUsersI } from "interfaces";
+import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import {
   BlockedUserInfo,
   ListBlockedUsersResponseI,
+  RootState,
+  UserInfo,
   getBlockedUsersService,
   unblockUserService,
   useAppDispatch,
+  useAppSelector,
 } from "store";
-import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import styles from "./blocked-users.styles";
-import { RefreshControl } from "react-native";
 
 const LIMIT: number = 10;
 
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [state, setState] = useState<BlockedUsersI>({
+  const [refreshing, setRefreshing] = useState(false);
+  const [unblockUserId, setUnblockUserId] = useState<string>("");
+  const [itemIdToBeUnblocked, setItemIdToBeUnblocked] = useState<string>("");
+  const [state, setState] = useState<ListWithPagination<BlockedUserInfo>>({
     list: [],
     page: 1,
     hasNext: false,
     listRefreshing: false,
   });
 
-  const [unblockUserId, setUnblockUserId] = useState<string>("");
-
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const unblockUser = async (userId: string) => {
+  const unblockUser = async (item: UserInfo) => {
+    let userIdToBeBlocked = item.initiator._id === user?._id ? item?.invitee?._id : item.initiator._id;
     setAlertModalVisible((prev) => !prev);
-    setUnblockUserId(userId);
+    setUnblockUserId(userIdToBeBlocked);
+    setItemIdToBeUnblocked(item._id);
   };
 
   const confirmUnblockUser = async () => {
-    await dispatch(unblockUserService({ userId: unblockUserId }));
+    const filteredUsers = state.list.filter((item) => itemIdToBeUnblocked !== item._id);
     setAlertModalVisible((prev) => !prev);
-
-    const filteredUsers = state.list.filter((user) => user.user?._id != unblockUserId);
-    setState((prev: BlockedUsersI) => ({
+    setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
       list: filteredUsers,
       page: 1 + prev?.page,
       hasNext: prev?.hasNext,
     }));
+
+    await dispatch(unblockUserService({ id: unblockUserId }));
   };
 
   const getBlockedUsers = async () => {
-    setIsLoading(true);
-    await dispatch(getBlockedUsersService({ page: state.page, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListBlockedUsersResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev: BlockedUsersI) => ({
-            ...prev,
-            list: prev.list.concat(response?.result?.docs),
-            page: 1 + prev?.page,
-            hasNext: response?.result?.hasNextPage,
-          }));
-        }
-      })
-      .finally(() => setIsLoading(false));
-  };
-
-  const loadMoreItems = () => {
-    if (!isLoading && state.hasNext) {
-      getBlockedUsers();
-    }
-  };
-
-  const onRefresh = async () => {
-    setState((prev: BlockedUsersI) => ({
+    setState((prev: ListWithPagination<BlockedUserInfo>) => ({
       ...prev,
       listRefreshing: true,
     }));
 
-    await dispatch(getBlockedUsersService({ page: 1, limit: LIMIT }))
+    await dispatch(getBlockedUsersService({ page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListBlockedUsersResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: BlockedUsersI) => ({
+          setState((prev: ListWithPagination<BlockedUserInfo>) => ({
             ...prev,
-            list: response?.result?.docs,
+            list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
@@ -95,8 +77,45 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
       });
   };
 
+  const loadMoreItems = () => {
+    if (!state.listRefreshing && state.hasNext) {
+      getBlockedUsers();
+    }
+  };
+
+  const onRefresh = async () => {
+    if (state.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
+    setState((prev: ListWithPagination<BlockedUserInfo>) => ({
+      ...prev,
+      page: 1,
+      hasNext: false,
+    }));
+
+    await dispatch(getBlockedUsersService({ page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListBlockedUsersResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListWithPagination<BlockedUserInfo>) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 2,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
   const renderLoader = () => {
-    return isLoading ? (
+    return state.listRefreshing ? (
       <View style={styles.loaderStyle}>
         <ActivityIndicator color={colors.primary} />
       </View>
@@ -127,16 +146,22 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
         <FlatList
           data={state.list}
           keyExtractor={(item: BlockedUserInfo) => item._id}
-          renderItem={({ item }: { item: BlockedUserInfo }) => (
-            <ContactUserCard item={item?.user} onAddBtnPress={() => unblockUser(item?.user?._id)} btnTitle="Unblock" />
+          renderItem={({ item }: { item: UserInfo }) => (
+            <ContactUserCard
+              item={item?.initiator?._id === user?._id ? item.invitee : item.initiator}
+              onAddBtnPress={() => unblockUser(item)}
+              btnTitle="Unblock"
+            />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
           onEndReachedThreshold={0.4}
           ListEmptyComponent={() =>
-            !isLoading && state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
+            !state.listRefreshing &&
+            !refreshing &&
+            state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
           }
-          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </View>
 

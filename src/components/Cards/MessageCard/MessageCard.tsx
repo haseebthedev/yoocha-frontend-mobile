@@ -15,14 +15,25 @@ interface MessageCardI {
 const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const isSentByUser: boolean = item?.sender?._id === user?._id;
+  const isSentByUser = user?._id === item.sender._id;
+  const userProfilePic = isSentByUser
+    ? user?.profilePicture
+    : item.sender?.profilePicture;
 
   return (
     <View
       key={item?._id}
-      style={[styles.messageContainer, { justifyContent: isSentByUser ? "flex-end" : "flex-start" }]}
+      style={[
+        styles.messageContainer,
+        { justifyContent: isSentByUser ? "flex-end" : "flex-start" },
+      ]}
     >
-      {!isSentByUser && <Image source={personPlaceholder} style={styles.otherParticipantImage} />}
+      {!isSentByUser && (
+        <Image
+          source={userProfilePic ? { uri: userProfilePic } : personPlaceholder}
+          style={styles.otherParticipantImage}
+        />
+      )}
 
       <View style={styles.messageTextContainer}>
         {isSentByUser && <Text text="12:05" style={styles.recieveTime} />}
@@ -31,7 +42,9 @@ const MessageCard = ({ item }: MessageCardI) => {
           style={[
             styles.messageText,
             {
-              backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
+              backgroundColor: isSentByUser
+                ? colors.primaryLight
+                : colors.white,
               color: isSentByUser ? colors.white : colors.textDim,
               borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
               borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),

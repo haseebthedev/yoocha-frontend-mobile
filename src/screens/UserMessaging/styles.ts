@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    // paddingHorizontal: wp(5),
     paddingVertical: hp(2),
     borderBottomColor: colors.lightShade,
     borderBottomWidth: 1,
@@ -31,8 +30,7 @@ const styles = StyleSheet.create({
     marginRight: wp(3),
   },
   listContainer: {
-    paddingVertical: 20,
-    flexGrow: 1,
+    paddingVertical: hp(1),
   },
   messageContainer: {
     flexDirection: "row",
@@ -74,28 +72,28 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightShade,
   },
   listHeight: {
-    height: hp(80),
-    // flexGrow: 1,
+    flex: 1,
+    marginBottom: hp(8)
   },
   loadingContainer: {
     flex: 1,
     backgroundColor: colors.lightShade,
   },
   inputFieldBlock: {
-    height: hp(8),
+    height: hp(7),
     width: wp(100),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.white,
-    paddingVertical: wp(4),
+    paddingVertical: wp(2),
     gap: 20,
-    paddingHorizontal: wp(5),
+    paddingHorizontal: wp(4),
     position: "absolute",
     bottom: 0,
   },
   inputfield: {
     width: wp(80),
-    backgroundColor: colors.lightShade,
+    // backgroundColor: colors.lightShade,
     color: colors.textDim,
     borderRadius: wp(2),
     paddingVertical: hp(0.7),

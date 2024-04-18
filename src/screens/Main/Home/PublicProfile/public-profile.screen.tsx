@@ -7,7 +7,7 @@ import { showFlashMessage } from "utils/flashMessage";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { RootState, UserI, useAppSelector } from "store";
+import { RootState, UserI, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
 import { SendFriendReqPayloadI, UserStatusI } from "interfaces";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
@@ -18,6 +18,8 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   navigation,
   route,
 }) => {
+  const dispatch = useAppDispatch();
+
   const { user } = useAppSelector((state: RootState) => state.auth);
   const { item }: { item: UserI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
@@ -43,19 +45,17 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   };
 
   const onAddFriendBtnPress = async () => {
-    const payload: SendFriendReqPayloadI = {
-      participants: [
-        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
-        { user: item._id, role: EventEnumRole.INVITEE },
-      ],
-    };
+    await dispatch(sendFriendRequest({ inviteeId: item._id }))
+      .unwrap()
+      .then((response) => {
+        if (response?.result?.status) {
+          setIsRequestSent(true);
+        }
+      })
+      .catch((error) => console.log("Error sending friend request:", error));
 
-    if (socket) {
-      socket.emit(EventEnum.SEND_FRIEND_REQUEST, payload);
-    }
-
-    showFlashMessage({ type: "success", message: "Friend Request has been sent!" });
-    setIsRequestSent(true);
+    // showFlashMessage({ type: "success", message: "Friend Request has been sent!" });
+    // setIsRequestSent(true);
   };
 
   return (
@@ -109,7 +109,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
                 <AddFriendButton title={isRequestSent ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
               </View>
 
-              <View>
+              {/* <View>
                 <View style={styles.tabNav}>
                   <TouchableOpacity onPress={() => setActiveTab("Photos")}>
                     <Text
@@ -125,14 +125,15 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
                   </TouchableOpacity>
                 </View>
                 <View style={styles.divider} />
-              </View>
+              </View> */}
             </View>
           </View>
         )}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => onViewPress(item)} style={styles.imagesGrid}>
-            <Image source={{ uri: item.media }} style={styles.postImage} />
-          </TouchableOpacity>
+          // <TouchableOpacity onPress={() => onViewPress(item)} style={styles.imagesGrid}>
+          //   <Image source={{ uri: item.media }} style={styles.postImage} />
+          // </TouchableOpacity>
+          <View style={styles.postContainer}></View>
         )}
         numColumns={3}
       />

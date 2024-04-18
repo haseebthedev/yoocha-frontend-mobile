@@ -18,7 +18,9 @@ export const PopupMenu = ({ isVisible, menuOptions, setMenuVisible, setMenuOptio
 
   const onPressMenuOption = (item: MenuOptionI) => {
     item.onPress && item.onPress();
-    setMenuOption(item);
+    setMenuOption?.(item);
+
+    resize(0);
   };
 
   return (

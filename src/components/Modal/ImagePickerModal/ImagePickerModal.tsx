@@ -12,6 +12,7 @@ interface ImagePickerModalI {
   isVisible: boolean;
   title?: string;
   setProfileImage: (uri: ImageSourcePropType) => void;
+  setSelectedImage: (any) => void;
   bottomSheetRef: any;
   snapPoints: string[];
   renderBackdrop: React.FC<BottomSheetBackdropProps>;
@@ -21,6 +22,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   isVisible,
   title,
   setProfileImage,
+  setSelectedImage,
   bottomSheetRef,
   snapPoints,
   renderBackdrop,
@@ -36,6 +38,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
       if (response?.assets) {
         const selectedImageUri = response.assets[0].uri;
         setProfileImage({ uri: selectedImageUri });
+        setSelectedImage(response.assets[0]);
         bottomSheetRef.current.close();
       }
     });
@@ -49,6 +52,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
     if (result?.assets) {
       const selectedImageUri = result.assets[0].uri;
       setProfileImage({ uri: selectedImageUri });
+      setSelectedImage(result.assets[0]);
       bottomSheetRef.current.close();
     }
   };

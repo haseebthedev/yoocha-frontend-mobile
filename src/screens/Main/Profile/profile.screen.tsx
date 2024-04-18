@@ -18,7 +18,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
   const [activeTab, setActiveTab] = useState<string>("Photos");
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const userLocation: string = user?.country ? `${user?.country}` : `Known`;
+  const userLocation: string = user?.country ? `${user?.country}` : `Unknown`;
   const userName: string = user?.firstname || user?.lastname ? `${user?.firstname} ${user?.lastname}` : `Username`;
 
   const onRefresh = () => {
@@ -80,7 +80,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
           </TouchableOpacity>
         </View>
 
-        <View style={styles.tabNavTopSpacing}>
+        {/* <View style={styles.tabNavTopSpacing}>
           <View style={styles.tabNav}>
             <TouchableOpacity onPress={() => setActiveTab("Photos")}>
               <Text text="Photos" style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]} />
@@ -112,7 +112,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
               </View>
             )}
           </View>
-        </View>
+        </View> */}
       </View>
     </View>
   );

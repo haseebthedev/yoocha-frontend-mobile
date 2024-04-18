@@ -16,6 +16,7 @@ import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import DatePicker from "react-native-date-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
+import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
   const [imagePickerVisible, setImagePickerVisible] = useState<boolean>(false);
@@ -54,7 +56,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   };
 
   const submit = async ({ firstname, lastname }: UpdateUserI) => {
-    await dispatch(updateUserService({ firstname, lastname, country: selectedCountry, dateOfBirth }));
+    const profilePicture = await uploadImageToCloudinary(selectedImage);
+    await dispatch(updateUserService({ firstname, lastname, country: selectedCountry, dateOfBirth, profilePicture }));
     setSuccessModalVisible((prev) => !prev);
   };
 
@@ -77,6 +80,14 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
       setSelectedCountry(user?.country);
     } else {
       setSelectedCountry("Select Country");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.profilePicture) {
+      setProfileImage({ uri: user.profilePicture });
+    } else {
+      setProfileImage(personPlaceholder);
     }
   }, [user]);
 
@@ -145,6 +156,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
         isVisible={imagePickerVisible}
         title="Select an option!"
         setProfileImage={setProfileImage}
+        setSelectedImage={setSelectedImage}
         bottomSheetRef={bottomSheetRef}
         snapPoints={snapPoints}
         renderBackdrop={renderBackdrop}

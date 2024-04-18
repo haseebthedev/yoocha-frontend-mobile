@@ -14,14 +14,12 @@ interface ContactUserCardI {
 const ContactUserCard = ({ item, btnTitle, onAddBtnPress, onViewPress }: ContactUserCardI) => {
   const username = `${item.firstname} ${item.lastname}`;
   const location = item.country ? item.country : "Unknown";
+  const profilePicture = item.profilePicture ? { uri: item.profilePicture } : personPlaceholder;
 
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onViewPress}>
       <View style={styles.leftContainer}>
-        <Image
-          source={item.profilePicture ? { uri: item.profilePicture } : personPlaceholder}
-          style={styles.profileImage}
-        />
+        <Image source={profilePicture} style={styles.profileImage} />
 
         <View>
           <Text preset="semiBold" text={username} numberOfLines={1} />

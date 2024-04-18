@@ -1,19 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { colors } from "theme";
-import { socket } from "socket";
 import { RefreshControl } from "react-native";
-import { showFlashMessage } from "utils/flashMessage";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { EventEnum, EventEnumRole } from "enums";
-import { CancelFriendReqPayloadI, UserRequestsI } from "interfaces";
+import { EventEnumRole } from "enums";
+import { ListWithPagination } from "interfaces";
 import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
 import {
   ListUserRequestsResponseI,
   RootState,
   UserInfo,
   getUsersRequestsService,
+  removeFriendRequest,
   useAppDispatch,
   useAppSelector,
 } from "store";
@@ -26,9 +25,9 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [friendId, setFriendId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [state, setState] = useState<UserRequestsI>({
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [state, setState] = useState<ListWithPagination<UserInfo>>({
     list: [],
     page: 1,
     hasNext: false,
@@ -43,79 +42,87 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   };
 
   const confirmRemoveRequest = async () => {
-    const payload: CancelFriendReqPayloadI = {
-      participants: [
-        { user: user?._id ?? "", role: EventEnumRole.INITIATOR },
-        { user: friendId, role: EventEnumRole.INVITEE },
-      ],
-    };
+    const filteredUsers = state.list.filter((user) => user?.invitee?._id != friendId);
 
-    if (socket) {
-      socket.emit(EventEnum.CANCEL_FRIEND_REQUEST, payload);
-      showFlashMessage({ type: "success", message: "Request is removed!" });
-    }
+    setAlertModalVisible((prev) => !prev);
 
-    const filteredUsers = state.list.filter((user) => user.user?._id != friendId);
-    setState((prev: UserRequestsI) => ({
+    setState((prev: ListWithPagination<UserInfo>) => ({
       ...prev,
       list: filteredUsers,
       page: 1 + prev?.page,
       hasNext: prev?.hasNext,
     }));
 
-    setAlertModalVisible((prev) => !prev);
+    await dispatch(removeFriendRequest({ inviteeId: friendId }));
   };
 
   const getUserRequests = async () => {
-    setIsLoading(true);
-    await dispatch(getUsersRequestsService({ role: EventEnumRole.INITIATOR, page: state.page, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListUserRequestsResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev: UserRequestsI) => ({
-            ...prev,
-            list: prev.list.concat(response?.result?.docs),
-            page: 1 + prev?.page,
-            hasNext: response?.result?.hasNextPage,
-          }));
-        }
-      })
-      .finally(() => setIsLoading(false));
-  };
-
-  const loadMoreItems = () => {
-    if (!isLoading && state.hasNext) {
-      getUserRequests();
-    }
-  };
-
-  const onRefresh = async () => {
-    setState((prev: UserRequestsI) => ({
+    setState((prev: ListWithPagination<UserInfo>) => ({
       ...prev,
       listRefreshing: true,
     }));
 
-    await dispatch(getUsersRequestsService({ role: EventEnumRole.INITIATOR, page: 1, limit: LIMIT }))
+    await dispatch(getUsersRequestsService({ type: EventEnumRole.INITIATOR, page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListUserRequestsResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: UserRequestsI) => ({
+          setState((prev: ListWithPagination<UserInfo>) => ({
             ...prev,
-            list: response?.result?.docs,
+            list: prev.list.concat(response?.result?.docs),
             page: 1 + prev?.page,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
+      })
+      .then(() => {
+        setRefreshing(false);
       });
   };
 
+  const loadMoreItems = () => {
+    if (!state.listRefreshing && state.hasNext) {
+      getUserRequests();
+    }
+  };
+
   const renderLoader = () => {
-    return isLoading ? (
+    return state.listRefreshing ? (
       <View style={styles.loaderStyle}>
         <ActivityIndicator color={colors.primary} />
       </View>
     ) : null;
+  };
+
+  const onRefresh = async () => {
+    if (state.listRefreshing || refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+
+    setState((prev: ListWithPagination<UserInfo>) => ({
+      ...prev,
+      page: 1,
+      hasNext: false,
+    }));
+
+    await dispatch(getUsersRequestsService({ type: EventEnumRole.INITIATOR, page: 1, limit: LIMIT }))
+      .unwrap()
+      .then((response: ListUserRequestsResponseI) => {
+        if (response?.result?.docs) {
+          setState((prev: ListWithPagination<UserInfo>) => ({
+            ...prev,
+            list: response?.result?.docs,
+            page: 2,
+            hasNext: response?.result?.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
   };
 
   useEffect(() => {
@@ -142,18 +149,25 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
         <FlatList
           data={state.list}
           keyExtractor={(item: UserInfo) => item._id}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
-              item={item?.user}
-              onAddBtnPress={() => removeRequest(item?.user?._id)}
+              item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
+              onAddBtnPress={() => {
+                removeRequest(item?.invitee?._id);
+              }}
               btnTitle="Pending"
             />
           )}
           onEndReached={loadMoreItems}
           ListFooterComponent={renderLoader}
           onEndReachedThreshold={0.4}
-          ListEmptyComponent={() => !isLoading && <EmptyListText text="Requests List is Empty!" />}
-          refreshControl={<RefreshControl refreshing={state.listRefreshing} onRefresh={onRefresh} />}
+          ListEmptyComponent={() =>
+            !state.listRefreshing &&
+            !refreshing &&
+            state.list.length === 0 && <EmptyListText text="No requests are sent!" />
+          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </View>
 

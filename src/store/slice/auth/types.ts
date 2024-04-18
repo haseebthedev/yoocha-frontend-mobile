@@ -7,6 +7,7 @@ export interface UserI {
   _id: string;
   dateOfBirth: string | null;
   country: string | null;
+  city?: string | null;
   createdAt: string;
   updatedAt: string;
 }

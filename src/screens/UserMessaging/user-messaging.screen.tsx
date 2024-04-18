@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,42 +6,51 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Keyboard,
-  RefreshControl,
 } from "react-native";
 import { colors } from "theme";
-import { socket } from "socket/socketIo";
-import { EventEnum } from "enums";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListMessageI, MenuOptionI, SendMessagePayloadI } from "interfaces";
-import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
+import { ListWithPagination, MenuOptionI } from "interfaces";
+import {
+  AlertBox,
+  EmptyListText,
+  MessageCard,
+  PopupMenu,
+  Text,
+} from "components";
 import {
   ListMessageResponseI,
   MessageItemI,
-  ParticipantI,
   RootState,
+  SendMessageResponseI,
+  UserI,
   blockUserService,
   getListMessageService,
+  sendMessageService,
   useAppDispatch,
   useAppSelector,
 } from "store";
+import { EventEnum } from "enums";
+import { socket } from "socket/socketIo";
 import { userMessageScreenOptions } from "constant";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 
-const LIMIT: number = 15;
+const LIMIT: number = 50;
 
-const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "usermessaging">> = ({
-  navigation,
-  route,
-}) => {
-  const { roomId, friendName, participants } = route.params;
+const UserMessagingScreen: FC<
+  NativeStackScreenProps<NavigatorParamList, "usermessaging">
+> = ({ navigation, route }) => {
+  const { roomId, friendName, item } = route.params;
+
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [otherUser, setOtherUser] = useState<ParticipantI>();
+  const flatListRef = useRef<FlatList>(null);
+  const messageInputRef = useRef<TextInput>(null);
+
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const [otherUser, setOtherUser] = useState<UserI>();
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
     id: 0,
@@ -49,93 +58,59 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   });
 
   const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
-  const [removeChatModalVisible, setRemoveChatModalVisible] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [state, setState] = useState<ListMessageI>({
+  const [state, setState] = useState<ListWithPagination<MessageItemI>>({
     list: [],
     page: 1,
     hasNext: false,
     listRefreshing: false,
   });
 
-  const lastSeen = "8:14 PM";
-
   const blockUser = async () => {
-    await dispatch(blockUserService({ roomId, userIdToBlock: otherUser?.user._id }))
+    await dispatch(blockUserService({ id: otherUser?._id }))
       .unwrap()
       .then(() => {
         setIsUserBlock(true);
         setBlockModalVisible((prev) => !prev);
-      });
-  };
-
-  const removeChat = async () => console.log("Remove Chat");
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-
-    await dispatch(getListMessageService({ roomId: roomId, page: 1, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListMessageResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev: ListMessageI) => ({
-            ...prev,
-            list: response.result.docs,
-            page: 1 + prev.page,
-            hasNext: response.result.hasNextPage,
-          }));
-        }
       })
-      .finally(() => setRefreshing(false));
+      .catch((error) => console.log("error: ", error));
   };
 
-  const sendMessage = () => {
-    Keyboard.dismiss();
-    if (message) {
-      const payload: SendMessagePayloadI = {
-        chatRoomId: roomId,
-        message: message,
-        sender: user?._id ?? "",
-      };
-
-      if (socket) {
-        socket.emit(EventEnum.SEND_MESSAGE, payload);
-      }
-
-      setMessage("");
-    }
+  const sendMessage = async () => {
+    await dispatch(sendMessageService({ roomId: roomId, message: message }));
+    messageInputRef.current?.clear()
   };
 
   const renderLoader = () => {
-    return isLoading ? (
+    return state.listRefreshing ? (
       <View style={styles.loaderStyle}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="small" color={colors.primary} />
       </View>
     ) : null;
   };
 
   const getMessages = async () => {
-    setIsLoading(true);
-    await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
+    setState((prev) => ({ ...prev, listRefreshing: true }));
+    await dispatch(
+      getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT })
+    )
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListMessageI) => ({
+          setState((prev: ListWithPagination<MessageItemI>) => ({
             ...prev,
             list: prev.list.concat(response.result.docs),
             page: 1 + prev.page,
             hasNext: response.result.hasNextPage,
+            listRefreshing: false,
           }));
         }
-      })
-      .finally(() => setIsLoading(false));
+      });
   };
 
   const loadMoreItems = () => {
-    if (!isLoading && state.hasNext) {
+    if (!state.listRefreshing && state.hasNext) {
       getMessages();
     }
   };
@@ -149,28 +124,33 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      socket.on(EventEnum.RECIEVE_MESSAGE, (payload: any) => {
-        setState((prev: ListMessageI) => ({
-          ...prev,
-          list: prev.list.concat(payload._doc),
-        }));
-      });
-    }
-  }, [socket]);
-
-  useEffect(() => {
     if (menuOption.title === "Block user") {
       setBlockModalVisible(true);
-    } else if (menuOption.title === "Remove chat") {
-      setRemoveChatModalVisible(true);
     }
   }, [menuOption]);
 
   useEffect(() => {
-    const otherUser: ParticipantI[] = participants.filter((item) => item.user._id !== user?._id);
-    setOtherUser(otherUser[0]);
+    const otherUser =
+      item?.initiator._id === user?._id ? item.invitee : item.initiator;
+    setOtherUser(otherUser);
   }, []);
+
+  const scrollToTop = () => {
+    if (flatListRef?.current) {
+      flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+    }
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on(String(EventEnum.RECIEVE_MESSAGE), (payload: any) => {
+        setState((prev: any) => ({
+          ...prev,
+          list: [payload._doc, ...prev.list],
+        }));
+      });
+    }
+  }, [socket]);
 
   return (
     <View style={styles.container}>
@@ -180,15 +160,28 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Ionicons name="chevron-back" color={colors.textDark} size={20} />
             </TouchableOpacity>
-            <Image source={personPlaceholder} style={styles.profileImage} />
+
+            <Image
+              source={
+                otherUser?.profilePicture
+                  ? { uri: otherUser?.profilePicture }
+                  : personPlaceholder
+              }
+              style={styles.profileImage}
+            />
             <View>
               <Text text={friendName} preset="heading" />
-              <Text text={`Last seen: ${lastSeen}`} style={styles.lastSeenText} />
+              <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
             </View>
           </View>
         </View>
+
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={20} />
+          <Ionicons
+            name="ellipsis-vertical-sharp"
+            color={colors.textDark}
+            size={16}
+          />
         </TouchableOpacity>
 
         <PopupMenu
@@ -202,20 +195,29 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
       <View style={styles.bodyContainer}>
         <View style={styles.listHeight}>
           <FlatList
+            inverted={true}
+            ref={flatListRef}
+            style={{ flex: 1 }}
             data={state.list}
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item: MessageItemI) => String(item?._id)}
+            keyExtractor={(item: MessageItemI) => String(item._id)}
             contentContainerStyle={styles.listContainer}
-            renderItem={({ item }: { item: MessageItemI }) => <MessageCard item={item} />}
-            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+            renderItem={({ item }) => <MessageCard item={item} />}
+            ItemSeparatorComponent={() => (
+              <View style={styles.paddingVertical} />
+            )}
             onEndReached={loadMoreItems}
-            onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.1}
             ListFooterComponent={renderLoader}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
             ListEmptyComponent={() =>
-              !isLoading &&
-              state.list.length === 0 && <EmptyListText text="There are no messages yet. Start a conversation!" />
+              !state.listRefreshing &&
+              state.list.length === 0 && (
+                <View style={{ transform: [{ scaleY: -1 }] }}>
+                  <EmptyListText text="There are no messages yet. Start a conversation!" />
+                </View>
+              )
             }
+            onLayout={scrollToTop} // Scrolls to bottom when layout changes (initial render)
           />
         </View>
 
@@ -224,6 +226,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         ) : (
           <View style={styles.inputFieldBlock}>
             <TextInput
+              ref={messageInputRef}
               value={message}
               placeholder="Type here..."
               onChangeText={(text) => setMessage(text)}
@@ -236,17 +239,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
           </View>
         )}
       </View>
-
-      <AlertBox
-        open={removeChatModalVisible}
-        title="Remove Chat!"
-        description="Are you sure you want to remove chat."
-        onClose={() => setRemoveChatModalVisible((prev) => !prev)}
-        secondaryButtonText="Cancel"
-        primaryButtonText="Remove"
-        secondaryOnClick={() => setRemoveChatModalVisible((prev) => !prev)}
-        primaryOnClick={removeChat}
-      />
 
       <AlertBox
         open={blockModalVisible}

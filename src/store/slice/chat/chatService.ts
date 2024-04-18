@@ -14,6 +14,17 @@ import {
   UnblockUserResponseI,
   ListUserRequestsPayloadI,
   ListUserRequestsResponseI,
+  ExplorePeopleResponseI,
+  ExplorePeoplePayloadI,
+  sendFriendReqPayloadI,
+  sendFriendReqResponseI,
+  SendMessagePayloadI,
+  SendMessageResponseI,
+  SuggestedFriendsPayloadI,
+  RemoveFriendReqPayloadI,
+  RemoveFriendReqResponseI,
+  AcceptFriendReqPayloadI,
+  AcceptFriendReqResponseI,
 } from "./types";
 import { showFlashMessage } from "utils/flashMessage";
 import AxiosInstance from "services/api/api";
@@ -23,9 +34,65 @@ export const getListRoomsService: any = createAsyncThunk(
   async (payload: ListChatRoomPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<ListRoomResponseI> = await AxiosInstance.post(
-        `/chat/list-rooms?page=${payload.page}&limit=${payload.limit}`,
-        {}
+        `/chat/list-rooms?page=${payload.page}&limit=${payload.limit}`
       );
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const sendFriendRequest: any = createAsyncThunk(
+  "chat/sendFriendRequest",
+  async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.get(
+        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
+      );
+
+      showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const acceptFriendRequest: any = createAsyncThunk(
+  "chat/acceptFriendRequest",
+  async (payload: AcceptFriendReqPayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<AcceptFriendReqResponseI> = await AxiosInstance.get(
+        `/chat/accept-friend-req?roomId=${payload.roomId}`
+      );
+
+      showFlashMessage({ type: "success", message: `${response.data.result.status || "Request is Accepted!"}` });
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const removeFriendRequest: any = createAsyncThunk(
+  "chat/removeFriendRequest",
+  async (payload: RemoveFriendReqPayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<RemoveFriendReqResponseI> = await AxiosInstance.get(
+        `/chat/cancel-friend-req?inviteeId=${payload.inviteeId}`
+      );
+
+      showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been cancelled!"}` });
 
       return response.data;
     } catch (error: any) {
@@ -56,14 +123,52 @@ export const getListMessageService: any = createAsyncThunk(
   }
 );
 
+export const sendMessageService: any = createAsyncThunk(
+  "chat/sendMessageService",
+  async (payload: SendMessagePayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<SendMessageResponseI> = await AxiosInstance.post(`/chat/send-message`, {
+        roomId: payload.roomId,
+        payload: {
+          message: payload.message,
+        },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
 export const getFriendsSuggestionService: any = createAsyncThunk(
   "chat/getFriendsSuggestion",
-  async (_, { rejectWithValue }) => {
+  async (payload: SuggestedFriendsPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<GetFriendsSuggestionResponseI> = await AxiosInstance.get(
-        `/chat/friend-suggestions`,
-        {}
+        `/chat/friend-suggestions?page=${payload.page}&limit=${payload.limit}`
       );
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const getExplorePeopleService: any = createAsyncThunk(
+  "chat/getExplorePeople",
+  async (payload: ExplorePeoplePayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(
+        `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
+      );
+
+      console.log("res === ", response.data);
 
       return response.data;
     } catch (error: any) {
@@ -79,13 +184,10 @@ export const blockUserService: any = createAsyncThunk(
   async (payload: BlockUserPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<BlockUserResponseI> = await AxiosInstance.patch(
-        `/chat/block-user?id=${payload.userIdToBlock}`,
-        {
-          roomId: payload.roomId,
-        }
+        `/chat/block-user?id=${payload.id}`
       );
 
-      showFlashMessage({ type: "success", message: response.data.result.message });
+      showFlashMessage({ type: "success", message: response.data.result.status });
 
       return response.data;
     } catch (error: any) {
@@ -119,7 +221,7 @@ export const unblockUserService: any = createAsyncThunk(
   async (payload: UnblockUserPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<UnblockUserResponseI> = await AxiosInstance.patch(
-        `/chat/unblock-user?id=${payload.userId}`,
+        `/chat/unblock-user?id=${payload.id}`,
         {}
       );
 
@@ -141,7 +243,7 @@ export const getUsersRequestsService: any = createAsyncThunk(
       const response: AxiosResponse<ListUserRequestsResponseI> = await AxiosInstance.post(
         `/chat/list-user-requests?page=${payload.page}&limit=${payload.limit}`,
         {
-          role: payload.role,
+          type: payload.type,
         }
       );
 
