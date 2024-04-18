@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     marginRight: wp(3),
   },
   listContainer: {
-    paddingVertical: 20,
+    paddingVertical: hp(1),
   },
   messageContainer: {
     flexDirection: "row",
@@ -72,20 +72,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightShade,
   },
   listHeight: {
-    height: hp(80),
-    // flexGrow: 1,
+    flex: 1,
+    marginBottom: hp(8)
   },
   loadingContainer: {
     flex: 1,
     backgroundColor: colors.lightShade,
   },
   inputFieldBlock: {
-    height: hp(7.5),
+    height: hp(7),
     width: wp(100),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.white,
-    paddingVertical: wp(3.3),
+    paddingVertical: wp(2),
     gap: 20,
     paddingHorizontal: wp(4),
     position: "absolute",
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   inputfield: {
     width: wp(80),
-    backgroundColor: colors.lightShade,
+    // backgroundColor: colors.lightShade,
     color: colors.textDim,
     borderRadius: wp(2),
     paddingVertical: hp(0.7),

@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   otherParticipantImage: {
-    width: wp(10),
-    height: wp(10),
+    width: wp(8),
+    height: wp(8),
     borderRadius: wp(5),
     marginTop: 10,
     marginRight: 10,
