@@ -21,7 +21,7 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
         <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
           <Text preset="semiBold" text={fullName} numberOfLines={1} />
-          <Text text={"Last Message text here..."} numberOfLines={1} style={styles.lastMessageText} />
+          <Text text={item?.lastMessage ? item.lastMessage : ''} numberOfLines={1} style={styles.lastMessageText} />
         </View>
       </View>
 

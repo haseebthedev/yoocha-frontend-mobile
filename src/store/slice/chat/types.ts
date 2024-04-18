@@ -32,6 +32,7 @@ export interface ListRoomItemI {
   blockedBy: null;
   createdAt: string;
   updatedAt: string;
+  lastMessage: string | null;
 }
 
 export type ListRoomResponseI = PaginationListResultI<ListRoomItemI>;
