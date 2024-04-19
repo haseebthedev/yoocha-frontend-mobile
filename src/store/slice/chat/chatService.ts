@@ -134,6 +134,8 @@ export const sendMessageService: any = createAsyncThunk(
         },
       });
 
+      console.log("res === ", response.data.result);
+
       return response.data;
     } catch (error: any) {
       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
@@ -167,8 +169,6 @@ export const getExplorePeopleService: any = createAsyncThunk(
       const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(
         `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
       );
-
-      console.log("res === ", response.data);
 
       return response.data;
     } catch (error: any) {

@@ -2,6 +2,7 @@ import AxiosInstance from "services/api/api";
 
 export const uploadImageToCloudinary = async (selectedImage: any): Promise<any> => {
   try {
+    console.log("wworking.......");
     const formData = new FormData();
 
     formData.append("file", {
@@ -15,6 +16,7 @@ export const uploadImageToCloudinary = async (selectedImage: any): Promise<any> 
         "Content-Type": "multipart/form-data",
       },
     });
+
     return uploadResponse.data.result.url;
   } catch (error) {
     console.error("File upload error:", error);

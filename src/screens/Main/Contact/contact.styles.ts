@@ -16,10 +16,8 @@ const styles = StyleSheet.create({
     paddingVertical: hp(2),
   },
   suggestionsContainer: {
-    paddingHorizontal: wp(5),
-  },
-  suggestionListContainer: {
-    gap: 8,
+    flexDirection: "row",
+    gap: wp(4),
   },
   loaderContainer: {
     height: hp(18),

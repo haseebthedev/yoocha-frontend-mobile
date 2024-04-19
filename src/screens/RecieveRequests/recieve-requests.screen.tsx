@@ -5,7 +5,7 @@ import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, Text } from "components";
 import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
@@ -119,11 +119,13 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   };
 
   const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    ) : null;
+    return (
+      state.listRefreshing && (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      )
+    );
   };
 
   useEffect(() => {
@@ -145,7 +147,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
       />
 
       <View style={styles.containerWithWhiteBg}>
-        <Text text="Recieved Requests" style={styles.listHeading} />
+        <AppHeading title="Recieved Requests" />
 
         <FlatList
           data={state.list}

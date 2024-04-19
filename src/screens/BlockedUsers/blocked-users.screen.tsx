@@ -4,7 +4,7 @@ import { colors } from "theme";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, Text } from "components";
 import {
   BlockedUserInfo,
   ListBlockedUsersResponseI,
@@ -115,11 +115,13 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    ) : null;
+    return (
+      state.listRefreshing && (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      )
+    );
   };
 
   useEffect(() => {
@@ -141,7 +143,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
       />
 
       <View style={styles.containerWithWhiteBg}>
-        <Text text="Block users list" style={styles.listHeading} />
+        <AppHeading title="Block Users" />
 
         <FlatList
           data={state.list}

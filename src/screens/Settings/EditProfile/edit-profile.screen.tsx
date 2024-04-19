@@ -1,26 +1,28 @@
 import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View, ActivityIndicator } from "react-native";
-import { colors } from "theme";
-import { UpdateUserI } from "interfaces/user";
-import { useFormikHook } from "hooks/UseFormikHook";
-import { formatDateToDMY } from "utils/dateAndTime";
+
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TranslationLanguageCodeMap } from "react-native-country-picker-modal";
 import { editAccountValidationSchema } from "utils/validations";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import DatePicker from "react-native-date-picker";
+
+import { colors } from "theme";
+import { useFormikHook } from "hooks/UseFormikHook";
+import { formatDateToDMY } from "utils/dateAndTime";
+import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
+import { UpdateUserI, UserUpdateI } from "interfaces/user";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
 import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import DatePicker from "react-native-date-picker";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./edit-profile.styles";
-import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
-  const { user, loading } = useAppSelector((state: RootState) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
@@ -33,11 +35,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
   const [imagePickerVisible, setImagePickerVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {
     firstname: user?.firstname ?? "",
     lastname: user?.lastname ?? "",
+    email: user?.email ?? "",
   };
 
   const handleOpenPress = () => {
@@ -55,10 +59,29 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
     navigation.goBack();
   };
 
-  const submit = async ({ firstname, lastname }: UpdateUserI) => {
-    const profilePicture = await uploadImageToCloudinary(selectedImage);
-    await dispatch(updateUserService({ firstname, lastname, country: selectedCountry, dateOfBirth, profilePicture }));
-    setSuccessModalVisible((prev) => !prev);
+  const submit = async ({ firstname, lastname, email }: UpdateUserI) => {
+    let profilePicture = null;
+
+    try {
+      setLoading(true);
+      if (selectedImage) {
+        profilePicture = await uploadImageToCloudinary(selectedImage);
+      }
+
+      const dataToBeUpdate: UserUpdateI = { firstname, lastname, email, country: selectedCountry, dateOfBirth };
+
+      if (profilePicture) {
+        dataToBeUpdate.profilePicture = profilePicture;
+      }
+
+      await dispatch(updateUserService(dataToBeUpdate))
+        .unwrap()
+        .then(() => setLoading(false));
+
+      setSuccessModalVisible((prev) => !prev);
+    } catch (error) {
+      console.error("Submission Error:", error);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -70,17 +93,16 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   useEffect(() => {
     if (user?.dateOfBirth) {
       setDateOfBirth(new Date(user.dateOfBirth));
-    } else {
-      setDateOfBirth(new Date());
     }
   }, []);
 
   useEffect(() => {
     if (user?.country) {
       setSelectedCountry(user?.country);
-    } else {
-      setSelectedCountry("Select Country");
     }
+    // else {
+    //   setSelectedCountry("Select Country");
+    // }
   }, [user]);
 
   useEffect(() => {
@@ -124,7 +146,15 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             visible={touched.lastname}
           />
 
-          <TextInput label="Email" value={`${user?.email}`} />
+          <TextInput
+            label="Email"
+            placeholder="Enter Email"
+            value={values.email}
+            onBlur={() => setFieldTouched("email")}
+            onChangeText={handleChange("email")}
+            error={errors.email}
+            visible={touched.email}
+          />
 
           <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setDateModalVisible(true)} style={styles.pickerInputField}>
@@ -137,8 +167,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
-              text={String(selectedCountry)}
-              preset={selectedCountry === "Select Country" ? "inputTextPlaceholder" : "inputText"}
+              text={selectedCountry ? String(selectedCountry) : "Select Country"}
+              preset={selectedCountry ? "inputText" : "inputTextPlaceholder"}
             />
           </TouchableOpacity>
         </View>

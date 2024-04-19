@@ -10,7 +10,7 @@ interface EmptyListTextI {
 export const EmptyListText = ({ text }: EmptyListTextI) => {
   return (
     <View style={styles.emptyTextContainer}>
-      <Text preset="heading">{text}</Text>
+      <Text preset="inputText">{text}</Text>
     </View>
   );
 };

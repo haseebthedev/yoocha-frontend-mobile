@@ -12,8 +12,12 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
   const initialValues = { name: "", email: "", message: "" };
 
   const submit = () => {
-    Keyboard.dismiss();
-    console.log("message by: ", values.name, values.email, values.message);
+    try {
+      Keyboard.dismiss();
+      console.log("message by: ", values.name, values.email, values.message);
+    } catch (error) {
+      console.log("Submission Error: ", error);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -53,7 +57,7 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           multiline
           numberOfLines={4}
         />
-        <AppButton text={"Recover Password"} preset="filled" onPress={handleSubmit} />
+        <AppButton text={"Submit"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>
   );
