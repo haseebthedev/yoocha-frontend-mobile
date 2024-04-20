@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
-import { colors } from "theme";
-import { RefreshControl } from "react-native";
+import { ActivityIndicator, FlatList, View, RefreshControl } from "react-native";
+
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { colors } from "theme";
 import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
-import { AlertBox, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header } from "components";
 import {
   ListUserRequestsResponseI,
   RootState,
@@ -87,11 +88,13 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   };
 
   const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    ) : null;
+    return (
+      state.listRefreshing && (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      )
+    );
   };
 
   const onRefresh = async () => {
@@ -144,7 +147,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
       />
 
       <View style={styles.containerWithWhiteBg}>
-        <Text text="Sent requests" style={styles.listHeading} />
+        <AppHeading title="Sent requests" />
 
         <FlatList
           data={state.list}

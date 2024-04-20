@@ -1,14 +1,16 @@
 import { FC, useEffect, useState } from "react";
 import { FlatList, Image, RefreshControl, TouchableOpacity, View } from "react-native";
-import { EmptyListText, Text } from "components";
-import { colors } from "theme";
-import { MY_PROFILE_DATA } from "constant";
+
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+import { colors } from "theme";
+import { MY_PROFILE_DATA } from "constant";
+import { EmptyListText, Text } from "components";
 import { RootState, getMyProfileService, useAppDispatch, useAppSelector } from "store";
 import noImage from "assets/images/personPlaceholder.jpeg";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import styles from "./profile.styles";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
@@ -18,7 +20,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
   const [activeTab, setActiveTab] = useState<string>("Photos");
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const userLocation: string = user?.country ? `${user?.country}` : `Unknown`;
   const userName: string = user?.firstname || user?.lastname ? `${user?.firstname} ${user?.lastname}` : `Username`;
 
   const onRefresh = () => {
@@ -53,10 +54,12 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
           <Image source={user?.profilePicture ? { uri: user.profilePicture } : noImage} style={styles.profilePic} />
           <Text text={userName} preset="largeHeading" style={styles.name} />
 
-          <View style={styles.location}>
-            <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-            <Text text={userLocation} preset="light" />
-          </View>
+          {user?.country && (
+            <View style={styles.location}>
+              <Ionicons name="location-sharp" size={18} color={colors.textDark} />
+              <Text text={user?.country} preset="light" />
+            </View>
+          )}
         </View>
 
         <View style={styles.infoContainer}>

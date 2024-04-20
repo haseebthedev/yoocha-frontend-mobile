@@ -1,10 +1,12 @@
 import { FC } from "react";
 import { Keyboard, View } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { NavigatorParamList } from "navigators";
-import { AppButton, Header, TextInput } from "components";
-import { contactUsValidationSchema } from "utils/validations";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { useFormikHook } from "hooks/UseFormikHook";
+import { contactUsValidationSchema } from "utils/validations";
+import { AppButton, Header, TextInput } from "components";
 import styles from "./contactUs.styles";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
@@ -12,8 +14,12 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
   const initialValues = { name: "", email: "", message: "" };
 
   const submit = () => {
-    Keyboard.dismiss();
-    console.log("message by: ", values.name, values.email, values.message);
+    try {
+      Keyboard.dismiss();
+      console.log("message by: ", values.name, values.email, values.message);
+    } catch (error) {
+      console.log("Submission Error: ", error);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -53,7 +59,7 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           multiline
           numberOfLines={4}
         />
-        <AppButton text={"Recover Password"} preset="filled" onPress={handleSubmit} />
+        <AppButton text={"Submit"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>
   );

@@ -39,11 +39,13 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   };
 
   const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    ) : null;
+    return (
+      state.listRefreshing && (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      )
+    );
   };
 
   const loadMoreItems = () => {

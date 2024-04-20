@@ -94,6 +94,7 @@ export const addAddressValidationSchema = yup.object().shape({
 export const editAccountValidationSchema = yup.object().shape({
   firstname: yup.string().required("First name is required field!").label("First Name"),
   lastname: yup.string().label("Last Name"),
+  email: yup.string().required().label("Email").email(),
 });
 
 export const forgotPasswordValidation = yup.object().shape({

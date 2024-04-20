@@ -18,7 +18,7 @@ import {
   ContactUsScreen,
   ReportIssue,
   NotificationScreen,
-  SuggestionsScreen,
+  SearchPeopleScreen,
   PublicProfileScreen,
   ChangePasswordScreen,
   SendRequestsScreen,
@@ -55,7 +55,7 @@ export type NavigatorParamList = {
   contactUs: undefined;
   reportIssue: undefined;
   notifications: undefined;
-  suggestions: undefined;
+  searchPeople: undefined;
   publicProfile: { item: UserI };
   changePassword: undefined;
 };
@@ -78,7 +78,7 @@ const AppStack = () => {
 
       <Stack.Screen name="main" component={MainScreen} />
       <Stack.Screen name="notifications" component={NotificationScreen} />
-      <Stack.Screen name="suggestions" component={SuggestionsScreen} />
+      <Stack.Screen name="searchPeople" component={SearchPeopleScreen} />
       <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
       <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
       <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
@@ -108,8 +108,7 @@ const AppStack = () => {
   );
 };
 
-interface NavigationProps
-  extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
+interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = (props: NavigationProps) => {
   const colorScheme = useColorScheme();

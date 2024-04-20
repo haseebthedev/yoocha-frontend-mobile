@@ -1,7 +1,7 @@
 //  Main home Screens
 export * from "./Main/main.screen";
 export * from "./Main/Home/Notification/notification.screen";
-export * from "./Main/Home/Suggestion/suggestion.screen";
+export * from "./Main/Home/SearchPeople/searchPeople.screen";
 
 export * from "./Main/Home/PublicProfile/public-profile.screen";
 

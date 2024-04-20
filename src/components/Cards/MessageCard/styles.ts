@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    elevation: 1,
+    // elevation: 1,
   },
   recieveTime: {
     fontSize: 10,

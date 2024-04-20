@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    elevation: 1,
+    // elevation: 1,
   },
   recieveTime: {
     fontSize: 10,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   listHeight: {
     flex: 1,
-    marginBottom: hp(8)
+    marginBottom: hp(8),
   },
   loadingContainer: {
     flex: 1,

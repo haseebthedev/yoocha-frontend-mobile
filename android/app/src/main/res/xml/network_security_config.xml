@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
   <domain-config cleartextTrafficPermitted="true">
-    <domain includeSubdomains="true">https://3c58-182-183-109-77.ngrok-free.app</domain> <!-- Debug port -->
+    <domain includeSubdomains="true"> https://1232-182-183-50-75.ngrok-free.app</domain>
   </domain-config>
 </network-security-config>

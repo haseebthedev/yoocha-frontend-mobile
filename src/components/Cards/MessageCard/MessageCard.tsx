@@ -16,17 +16,12 @@ const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const isSentByUser = user?._id === item.sender._id;
-  const userProfilePic = isSentByUser
-    ? user?.profilePicture
-    : item.sender?.profilePicture;
+  const userProfilePic = isSentByUser ? user?.profilePicture : item.sender?.profilePicture;
 
   return (
     <View
       key={item?._id}
-      style={[
-        styles.messageContainer,
-        { justifyContent: isSentByUser ? "flex-end" : "flex-start" },
-      ]}
+      style={[styles.messageContainer, { justifyContent: isSentByUser ? "flex-end" : "flex-start" }]}
     >
       {!isSentByUser && (
         <Image
@@ -42,9 +37,7 @@ const MessageCard = ({ item }: MessageCardI) => {
           style={[
             styles.messageText,
             {
-              backgroundColor: isSentByUser
-                ? colors.primaryLight
-                : colors.white,
+              backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
               color: isSentByUser ? colors.white : colors.textDim,
               borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
               borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),

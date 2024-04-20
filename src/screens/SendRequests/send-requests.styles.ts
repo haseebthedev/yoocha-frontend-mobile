@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingTop: hp(4),
   },
-  listHeading: {
-    color: colors.textDim,
-    fontSize: 14,
-    marginBottom: 10,
-  },
 });
 
 export default styles;

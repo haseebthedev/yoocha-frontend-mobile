@@ -1,23 +1,10 @@
 import { FC, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import {
-  AlertBox,
-  EmptyListText,
-  MessageCard,
-  PopupMenu,
-  Text,
-} from "components";
+import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
 import {
   ListMessageResponseI,
   MessageItemI,
@@ -39,9 +26,10 @@ import styles from "./styles";
 
 const LIMIT: number = 50;
 
-const UserMessagingScreen: FC<
-  NativeStackScreenProps<NavigatorParamList, "usermessaging">
-> = ({ navigation, route }) => {
+const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "usermessaging">> = ({
+  navigation,
+  route,
+}) => {
   const { roomId, friendName, item } = route.params;
 
   const dispatch = useAppDispatch();
@@ -79,22 +67,22 @@ const UserMessagingScreen: FC<
 
   const sendMessage = async () => {
     await dispatch(sendMessageService({ roomId: roomId, message: message }));
-    messageInputRef.current?.clear()
+    messageInputRef.current?.clear();
   };
 
   const renderLoader = () => {
-    return state.listRefreshing ? (
-      <View style={styles.loaderStyle}>
-        <ActivityIndicator size="small" color={colors.primary} />
-      </View>
-    ) : null;
+    return (
+      state.listRefreshing && (
+        <View style={styles.loaderStyle}>
+          <ActivityIndicator size="small" color={colors.primary} />
+        </View>
+      )
+    );
   };
 
   const getMessages = async () => {
     setState((prev) => ({ ...prev, listRefreshing: true }));
-    await dispatch(
-      getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT })
-    )
+    await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
@@ -130,8 +118,7 @@ const UserMessagingScreen: FC<
   }, [menuOption]);
 
   useEffect(() => {
-    const otherUser =
-      item?.initiator._id === user?._id ? item.invitee : item.initiator;
+    const otherUser = item?.initiator._id === user?._id ? item.invitee : item.initiator;
     setOtherUser(otherUser);
   }, []);
 
@@ -162,11 +149,7 @@ const UserMessagingScreen: FC<
             </TouchableOpacity>
 
             <Image
-              source={
-                otherUser?.profilePicture
-                  ? { uri: otherUser?.profilePicture }
-                  : personPlaceholder
-              }
+              source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personPlaceholder}
               style={styles.profileImage}
             />
             <View>
@@ -177,11 +160,7 @@ const UserMessagingScreen: FC<
         </View>
 
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons
-            name="ellipsis-vertical-sharp"
-            color={colors.textDark}
-            size={16}
-          />
+          <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={16} />
         </TouchableOpacity>
 
         <PopupMenu
@@ -203,9 +182,7 @@ const UserMessagingScreen: FC<
             keyExtractor={(item: MessageItemI) => String(item._id)}
             contentContainerStyle={styles.listContainer}
             renderItem={({ item }) => <MessageCard item={item} />}
-            ItemSeparatorComponent={() => (
-              <View style={styles.paddingVertical} />
-            )}
+            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderLoader}
