@@ -26,6 +26,7 @@ export interface SignupResponseI {
 export interface AuthI {
   loading: boolean;
   user: UserI | null;
+  token: UserI | null;
   error: string | null;
 }
 

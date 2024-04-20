@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar, useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -26,6 +26,7 @@ import {
 } from "screens";
 import { colors } from "theme";
 import { ListRoomItemI, RootState, UserI, useAppSelector } from "store";
+import { disconnectSocketIO, initSocketIO } from "socket";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -107,12 +108,25 @@ const AppStack = () => {
   );
 };
 
-interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
+interface NavigationProps
+  extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = (props: NavigationProps) => {
   const colorScheme = useColorScheme();
 
+  const { token } = useAppSelector((state) => state.auth);
+
   useBackButtonHandler(canExit);
+
+  useEffect(() => {
+    if (token) {
+      initSocketIO();
+    }
+
+    return () => {
+      disconnectSocketIO();
+    };
+  }, [token]);
 
   return (
     <NavigationContainer ref={navigationRef} {...props}>

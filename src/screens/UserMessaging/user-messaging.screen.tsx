@@ -143,7 +143,7 @@ const UserMessagingScreen: FC<
 
   useEffect(() => {
     if (socket) {
-      socket.on(String(EventEnum.RECIEVE_MESSAGE), (payload: any) => {
+      socket.on(EventEnum.RECIEVE_MESSAGE, (payload: any) => {
         setState((prev: any) => ({
           ...prev,
           list: [payload._doc, ...prev.list],

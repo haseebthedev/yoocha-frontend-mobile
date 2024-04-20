@@ -12,6 +12,7 @@ import { AuthI } from "./types";
 const initialState: AuthI = {
   loading: false,
   user: null,
+  token: null,
   error: null,
 };
 
@@ -22,6 +23,7 @@ export const authSlice = createSlice({
     logoutUser: (state) => {
       state.loading = false;
       state.user = null;
+      state.token = null;
       state.error = null;
     },
   },
@@ -46,6 +48,7 @@ export const authSlice = createSlice({
       .addCase(signinService.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.result.user;
+        state.token = action.payload.result.token;
       })
       .addCase(signinService.rejected, (state, action) => {
         state.loading = false;

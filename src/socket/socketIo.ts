@@ -13,7 +13,7 @@ export const initSocketIO = async () => {
     extraHeaders["authorization"] = token ? token : null;
   }
 
-  socket = io(API_URL, { extraHeaders });
+  socket = io(API_URL, { transports: ["websocket"], extraHeaders });
 };
 
 export const disconnectSocketIO = () => {
