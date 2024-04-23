@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { hp } from "utils/responsive";
 import { Text } from "components";
 import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import { formatTime } from "utils/dateAndTime";
+import userPlaceholder from "assets/images/personPlaceholder.jpeg";
 import styles from "./styles";
 
 interface MessageCardI {
@@ -25,13 +25,13 @@ const MessageCard = ({ item }: MessageCardI) => {
     >
       {!isSentByUser && (
         <Image
-          source={userProfilePic ? { uri: userProfilePic } : personPlaceholder}
+          source={userProfilePic ? { uri: userProfilePic } : userPlaceholder}
           style={styles.otherParticipantImage}
         />
       )}
 
       <View style={styles.messageTextContainer}>
-        {isSentByUser && <Text text="12:05" style={styles.recieveTime} />}
+        {isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
         <Text
           text={item?.message}
           style={[
@@ -45,7 +45,7 @@ const MessageCard = ({ item }: MessageCardI) => {
           ]}
         />
 
-        {!isSentByUser && <Text text="12:05" style={styles.recieveTime} />}
+        {!isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
       </View>
     </View>
   );

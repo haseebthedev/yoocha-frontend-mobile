@@ -17,18 +17,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 
-  const [activeTab, setActiveTab] = useState<string>("Photos");
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const userName: string = user?.firstname || user?.lastname ? `${user?.firstname} ${user?.lastname}` : `Username`;
-
-  const onRefresh = () => {
-    setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  };
+  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
   useEffect(() => {
     dispatch(getMyProfileService());
