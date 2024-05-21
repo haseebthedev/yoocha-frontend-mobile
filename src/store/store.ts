@@ -1,19 +1,27 @@
-import { configureStore, ThunkAction, Action, combineReducers } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  combineReducers,
+} from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { persistReducer, persistStore } from "redux-persist";
+import { PersistConfig, persistReducer, persistStore } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import thunk from "redux-thunk";
 import authReducer from "./slice/auth/authReducer";
 import chatReducer from "./slice/chat/chatReducer";
 
-const persistConfig = {
+const persistConfig: PersistConfig<any> = {
   key: "root",
   storage: AsyncStorage,
+  // blacklist: ['contacts']
 };
 
 const rootReducer = combineReducers({
   auth: authReducer,
   chat: chatReducer,
+
+  // contacts: contactsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -27,7 +35,12 @@ export const persistor = persistStore(store);
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

@@ -120,7 +120,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       </View>
 
       <View style={styles.mainContainer}>
-        <View style={styles.sidebarContainer}>
+        {/* <View style={styles.sidebarContainer}>
           <FlatList
             data={HOME_STATUS_DATA}
             keyExtractor={(item: HOME_STATUS_DATA_I) => item.id}
@@ -131,7 +131,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
               <HomeUserStatus key={item.id} item={item} onViewPress={() => onViewPress(item)} onAddPress={() => {}} />
             )}
           />
-        </View>
+        </View> */}
 
         <View style={styles.mainBodyContainer}>
           <FlatList
@@ -159,7 +159,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             ListEmptyComponent={() =>
               !refreshing &&
               !state.listRefreshing &&
-              state.list.length === 0 && <EmptyListText text="Empty Chatroom List!" />
+              state.list.length === 0 && <EmptyListText text="You don't any friends yet!" />
             }
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />

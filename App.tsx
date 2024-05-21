@@ -1,12 +1,11 @@
 import "react-native-gesture-handler";
+import BootSplash from "react-native-bootsplash";
+import FlashMessage from "react-native-flash-message";
 import React, { useEffect } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { AppNavigator } from "./src/navigators";
 import { persistor, store } from "./src/store/store";
-// import { initSocketIO, disconnectSocketIO } from "./src/socket/socketIo";
-import BootSplash from "react-native-bootsplash";
-import FlashMessage from "react-native-flash-message";
 import { StatusBar } from "react-native";
 
 const App = () => {
