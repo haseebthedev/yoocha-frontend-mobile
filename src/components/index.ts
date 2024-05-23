@@ -17,6 +17,7 @@ export * from "./Cards/ContactUserCard/ContactUserCard";
 
 // List Component
 export * from "./List/SettingsListItem/SettingListItem";
+export * from "./List/AppSettingsItem/AppSettingsItem";
 
 // Drawer Component
 export * from "./Drawer/drawer";

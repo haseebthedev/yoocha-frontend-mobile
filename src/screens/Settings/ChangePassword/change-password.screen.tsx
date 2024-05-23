@@ -1,18 +1,21 @@
 import { FC, useState } from "react";
-import { Keyboard, View } from "react-native";
+import { Keyboard, View, ActivityIndicator } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { useFormikHook } from "hooks/UseFormikHook";
 import { ChangePasswordI } from "interfaces/user";
-import { ActivityIndicator } from "react-native";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AppButton, Header, TextInput } from "components";
 import { changePasswordValidationSchema } from "utils/validations";
 import { RootState, changePasswordService, useAppDispatch, useAppSelector } from "store";
 import styles from "./change-password.styles";
+import { colors } from "theme";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -34,8 +37,13 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
   );
 
   return (
-    <View style={styles.container}>
-      <Header headerText="Change Password" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+    <View style={[styles.container, darkMode ? styles.darkBg : styles.lightBg]}>
+      <Header
+        headerText="Change Password"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: darkMode ? colors.white : colors.black }}
+      />
 
       <View style={styles.form}>
         <TextInput
@@ -48,6 +56,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           onChangeText={handleChange("currentPassword")}
           error={errors.currentPassword}
           visible={touched.currentPassword}
+          style={{ color: darkMode ? colors.lightShade : colors.black }}
         />
         <TextInput
           label="New Password"

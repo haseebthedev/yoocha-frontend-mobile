@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     fontSize: hp(1.9),
   },
   addFriendBtnContainer: {
-    marginTop: hp(3.8),
+    marginTop: hp(5),
   },
   tabNavContainer: {
     paddingHorizontal: wp(5),

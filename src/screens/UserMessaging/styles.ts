@@ -3,10 +3,15 @@ import { colors } from "theme";
 import { hp, wp } from "utils/responsive";
 
 const styles = StyleSheet.create({
-  container: {
+  lightContainer: {
     flex: 1,
     paddingTop: hp(2.5),
     backgroundColor: colors.white,
+  },
+  darkContainer: {
+    flex: 1,
+    paddingTop: hp(2.5),
+    backgroundColor: colors.black,
   },
   appHeader: {
     flexDirection: "row",
@@ -71,6 +76,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.lightShade,
   },
+  darkBodyContainer: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
   listHeight: {
     flex: 1,
     marginBottom: hp(8),
@@ -84,7 +93,6 @@ const styles = StyleSheet.create({
     width: wp(100),
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.white,
     paddingVertical: wp(2),
     gap: 20,
     paddingHorizontal: wp(4),
@@ -94,7 +102,6 @@ const styles = StyleSheet.create({
   inputfield: {
     width: wp(80),
     // backgroundColor: colors.lightShade,
-    color: colors.textDim,
     borderRadius: wp(2),
     paddingVertical: hp(0.7),
     paddingHorizontal: wp(5),

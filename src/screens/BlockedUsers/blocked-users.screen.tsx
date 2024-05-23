@@ -22,6 +22,7 @@ const LIMIT: number = 10;
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -142,7 +143,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
         iconStyle={colors.white}
       />
 
-      <View style={styles.containerWithWhiteBg}>
+      <View style={[styles.containerWithWhiteBg, darkMode ? styles.blackBg : styles.whiteBg]}>
         <AppHeading title="Block Users" />
 
         <FlatList
@@ -152,7 +153,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
             <ContactUserCard
               item={item?.initiator?._id === user?._id ? item.invitee : item.initiator}
               onAddBtnPress={() => unblockUser(item)}
-              btnTitle="Unblock"
+              // btnTitle="Unblock"
             />
           )}
           onEndReached={loadMoreItems}
@@ -161,7 +162,12 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           ListEmptyComponent={() =>
             !state.listRefreshing &&
             !refreshing &&
-            state.list.length === 0 && <EmptyListText text="Block List is Empty!" />
+            state.list.length === 0 && (
+              <EmptyListText
+                text="Block List is Empty!"
+                textStyle={{ color: darkMode ? colors.lightShade : colors.black }}
+              />
+            )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

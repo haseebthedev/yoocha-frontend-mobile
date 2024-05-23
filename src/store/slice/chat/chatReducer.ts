@@ -1,12 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { LoadingI } from "./types";
-import {
-  blockUserService,
-  getBlockedUsersService,
-  getFriendsSuggestionService,
-  getListMessageService,
-  getListRoomsService,
-} from "./chatService";
+import { blockUserService, getBlockedUsersService, getListMessageService, getListRoomsService } from "./chatService";
 
 const initialState: LoadingI = {
   loading: false,
@@ -38,17 +32,6 @@ export const chatSlice = createSlice({
         state.loading = false;
       })
       .addCase(getListMessageService.rejected, (state, action) => {
-        state.loading = false;
-      })
-
-      // For listing Friends Suggestion
-      .addCase(getFriendsSuggestionService.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getFriendsSuggestionService.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(getFriendsSuggestionService.rejected, (state, action) => {
         state.loading = false;
       })
 

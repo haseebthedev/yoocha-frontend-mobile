@@ -24,6 +24,7 @@ const LIMIT: number = 10;
 const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendrequests">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const [friendId, setFriendId] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
@@ -146,7 +147,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
         iconStyle={colors.white}
       />
 
-      <View style={styles.containerWithWhiteBg}>
+      <View style={[styles.roundedContainer, darkMode ? styles.blackBg : styles.whiteBg]}>
         <AppHeading title="Sent requests" />
 
         <FlatList

@@ -8,6 +8,11 @@ const styles = StyleSheet.create({
     paddingTop: hp(2.5),
     backgroundColor: colors.white,
   },
+  darkContainer: {
+    flex: 1,
+    paddingTop: hp(2.5),
+    backgroundColor: colors.charcoalBlack,
+  },
   mainContainer: {
     flex: 1,
     flexDirection: "row",

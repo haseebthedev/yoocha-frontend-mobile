@@ -1,11 +1,16 @@
 import React from "react";
-import { View } from "react-native";
+import { View, ViewStyle } from "react-native";
 import styles from "./styles";
 
-export const Divider = () => {
+interface DividerProps {
+  spacingStyle?: ViewStyle;
+  dividerStyle?: ViewStyle;
+}
+
+export const Divider = ({ spacingStyle, dividerStyle }: DividerProps) => {
   return (
-    <View style={styles.spacing}>
-      <View style={styles.divider} />
+    <View style={[styles.spacing, spacingStyle]}>
+      <View style={[styles.divider, dividerStyle]} />
     </View>
   );
 };

@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
   headerTitle: { color: colors.white },
   listContainer: {
     flex: 1,
-    backgroundColor: colors.white,
     borderTopRightRadius: 40,
     borderTopLeftRadius: 40,
     paddingHorizontal: wp(5),
@@ -19,6 +18,9 @@ const styles = StyleSheet.create({
   spacing: {
     marginTop: hp(3),
     paddingHorizontal: wp(5),
+  },
+  deleteAccount: {
+    paddingHorizontal: wp(10),
   },
 });
 

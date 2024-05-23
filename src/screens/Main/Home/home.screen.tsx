@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } from "react-native";
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
@@ -6,7 +6,14 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ListWithPagination, UserStatusI } from "interfaces";
 import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
 import { Text, HomeUserStatus, ChatCard, StatusModal, Divider, EmptyListText } from "components";
-import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
+import {
+  useAppDispatch,
+  getListRoomsService,
+  ListRoomResponseI,
+  ListRoomItemI,
+  useAppSelector,
+  RootState,
+} from "store";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./home.styles";
@@ -15,6 +22,7 @@ const LIMIT: number = 10;
 
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
@@ -33,12 +41,12 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     listRefreshing: false,
   });
 
-  const onViewPress = (selectedItem: UserStatusI) => {
-    setStatusData(selectedItem);
-    setViewStatus((prev: boolean) => !prev);
-  };
+  // const onViewPress = useCallback((selectedItem: UserStatusI) => {
+  //   setStatusData(selectedItem);
+  //   setViewStatus((prev) => !prev);
+  // }, []);
 
-  const renderLoader = () => {
+  const renderLoader = useCallback(() => {
     return (
       state.listRefreshing && (
         <View style={styles.loaderStyle}>
@@ -46,16 +54,16 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
         </View>
       )
     );
-  };
+  }, [state.listRefreshing]);
 
-  const loadMoreItems = () => {
+  const loadMoreItems = useCallback(() => {
     if (!state.listRefreshing && state.hasNext) {
       getChatRooms();
     }
-  };
+  }, [state.listRefreshing, state.hasNext]);
 
-  const getChatRooms = async () => {
-    setState((prev: ListWithPagination<ListRoomItemI>) => ({
+  const getChatRooms = useCallback(async () => {
+    setState((prev) => ({
       ...prev,
       listRefreshing: true,
     }));
@@ -63,20 +71,20 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListWithPagination<ListRoomItemI>) => ({
+          setState((prev) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
-            page: 1 + prev?.page,
+            page: prev.page + 1,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
       });
-  };
+  }, [state.page, dispatch]);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setState((prev: ListWithPagination<ListRoomItemI>) => ({
+    setState((prev) => ({
       ...prev,
       page: 1,
       hasNext: false,
@@ -86,7 +94,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListWithPagination<ListRoomItemI>) => ({
+          setState((prev) => ({
             ...prev,
             list: response?.result?.docs,
             page: 2,
@@ -96,7 +104,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
         }
       })
       .finally(() => setRefreshing(false));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     getChatRooms();
@@ -107,15 +115,15 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.appHeader}>
+    <View style={darkMode ? styles.darkContainer : styles.container}>
+      <View style={[styles.appHeader]}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+          <MaterialCommunityIcons name="menu" color={darkMode ? colors.white : colors.textDark} size={24} />
         </TouchableOpacity>
-        <Text text="YOOCHAT" preset="logo" />
+        <Text text="YOOCHAT" preset="logo" style={{ color: darkMode ? colors.white : colors.textDark }} />
         <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
-          <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
+          <Ionicons name="notifications-outline" color={darkMode ? colors.white : colors.textDark} size={24} />
         </TouchableOpacity>
       </View>
 
@@ -155,11 +163,16 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             onEndReached={loadMoreItems}
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
-            ItemSeparatorComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider dividerStyle={darkMode && { backgroundColor: colors.textDark }} />}
             ListEmptyComponent={() =>
               !refreshing &&
               !state.listRefreshing &&
-              state.list.length === 0 && <EmptyListText text="You don't any friends yet!" />
+              state.list.length === 0 && (
+                <EmptyListText
+                  text="You don't any friends yet!"
+                  textStyle={{ color: darkMode ? colors.white : colors.black }}
+                />
+              )
             }
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />

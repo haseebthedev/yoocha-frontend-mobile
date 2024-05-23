@@ -5,7 +5,6 @@ import { hp, wp } from "utils/responsive";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
     paddingTop: hp(2),
   },
   form: {

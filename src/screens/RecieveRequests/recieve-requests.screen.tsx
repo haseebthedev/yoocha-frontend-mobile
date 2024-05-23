@@ -26,6 +26,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
@@ -146,7 +147,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         iconStyle={colors.white}
       />
 
-      <View style={styles.containerWithWhiteBg}>
+      <View style={[styles.roundedContainer, darkMode ? styles.blackBg : styles.whiteBg]}>
         <AppHeading title="Recieved Requests" />
 
         <FlatList

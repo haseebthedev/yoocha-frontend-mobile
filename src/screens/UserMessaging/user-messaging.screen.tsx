@@ -38,6 +38,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const messageInputRef = useRef<TextInput>(null);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
   const [otherUser, setOtherUser] = useState<UserI>();
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
@@ -140,12 +142,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, [socket]);
 
   return (
-    <View style={styles.container}>
+    <View style={darkMode ? styles.darkContainer : styles.lightContainer}>
       <View style={styles.headerContainer}>
         <View style={styles.appHeader}>
           <View style={styles.flexAlignCenter}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back" color={colors.textDark} size={20} />
+              <Ionicons name="chevron-back" color={darkMode ? colors.white : colors.textDark} size={24} />
             </TouchableOpacity>
 
             <Image
@@ -153,14 +155,17 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
               style={styles.profileImage}
             />
             <View>
-              <Text text={friendName} preset="heading" />
-              <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
+              <Text text={friendName} preset="semiBold" style={darkMode && { color: colors.white }} />
+              <Text
+                text={`Last seen: 4:20pm`}
+                style={[styles.lastSeenText, { color: darkMode && colors.lightShade }]}
+              />
             </View>
           </View>
         </View>
 
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={16} />
+          <Ionicons name="ellipsis-vertical-sharp" color={darkMode ? colors.white : colors.textDark} size={24} />
         </TouchableOpacity>
 
         <PopupMenu
@@ -171,7 +176,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         />
       </View>
 
-      <View style={styles.bodyContainer}>
+      <View style={darkMode ? styles.darkBodyContainer : styles.bodyContainer}>
         <View style={styles.listHeight}>
           <FlatList
             inverted={true}
@@ -201,14 +206,14 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         {isUserBlock ? (
           <EmptyListText text="User is Blocked!" />
         ) : (
-          <View style={styles.inputFieldBlock}>
+          <View style={[styles.inputFieldBlock, { backgroundColor: darkMode ? colors.black : colors.white }]}>
             <TextInput
               ref={messageInputRef}
               value={message}
               placeholder="Type here..."
               onChangeText={(text) => setMessage(text)}
               placeholderTextColor={colors.textDim}
-              style={styles.inputfield}
+              style={[styles.inputfield, { color: darkMode ? colors.lightShade : colors.textDim }]}
             />
             <TouchableOpacity onPress={sendMessage}>
               <Ionicons name="send" color={colors.primary} size={20} />

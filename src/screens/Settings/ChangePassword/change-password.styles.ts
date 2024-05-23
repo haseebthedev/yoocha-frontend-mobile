@@ -6,6 +6,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: hp(2.5),
+  },
+  darkBg: {
+    backgroundColor: colors.black,
+  },
+  lightBg: {
     backgroundColor: colors.white,
   },
   form: {

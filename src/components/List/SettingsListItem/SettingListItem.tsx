@@ -3,6 +3,7 @@ import { Text } from "components";
 import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
+import { RootState, useAppSelector } from "store";
 
 interface ChatCardI {
   iconName: string;

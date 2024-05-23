@@ -15,6 +15,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
   },
+  contentContainer: {
+    flex: 1,
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+    paddingHorizontal: wp(5),
+    paddingTop: hp(4),
+  },
 });
 
 export default styles;

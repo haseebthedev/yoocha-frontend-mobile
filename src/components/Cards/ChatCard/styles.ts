@@ -21,14 +21,21 @@ const styles = StyleSheet.create({
   textContainer: {
     marginLeft: wp(2),
   },
-  lastMessageText: {
+  lastMessageTextDark: {
     color: colors.textDim,
+  },
+  lastMessageTextLight: {
+    color: colors.lightShade,
   },
   infoContainer: {
     flexDirection: "column",
     alignItems: "flex-end",
   },
-  infoText: {
+  infoTextLight: {
+    color: colors.lightShade,
+    fontSize: hp(1.2),
+  },
+  infoTextDark: {
     color: colors.textDim,
     fontSize: hp(1.2),
   },

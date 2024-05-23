@@ -10,6 +10,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: wp(5),
     paddingVertical: hp(0.7),
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightBlack,
   },
   profileContainer: {
     flexDirection: "row",
@@ -19,14 +21,13 @@ const styles = StyleSheet.create({
   profileImage: {
     width: wp(14),
     height: hp(7),
-    borderRadius: wp(7),
+    borderRadius: wp(10),
   },
   textContainer: {
     marginLeft: wp(2),
     width: wp(74),
   },
   notificationText: {
-    color: colors.textDim,
     width: wp(60),
     marginTop: hp(-0.4),
   },

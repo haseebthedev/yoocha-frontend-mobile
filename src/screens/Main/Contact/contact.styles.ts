@@ -6,7 +6,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: hp(2.5),
+  },
+  whiteBg: {
     backgroundColor: colors.white,
+  },
+  blackBg: {
+    backgroundColor: colors.charcoalBlack,
   },
   appHeader: {
     flexDirection: "row",
@@ -18,6 +23,7 @@ const styles = StyleSheet.create({
   suggestionsContainer: {
     flexDirection: "row",
     gap: wp(4),
+    height: hp(20),
   },
   loaderContainer: {
     height: hp(18),

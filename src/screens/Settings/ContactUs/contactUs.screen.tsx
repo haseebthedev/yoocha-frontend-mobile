@@ -1,15 +1,19 @@
-import { FC } from "react";
-import { Keyboard, View } from "react-native";
+import { FC, useState } from "react";
+import { Keyboard, View, TextInput as TextInputField } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useFormikHook } from "hooks/UseFormikHook";
+import { useAppSelector, RootState } from "store";
 import { contactUsValidationSchema } from "utils/validations";
 import { AppButton, Header, TextInput } from "components";
 import styles from "./contactUs.styles";
+import { colors } from "theme";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
   const validationSchema = contactUsValidationSchema;
   const initialValues = { name: "", email: "", message: "" };
 
@@ -29,8 +33,13 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
   );
 
   return (
-    <View style={styles.container}>
-      <Header headerText="Contact Us" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+    <View style={[styles.container, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+      <Header
+        headerText="Contact Us"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: darkMode ? colors.white : colors.black }}
+      />
 
       <View style={styles.form}>
         <TextInput
@@ -51,14 +60,16 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
         />
         <TextInput
           label="message"
-          placeholder="Enter Message"
+          placeholder="Type your message here"
           onBlur={() => setFieldTouched("message")}
           onChangeText={handleChange("message")}
           error={errors.message}
           visible={touched.message}
           multiline
           numberOfLines={4}
+          style={{ textAlignVertical: "top" }}
         />
+
         <AppButton text={"Submit"} preset="filled" onPress={handleSubmit} />
       </View>
     </View>

@@ -5,26 +5,21 @@ import { hp, wp } from "utils/responsive";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingHorizontal: wp(6),
     paddingVertical: hp(8),
-    borderTopRightRadius: hp(5),
-    borderBottomRightRadius: hp(5),
+    borderTopRightRadius: hp(2),
+    borderBottomRightRadius: hp(2),
   },
   profilePic: {
     width: wp(18),
     height: wp(18),
     borderRadius: wp(10),
-    borderWidth: 1,
-    borderColor: colors.white,
   },
   username: {
     fontSize: hp(1.8),
-    color: colors.white,
   },
   useremail: {
     fontSize: hp(1.5),
-    color: colors.white,
   },
   bottomBlock: {
     marginTop: hp(5),
@@ -43,7 +38,6 @@ const styles = StyleSheet.create({
   },
   navText: {
     fontSize: hp(1.8),
-    color: colors.white,
     lineHeight: hp(2.2),
   },
   flexAlignCenter: {

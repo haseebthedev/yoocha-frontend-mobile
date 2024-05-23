@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     marginTop: hp(14),
     flex: 1,
-    backgroundColor: colors.white,
     borderTopRightRadius: hp(6),
     borderTopLeftRadius: hp(6),
     position: "relative",
@@ -50,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: wp(2),
     marginTop: hp(1),
+    // height: hp(2),
   },
   infoContainer: {
     marginTop: hp(20),
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
   btnContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: hp(3.5),
     justifyContent: "center",
+    marginTop: hp(5),
   },
   btn: {
     backgroundColor: colors.primary,

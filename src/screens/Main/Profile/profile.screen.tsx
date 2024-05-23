@@ -16,6 +16,7 @@ import styles from "./profile.styles";
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
@@ -38,20 +39,29 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
         </TouchableOpacity>
       </View>
 
-      <View style={styles.mainContainer}>
+      <View style={[styles.mainContainer, { backgroundColor: darkMode ? colors.black : colors.white }]}>
         <View style={styles.roundedContainer}>
           <Image source={user?.profilePicture ? { uri: user.profilePicture } : noImage} style={styles.profilePic} />
-          <Text text={userName} preset="largeHeading" style={styles.name} />
+          <Text
+            text={userName}
+            preset="largeHeading"
+            style={[styles.name, { color: darkMode ? colors.white : colors.textDim }]}
+          />
 
-          {user?.country && (
-            <View style={styles.location}>
-              <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-              <Text text={user?.country} preset="light" />
-            </View>
-          )}
-        </View>
+          <View style={styles.location}>
+            {user?.country && (
+              <>
+                <Ionicons name="location-sharp" size={18} color={darkMode ? colors.white : colors.textDark} />
+                <Text
+                  text={user?.country}
+                  preset="light"
+                  style={{ color: darkMode ? colors.lightShade : colors.textDim }}
+                />
+              </>
+            )}
+          </View>
 
-        <View style={styles.infoContainer}>
+          {/* <View style={styles.infoContainer}>
           <View style={styles.infoHeading}>
             <Text text={String(0)} style={styles.info} />
             <Text text="Friends" style={styles.infoText} />
@@ -64,12 +74,13 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
             <Text text={String(0)} style={styles.info} />
             <Text text="Blocked" style={styles.infoText} />
           </View>
-        </View>
+        </View> */}
 
-        <View style={styles.btnContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate("editprofile")} style={styles.btn}>
-            <Text text="Edit Profile" style={styles.btnText} />
-          </TouchableOpacity>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate("editprofile")} style={styles.btn}>
+              <Text text="Edit Profile" style={styles.btnText} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* <View style={styles.tabNavTopSpacing}>

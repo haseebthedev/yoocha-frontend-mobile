@@ -23,6 +23,10 @@ import styles from "./edit-profile.styles";
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const headingColor: string = darkMode ? colors.white : colors.black;
+  const textColor: string = darkMode ? colors.lightShade : colors.black;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
@@ -111,8 +115,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   }, [user]);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+    <GestureHandlerRootView style={[styles.container, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+      <Header
+        headerText="Edit Profile"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: headingColor }}
+      />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
@@ -131,6 +140,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("firstname")}
             error={errors.firstname}
             visible={touched.firstname}
+            style={{ color: textColor }}
           />
 
           <TextInput
@@ -141,6 +151,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("lastname")}
             error={errors.lastname}
             visible={touched.lastname}
+            style={{ color: textColor }}
           />
 
           <TextInput
@@ -151,21 +162,25 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("email")}
             error={errors.email}
             visible={touched.email}
+            isEditable={false}
+            style={{ color: textColor }}
           />
 
-          <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
+          <Text text="Date of Birth" preset="labelHeading" style={[styles.topSpacing, { color: headingColor }]} />
           <TouchableOpacity onPress={() => setDateModalVisible(true)} style={styles.pickerInputField}>
             <Text
               text={dateOfBirth ? formatDateToDMY(dateOfBirth) : "Select Date"}
               preset={dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+              style={{ color: textColor }}
             />
           </TouchableOpacity>
 
-          <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
+          <Text text="Country / Region" preset="labelHeading" style={[styles.topSpacing, { color: headingColor }]} />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
               text={selectedCountry ? String(selectedCountry) : "Select Country"}
               preset={selectedCountry ? "inputText" : "inputTextPlaceholder"}
+              style={{ color: textColor }}
             />
           </TouchableOpacity>
         </View>

@@ -6,11 +6,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: hp(2.5),
-    backgroundColor: colors.white,
   },
   mainContainer: {
     flex: 1,
-    backgroundColor: colors.white,
     paddingHorizontal: wp(5),
   },
   imgContainer: { alignSelf: "center" },

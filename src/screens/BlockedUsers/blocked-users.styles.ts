@@ -20,12 +20,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   containerWithWhiteBg: {
-    backgroundColor: colors.white,
     flex: 1,
     borderTopRightRadius: 40,
     borderTopLeftRadius: 40,
     paddingHorizontal: wp(5),
     paddingTop: hp(4),
+  },
+  whiteBg: {
+    backgroundColor: colors.white,
+  },
+  blackBg: {
+    backgroundColor: colors.black,
   },
   headerTitle: {
     color: colors.white,

@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
 import {
-  GetFriendsSuggestionResponseI,
   ListMessagePayloadI,
   ListMessageResponseI,
   ListChatRoomPayloadI,
@@ -14,13 +13,8 @@ import {
   UnblockUserResponseI,
   ListUserRequestsPayloadI,
   ListUserRequestsResponseI,
-  ExplorePeopleResponseI,
-  ExplorePeoplePayloadI,
-  sendFriendReqPayloadI,
-  sendFriendReqResponseI,
   SendMessagePayloadI,
   SendMessageResponseI,
-  SuggestedFriendsPayloadI,
   RemoveFriendReqPayloadI,
   RemoveFriendReqResponseI,
   AcceptFriendReqPayloadI,
@@ -46,24 +40,24 @@ export const getListRoomsService: any = createAsyncThunk(
   }
 );
 
-export const sendFriendRequest: any = createAsyncThunk(
-  "chat/sendFriendRequest",
-  async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
-    try {
-      const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.get(
-        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
-      );
+// export const sendFriendRequest: any = createAsyncThunk(
+//   "chat/sendFriendRequest",
+//   async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
+//     try {
+//       const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.get(
+//         `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
+//       );
 
-      showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });
+//       showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });
 
-      return response.data;
-    } catch (error: any) {
-      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+//       return response.data;
+//     } catch (error: any) {
+//       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
 
-      return rejectWithValue(error?.response?.data || "Something went wrong!");
-    }
-  }
-);
+//       return rejectWithValue(error?.response?.data || "Something went wrong!");
+//     }
+//   }
+// );
 
 export const acceptFriendRequest: any = createAsyncThunk(
   "chat/acceptFriendRequest",
@@ -133,40 +127,6 @@ export const sendMessageService: any = createAsyncThunk(
           message: payload.message,
         },
       });
-
-      return response.data;
-    } catch (error: any) {
-      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
-
-      return rejectWithValue(error?.response?.data || "Something went wrong!");
-    }
-  }
-);
-
-export const getFriendsSuggestionService: any = createAsyncThunk(
-  "chat/getFriendsSuggestion",
-  async (payload: SuggestedFriendsPayloadI, { rejectWithValue }) => {
-    try {
-      const response: AxiosResponse<GetFriendsSuggestionResponseI> = await AxiosInstance.get(
-        `/chat/friend-suggestions?page=${payload.page}&limit=${payload.limit}`
-      );
-
-      return response.data;
-    } catch (error: any) {
-      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
-
-      return rejectWithValue(error?.response?.data || "Something went wrong!");
-    }
-  }
-);
-
-export const getExplorePeopleService: any = createAsyncThunk(
-  "chat/getExplorePeople",
-  async (payload: ExplorePeoplePayloadI, { rejectWithValue }) => {
-    try {
-      const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(
-        `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
-      );
 
       return response.data;
     } catch (error: any) {

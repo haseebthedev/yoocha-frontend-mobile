@@ -14,6 +14,7 @@ interface MessageCardI {
 
 const MessageCard = ({ item }: MessageCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const isSentByUser = user?._id === item.sender._id;
   const userProfilePic = isSentByUser ? user?.profilePicture : item.sender?.profilePicture;
@@ -36,16 +37,28 @@ const MessageCard = ({ item }: MessageCardI) => {
           text={item?.message}
           style={[
             styles.messageText,
-            {
-              backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
-              color: isSentByUser ? colors.white : colors.textDim,
-              borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
-              borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
-            },
+            darkMode
+              ? {
+                  backgroundColor: isSentByUser ? colors.primaryLight : colors.lightBlack,
+                  color: isSentByUser ? colors.white : colors.white,
+                  borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
+                  borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
+                }
+              : {
+                  backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
+                  color: isSentByUser ? colors.white : colors.textDim,
+                  borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
+                  borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
+                },
           ]}
         />
 
-        {!isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
+        {!isSentByUser && (
+          <Text
+            text={formatTime(new Date(item.createdAt))}
+            style={[styles.recieveTime, { color: darkMode && colors.lightShade }]}
+          />
+        )}
       </View>
     </View>
   );
