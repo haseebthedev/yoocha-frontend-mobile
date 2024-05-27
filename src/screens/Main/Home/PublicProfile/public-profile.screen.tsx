@@ -1,18 +1,20 @@
 import { FC, useState } from "react";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import { Image, View } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { socket } from "socket";
 import { colors } from "theme";
+import { useAppTheme } from "hooks";
 import { MY_PROFILE_DATA } from "constant";
-import { showFlashMessage } from "utils/flashMessage";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { EventEnum, EventEnumRole } from "enums";
-import { RootState, UserI, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
 import { SendFriendReqPayloadI, UserStatusI } from "interfaces";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
+import { FriendI, UserI, sendFriendRequest, useAppDispatch } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./public-profile.styles";
+import createStyles from "./public-profile.styles";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "publicProfile">> = ({
   navigation,
@@ -20,11 +22,12 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
 }) => {
   const dispatch = useAppDispatch();
 
-  const { user } = useAppSelector((state: RootState) => state.auth);
-  const { item }: { item: UserI } = route.params;
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
+  const { item }: { item: FriendI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Photos");
-  const [isRequestSent, setIsRequestSent] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
     name: "",
@@ -47,15 +50,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   const onAddFriendBtnPress = async () => {
     await dispatch(sendFriendRequest({ inviteeId: item._id }))
       .unwrap()
-      .then((response) => {
-        if (response?.result?.status) {
-          setIsRequestSent(true);
-        }
-      })
       .catch((error) => console.log("Error sending friend request:", error));
-
-    // showFlashMessage({ type: "success", message: "Friend Request has been sent!" });
-    // setIsRequestSent(true);
   };
 
   return (
@@ -104,7 +99,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
               </View> */}
 
             <View style={styles.addFriendBtnContainer}>
-              <AddFriendButton title={isRequestSent ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
+              <AddFriendButton title={item?.isFriendReqSent ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
             </View>
           </View>
 

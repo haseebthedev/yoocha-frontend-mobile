@@ -4,7 +4,8 @@ import { Text } from "components";
 import { AppButton } from "components";
 import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./styles";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 
 interface PropsI extends ModalProps {
   open: boolean;
@@ -34,6 +35,9 @@ const AlertBox = ({
 }: PropsI) => {
   if (!open) return null;
 
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const onBackdropPress = (event: GestureResponderEvent) => {
     if (event.target === event.currentTarget) {
       onClose();
@@ -61,7 +65,7 @@ const AlertBox = ({
                     text={secondaryButtonText}
                     onPress={secondaryOnClick}
                     textStyle={type === "error" && { color: colors.red }}
-                    style={type === "error" && { borderColor: colors.red }}
+                    style={[type === "error" && { borderColor: colors.red }, { backgroundColor: "transparent" }]}
                   />
                 </View>
               )}

@@ -13,13 +13,16 @@ export interface FriendI {
   city?: string | null;
   createdAt: string;
   updatedAt: string;
-  isFriendReqSent: boolean;
+  isFriendReqSent?: boolean;
 }
 
 export interface InitialStateI {
-  loading: boolean;
-  friendSuggestions: FriendI[];
-  explorePeople: FriendI[];
+  friendSuggestionsLoading: boolean;
+  explorePeopleLoading: boolean;
+  searchExplorePeopleLoading: boolean;
+  friendSuggestions: PaginationListResultI<FriendI>;
+  explorePeople: PaginationListResultI<FriendI>;
+  searchExplorePeople: PaginationListResultI<FriendI>;
 }
 
 export type GetFriendsSuggestionResponseI = PaginationListResultI<UserI>;

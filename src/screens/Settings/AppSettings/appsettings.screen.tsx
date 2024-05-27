@@ -6,21 +6,22 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
-import { setMode } from "store/slice/mode/modeReducer";
+import { setMode } from "store/slice/appConfig/appConfigReducer";
 import { AppSettingsItem, Text } from "components";
-import { useAppDispatch, useAppSelector, RootState } from "store";
-import styles from "./appsettings.styles";
+import { useAppDispatch } from "store";
+import { useAppTheme } from "hooks";
+import createStyles from "./appsettings.styles";
 
 const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsettings">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme, darkMode } = useAppTheme();
+
+  const styles = createStyles(theme);
 
   const [pushNotifications, setPushNotifications] = useState<boolean>(false);
   const [messageNotifications, setMessageNotifications] = useState<boolean>(false);
   const [friendRequestNotifications, setFriendRequestNotifications] = useState<boolean>(false);
-
-  const iconColor: string = darkMode ? colors.lightShade : colors.textDim;
-  const textColor: string = darkMode ? colors.white : colors.black;
 
   return (
     <View style={styles.container}>
@@ -33,43 +34,40 @@ const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsetti
         <Ionicons name="chevron-forward" color={colors.primary} size={24} />
       </View>
 
-      <View style={[styles.contentContainer, { backgroundColor: darkMode ? colors.black : colors.white }]}>
-        <Text
-          text="GENERAL"
-          style={{ color: darkMode ? colors.lightShade : colors.textDim, fontSize: 14, marginBottom: 10 }}
-        />
+      <View style={styles.contentContainer}>
+        <Text text="GENERAL" style={{ color: theme.colors.heading }} />
 
         <AppSettingsItem
           iconName="invert-mode-outline"
           itemText="Dark Mode"
-          iconColor={iconColor}
+          iconColor={theme.colors.iconColor}
           switchValue={darkMode}
           onSwitchChange={() => dispatch(setMode(!darkMode))}
-          textColor={textColor}
+          textColor={theme.colors.heading}
         />
         <AppSettingsItem
           iconName="push-outline"
           itemText="Allow Push Notifications"
-          iconColor={iconColor}
+          iconColor={theme.colors.iconColor}
           switchValue={pushNotifications}
           onSwitchChange={() => setPushNotifications(!pushNotifications)}
-          textColor={textColor}
+          textColor={theme.colors.heading}
         />
         <AppSettingsItem
           iconName="chatbubbles-outline"
           itemText="Message Notifications"
-          iconColor={iconColor}
+          iconColor={theme.colors.iconColor}
           switchValue={messageNotifications}
           onSwitchChange={() => setMessageNotifications(!messageNotifications)}
-          textColor={textColor}
+          textColor={theme.colors.heading}
         />
         <AppSettingsItem
           iconName="people-circle-outline"
           itemText="Friend Request Notifications"
-          iconColor={iconColor}
+          iconColor={theme.colors.iconColor}
           switchValue={friendRequestNotifications}
           onSwitchChange={() => setFriendRequestNotifications(!friendRequestNotifications)}
-          textColor={textColor}
+          textColor={theme.colors.heading}
         />
       </View>
     </View>

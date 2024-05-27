@@ -5,7 +5,8 @@ import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
 import { formatTime } from "utils/dateAndTime";
 import userPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./styles";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 
 interface MessageCardI {
   item: MessageItemI;
@@ -13,8 +14,10 @@ interface MessageCardI {
 }
 
 const MessageCard = ({ item }: MessageCardI) => {
+  const { theme, darkMode } = useAppTheme();
+  const styles = createStyles(theme);
+
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const isSentByUser = user?._id === item.sender._id;
   const userProfilePic = isSentByUser ? user?.profilePicture : item.sender?.profilePicture;
@@ -37,28 +40,16 @@ const MessageCard = ({ item }: MessageCardI) => {
           text={item?.message}
           style={[
             styles.messageText,
-            darkMode
-              ? {
-                  backgroundColor: isSentByUser ? colors.primaryLight : colors.lightBlack,
-                  color: isSentByUser ? colors.white : colors.white,
-                  borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
-                  borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
-                }
-              : {
-                  backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
-                  color: isSentByUser ? colors.white : colors.textDim,
-                  borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
-                  borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
-                },
+            {
+              backgroundColor: isSentByUser ? colors.primaryLight : theme.colors.messageCardBg,
+              color: isSentByUser ? colors.white : theme.colors.heading,
+              borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
+              borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
+            },
           ]}
         />
 
-        {!isSentByUser && (
-          <Text
-            text={formatTime(new Date(item.createdAt))}
-            style={[styles.recieveTime, { color: darkMode && colors.lightShade }]}
-          />
-        )}
+        {!isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
       </View>
     </View>
   );

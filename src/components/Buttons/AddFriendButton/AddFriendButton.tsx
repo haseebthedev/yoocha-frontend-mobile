@@ -11,7 +11,7 @@ interface ButtonI extends ButtonProps {
 
 const AddFriendButton = ({ onPress, title }: ButtonI) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.addFriendBlock}>
+    <TouchableOpacity onPress={onPress} style={styles.addFriendBlock} activeOpacity={0.5}>
       <Ionicons name="person-add-outline" color={colors.white} size={13} />
       <Text text={title} style={styles.addFriendText} />
     </TouchableOpacity>

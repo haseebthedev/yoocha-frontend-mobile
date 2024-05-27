@@ -18,15 +18,15 @@ import { RootState, updateUserService, useAppDispatch, useAppSelector } from "st
 import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./edit-profile.styles";
+import createStyles from "./edit-profile.styles";
+import { useAppTheme } from "hooks";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
-  const headingColor: string = darkMode ? colors.white : colors.black;
-  const textColor: string = darkMode ? colors.lightShade : colors.black;
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
@@ -115,12 +115,12 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   }, [user]);
 
   return (
-    <GestureHandlerRootView style={[styles.container, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+    <GestureHandlerRootView style={styles.container}>
       <Header
         headerText="Edit Profile"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: headingColor }}
+        titleStyle={{ color: theme.colors.heading }}
       />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
@@ -140,7 +140,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("firstname")}
             error={errors.firstname}
             visible={touched.firstname}
-            style={{ color: textColor }}
+            style={{ color: theme.colors.heading }}
           />
 
           <TextInput
@@ -151,7 +151,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("lastname")}
             error={errors.lastname}
             visible={touched.lastname}
-            style={{ color: textColor }}
+            style={{ color: theme.colors.heading }}
           />
 
           <TextInput
@@ -163,24 +163,32 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             error={errors.email}
             visible={touched.email}
             isEditable={false}
-            style={{ color: textColor }}
+            style={{ color: theme.colors.heading }}
           />
 
-          <Text text="Date of Birth" preset="labelHeading" style={[styles.topSpacing, { color: headingColor }]} />
+          <Text
+            text="Date of Birth"
+            preset="labelHeading"
+            style={[styles.topSpacing, { color: theme.colors.heading }]}
+          />
           <TouchableOpacity onPress={() => setDateModalVisible(true)} style={styles.pickerInputField}>
             <Text
               text={dateOfBirth ? formatDateToDMY(dateOfBirth) : "Select Date"}
               preset={dateOfBirth ? "inputText" : "inputTextPlaceholder"}
-              style={{ color: textColor }}
+              style={{ color: theme.colors.heading }}
             />
           </TouchableOpacity>
 
-          <Text text="Country / Region" preset="labelHeading" style={[styles.topSpacing, { color: headingColor }]} />
+          <Text
+            text="Country / Region"
+            preset="labelHeading"
+            style={[styles.topSpacing, { color: theme.colors.heading }]}
+          />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
               text={selectedCountry ? String(selectedCountry) : "Select Country"}
               preset={selectedCountry ? "inputText" : "inputTextPlaceholder"}
-              style={{ color: textColor }}
+              style={{ color: theme.colors.heading }}
             />
           </TouchableOpacity>
         </View>

@@ -28,8 +28,25 @@ export const getFriendsSuggestionService: any = createAsyncThunk(
   }
 );
 
+export const getSearchExploreService: any = createAsyncThunk(
+  "contact/getSearchExplore",
+  async (payload: ExplorePeoplePayloadI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(
+        `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
+      );
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
 export const getExplorePeopleService: any = createAsyncThunk(
-  "chat/getExplorePeople",
+  "contact/getExplorePeople",
   async (payload: ExplorePeoplePayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(

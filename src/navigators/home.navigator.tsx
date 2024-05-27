@@ -13,6 +13,7 @@ import { ProfileScreen } from "screens/Main/Profile/profile.screen";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { RootState, useAppSelector } from "store";
+import { useAppTheme } from "hooks";
 
 export type AppNavigatorParamList = {
   home: undefined;
@@ -32,7 +33,7 @@ enum BottomTabIcon {
 const BOTTOM_TAB_HEIGHT = isIOS ? hp(6.5) : hp(6.5);
 
 const HomeNavigator = () => {
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+  const { theme } = useAppTheme();
 
   return (
     <Drawer.Navigator
@@ -55,7 +56,7 @@ const HomeNavigator = () => {
               tabBarInactiveTintColor: colors.grey,
               tabBarStyle: {
                 height: BOTTOM_TAB_HEIGHT,
-                backgroundColor: darkMode ? colors.charcoalBlack : colors.white,
+                backgroundColor: theme.colors.bgColor,
               },
               tabBarShowLabel: false,
               headerShown: false,

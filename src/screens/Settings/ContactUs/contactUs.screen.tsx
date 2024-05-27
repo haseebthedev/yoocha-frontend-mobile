@@ -5,14 +5,15 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useFormikHook } from "hooks/UseFormikHook";
-import { useAppSelector, RootState } from "store";
 import { contactUsValidationSchema } from "utils/validations";
 import { AppButton, Header, TextInput } from "components";
-import styles from "./contactUs.styles";
 import { colors } from "theme";
+import { useAppTheme } from "hooks";
+import createStyles from "./contactUs.styles";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const validationSchema = contactUsValidationSchema;
   const initialValues = { name: "", email: "", message: "" };
@@ -33,12 +34,12 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+    <View style={styles.container}>
       <Header
         headerText="Contact Us"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: darkMode ? colors.white : colors.black }}
+        titleStyle={{ color: theme.colors.heading }}
       />
 
       <View style={styles.form}>

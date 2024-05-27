@@ -9,15 +9,16 @@ import styles from "./styles";
 
 interface UserSuggestionCardI {
   item: UserI;
+  btnTitle: string;
   onAddFriendBtnPress: (id: string) => void;
   onViewPress?: () => void;
 }
 
-const UserSuggestionCard = ({ item, onAddFriendBtnPress, onViewPress }: UserSuggestionCardI) => {
+const UserSuggestionCard = ({ item, btnTitle, onAddFriendBtnPress, onViewPress }: UserSuggestionCardI) => {
   const fullname: string = `${item.firstname} ${item.lastname}`;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onViewPress}>
+    <TouchableOpacity style={styles.container} onPress={onViewPress} activeOpacity={0.7}>
       <Image
         source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
         style={styles.userProfilePic}
@@ -25,9 +26,13 @@ const UserSuggestionCard = ({ item, onAddFriendBtnPress, onViewPress }: UserSugg
       <LinearGradient colors={[colors.transparent, colors.black]} style={styles.gradientBlock}></LinearGradient>
       <View style={styles.bottomAbsoluteBlock}>
         <Text text={fullname} preset="semiBold" style={styles.nameText} numberOfLines={1} />
-        <TouchableOpacity onPress={() => onAddFriendBtnPress(item?._id)} style={styles.addFriendBlock}>
+        <TouchableOpacity
+          onPress={() => onAddFriendBtnPress(item?._id)}
+          style={styles.addFriendBlock}
+          activeOpacity={0.7}
+        >
           <Ionicons name="person-add-outline" color={colors.white} size={8} />
-          <Text text="Add Friend" style={styles.addFriendText} />
+          <Text text={btnTitle} style={styles.addFriendText} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

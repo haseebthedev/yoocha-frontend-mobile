@@ -6,7 +6,7 @@ import thunk from "redux-thunk";
 import authReducer from "./slice/auth/authReducer";
 import chatReducer from "./slice/chat/chatReducer";
 import contactReducer from "./slice/contact/contactReducer";
-import modeReducer from "./slice/mode/modeReducer";
+import appConfigReducer from "./slice/appConfig/appConfigReducer";
 
 const persistConfig: PersistConfig<any> = {
   key: "root",
@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   chat: chatReducer,
   contacts: contactReducer,
-  mode: modeReducer,
+  appConfig: appConfigReducer,
   // contacts: contactsReducer,
 });
 

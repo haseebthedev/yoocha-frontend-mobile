@@ -1,22 +1,25 @@
-import { FC, useEffect, useState } from "react";
-import { FlatList, Image, RefreshControl, TouchableOpacity, View } from "react-native";
+import { FC, useEffect } from "react";
+import { Image, TouchableOpacity, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import { Text } from "components";
 import { colors } from "theme";
-import { MY_PROFILE_DATA } from "constant";
-import { EmptyListText, Text } from "components";
+import { useAppTheme } from "hooks";
 import { RootState, getMyProfileService, useAppDispatch, useAppSelector } from "store";
+import createStyles from "./profile.styles";
 import noImage from "assets/images/personPlaceholder.jpeg";
-import styles from "./profile.styles";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
 
   const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
@@ -39,24 +42,16 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.mainContainer, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+      <View style={styles.mainContainer}>
         <View style={styles.roundedContainer}>
           <Image source={user?.profilePicture ? { uri: user.profilePicture } : noImage} style={styles.profilePic} />
-          <Text
-            text={userName}
-            preset="largeHeading"
-            style={[styles.name, { color: darkMode ? colors.white : colors.textDim }]}
-          />
+          <Text text={userName} preset="largeHeading" style={styles.name} />
 
           <View style={styles.location}>
             {user?.country && (
               <>
-                <Ionicons name="location-sharp" size={18} color={darkMode ? colors.white : colors.textDark} />
-                <Text
-                  text={user?.country}
-                  preset="light"
-                  style={{ color: darkMode ? colors.lightShade : colors.textDim }}
-                />
+                <Ionicons name="location-sharp" size={18} color={theme.colors.iconColor} />
+                <Text text={user?.country} preset="light" style={styles.locationText} />
               </>
             )}
           </View>

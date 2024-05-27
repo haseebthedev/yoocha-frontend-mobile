@@ -1,9 +1,10 @@
 import { TouchableOpacity } from "react-native";
-import { Text } from "components";
-import { colors } from "theme";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./styles";
-import { RootState, useAppSelector } from "store";
+
+import { Text } from "components";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 interface ChatCardI {
   iconName: string;
@@ -14,9 +15,11 @@ interface ChatCardI {
 }
 
 const SettingListItem = ({ iconName, listText, iconColor, textColor, onPress }: ChatCardI) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   return (
     <TouchableOpacity onPress={onPress} style={styles.listItem}>
-      <Ionicons name={iconName} size={20} color={iconColor ? iconColor : colors.textDim} />
+      <Ionicons name={iconName} size={20} color={iconColor ? iconColor : theme.colors.iconColor} />
       <Text text={listText} style={[styles.listText, textColor ? { color: textColor } : {}]} />
     </TouchableOpacity>
   );

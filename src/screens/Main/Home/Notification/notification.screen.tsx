@@ -3,23 +3,22 @@ import { FlatList, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
+import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { NOTIFICATIONS_DATA } from "constant/notifications";
 import { Header, NotificationCard } from "components";
-import { RootState, useAppSelector } from "store";
-import styles from "./notification.styles";
-import { colors } from "theme";
+import createStyles from "./notification.styles";
 
 const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notifications">> = ({ navigation }) => {
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
-
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? colors.black : colors.white }]}>
+    <View style={styles.container}>
       <Header
         headerText="Notifications"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: darkMode ? colors.white : colors.black }}
+        titleStyle={{ color: theme.colors.heading }}
       />
 
       <FlatList

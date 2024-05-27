@@ -2,8 +2,8 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./styles";
-import { colors } from "theme";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 interface ChatCardI {
   item: ListRoomItemI;
@@ -12,33 +12,26 @@ interface ChatCardI {
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const friend = item.initiator._id === user?._id ? item.invitee : item.initiator;
   const fullName: string = friend ? `${friend.firstname} ${friend.lastname}` : "Friend Name Here...";
   const profileImage = friend?.profilePicture;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)}>
+    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)} activeOpacity={0.5}>
       <View style={styles.profileContainer}>
         <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
-          <Text
-            preset="semiBold"
-            text={fullName}
-            numberOfLines={1}
-            style={{ color: darkMode ? colors.white : colors.black }}
-          />
-          <Text
-            text={item?.lastMessage && item.lastMessage}
-            numberOfLines={1}
-            style={darkMode ? styles.lastMessageTextLight : styles.lastMessageTextDark}
-          />
+          <Text preset="semiBold" text={fullName} numberOfLines={1} style={styles.name} />
+          <Text text={item?.lastMessage && item.lastMessage} numberOfLines={1} style={styles.lastMessageText} />
         </View>
       </View>
 
       <View style={styles.infoContainer}>
-        <Text text={"23/23"} numberOfLines={1} style={darkMode ? styles.infoTextLight : styles.infoTextDark} />
+        <Text text={"23/23"} numberOfLines={1} style={styles.infoText} />
         {/* {item.noOfUnReadMessages > 0 && (
           <View style={styles.unreadMessageContainer}>
             <Text text={item.noOfUnReadMessages} style={styles.unreadMessageText} />

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, ViewStyle } from "react-native";
-import styles from "./styles";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 
 interface DividerProps {
   spacingStyle?: ViewStyle;
@@ -8,6 +9,9 @@ interface DividerProps {
 }
 
 export const Divider = ({ spacingStyle, dividerStyle }: DividerProps) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <View style={[styles.spacing, spacingStyle]}>
       <View style={[styles.divider, dividerStyle]} />

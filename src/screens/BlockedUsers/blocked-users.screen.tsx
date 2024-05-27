@@ -15,14 +15,17 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import styles from "./blocked-users.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./blocked-users.styles";
 
 const LIMIT: number = 10;
 
 const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -143,7 +146,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
         iconStyle={colors.white}
       />
 
-      <View style={[styles.containerWithWhiteBg, darkMode ? styles.blackBg : styles.whiteBg]}>
+      <View style={styles.roundedContainer}>
         <AppHeading title="Block Users" />
 
         <FlatList
@@ -152,7 +155,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
               item={item?.initiator?._id === user?._id ? item.invitee : item.initiator}
-              onAddBtnPress={() => unblockUser(item)}
+              onBtnPress={() => unblockUser(item)}
               // btnTitle="Unblock"
             />
           )}
@@ -163,10 +166,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
             !state.listRefreshing &&
             !refreshing &&
             state.list.length === 0 && (
-              <EmptyListText
-                text="Block List is Empty!"
-                textStyle={{ color: darkMode ? colors.lightShade : colors.black }}
-              />
+              <EmptyListText text="Block List is Empty!" textStyle={styles.emptyTextPlaceholder} />
             )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

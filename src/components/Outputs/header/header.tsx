@@ -6,6 +6,7 @@ import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./styles";
 import { RootState, useAppSelector } from "store";
+import { useAppTheme } from "hooks";
 
 export function Header({
   headerText,
@@ -19,18 +20,17 @@ export function Header({
   isSticky = false,
   customComponentRight,
 }: HeaderProps) {
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+  const { theme } = useAppTheme();
 
   const ICON_SIZE = 24;
-  const iconColor = darkMode ? colors.white : colors.black;
 
   const renderLeftIcon = () => {
     return (
-      <TouchableOpacity style={styles.iconContainer} onPress={onLeftPress}>
+      <TouchableOpacity onPress={onLeftPress}>
         <Ionicons
           name={leftIcon || "chevron-back"}
           size={ICON_SIZE}
-          color={leftIcon ? (iconStyle ? iconStyle : iconColor) : colors.transparent}
+          color={leftIcon ? (iconStyle ? iconStyle : theme.colors.iconColor) : colors.transparent}
         />
       </TouchableOpacity>
     );
@@ -41,11 +41,11 @@ export function Header({
       return <View style={{ flexDirection: "row" }}>{customComponentRight}</View>;
     } else {
       return (
-        <TouchableOpacity style={styles.iconContainer} onPress={onRightPress}>
+        <TouchableOpacity onPress={onRightPress}>
           <Ionicons
             name={rightIcon || "ellipsis-vertical"}
             size={ICON_SIZE}
-            color={rightIcon ? (iconStyle ? iconStyle : iconColor) : colors.transparent}
+            color={rightIcon ? (iconStyle ? iconStyle : theme.colors.iconColor) : colors.transparent}
           />
         </TouchableOpacity>
       );

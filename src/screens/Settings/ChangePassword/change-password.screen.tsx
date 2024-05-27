@@ -9,13 +9,15 @@ import { NavigatorParamList } from "navigators";
 import { AppButton, Header, TextInput } from "components";
 import { changePasswordValidationSchema } from "utils/validations";
 import { RootState, changePasswordService, useAppDispatch, useAppSelector } from "store";
-import styles from "./change-password.styles";
-import { colors } from "theme";
+import { useAppTheme } from "hooks";
+import createStyles from "./change-password.styles";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
@@ -37,12 +39,12 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
   );
 
   return (
-    <View style={[styles.container, darkMode ? styles.darkBg : styles.lightBg]}>
+    <View style={styles.container}>
       <Header
         headerText="Change Password"
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
-        titleStyle={{ color: darkMode ? colors.white : colors.black }}
+        titleStyle={{ color: theme.colors.heading }}
       />
 
       <View style={styles.form}>
@@ -56,7 +58,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           onChangeText={handleChange("currentPassword")}
           error={errors.currentPassword}
           visible={touched.currentPassword}
-          style={{ color: darkMode ? colors.lightShade : colors.black }}
+          style={{ color: theme.colors.bgColor }}
         />
         <TextInput
           label="New Password"

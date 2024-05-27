@@ -2,9 +2,8 @@ import { Switch, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components";
-import { colors } from "theme";
-import { RootState, useAppSelector } from "store";
-import styles from "./styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 interface AppSettingsItemI {
   iconName: string;
@@ -15,29 +14,23 @@ interface AppSettingsItemI {
   onSwitchChange: () => void;
 }
 
-const AppSettingsItem = ({
-  iconName,
-  itemText,
-  iconColor,
-  textColor,
-  switchValue,
-  onSwitchChange,
-}: AppSettingsItemI) => {
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+const AppSettingsItem = ({ iconName, itemText, iconColor, switchValue, onSwitchChange }: AppSettingsItemI) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   return (
     <View style={styles.listContainer}>
       <View style={styles.listItem}>
         <Ionicons name={iconName} size={20} color={iconColor} />
-        <Text text={itemText} style={[styles.text, { color: textColor }]} />
+        <Text text={itemText} style={styles.text} />
       </View>
       <Switch
         value={switchValue}
         onValueChange={onSwitchChange}
-        thumbColor={darkMode ? colors.white : colors.primary}
+        thumbColor={theme.colors.thumbColor}
         trackColor={{
-          false: darkMode ? colors.lightShade : colors.lightPrimary,
-          true: darkMode ? colors.primary : colors.lightPrimary,
+          false: theme.colors.trackColor,
+          true: theme.colors.trackActiveColor,
         }}
       />
     </View>

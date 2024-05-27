@@ -1,113 +1,118 @@
 import { FC, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
-import { colors } from "theme";
-import { NavigatorParamList } from "navigators";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListWithPagination } from "interfaces";
+import { useIsFocused } from "@react-navigation/native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+import { useAppTheme } from "hooks";
+import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import {
-  ExplorePeopleResponseI,
   FriendI,
-  GetFriendsSuggestionResponseI,
   RootState,
-  UserI,
   getExplorePeopleService,
   getFriendsSuggestionService,
   sendFriendRequest,
   useAppDispatch,
   useAppSelector,
 } from "store";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./contact.styles";
+import createStyles from "./contact.styles";
 
 const EXPLORE_PEOPLE_LIMIT: number = 10;
 const FRIEND_SUGG_LIMIT: number = 4;
 
 const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
+  const isFocused = useIsFocused();
   const dispatch = useAppDispatch();
-  const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
+  const {
+    friendSuggestionsLoading: fLoading,
+    explorePeopleLoading: eLoading,
+    friendSuggestions,
+    explorePeople,
+  } = useAppSelector((state: RootState) => state.contacts);
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [peopleToExplore, setPeopleToExplore] = useState<FriendI[]>([]);
-  const [suggestedFriend, setSuggestedFriend] = useState<FriendI[]>([]);
 
   const onAddFriendBtnPress = async (id: string) => {
     await dispatch(sendFriendRequest({ inviteeId: id }))
       .unwrap()
-      .then((response) => {
-        setPeopleToExplore((prev) =>
-          prev.map((person) => (person._id === id ? { ...person, isFriendReqSent: true } : person))
-        );
-        setSuggestedFriend((prev) =>
-          prev.map((person) => (person._id === id ? { ...person, isFriendReqSent: true } : person))
-        );
-      })
-      .catch((err) => console.log("error: ", err));
+      .catch((err) => console.error("error: ", err));
   };
 
   const onRefresh = async () => {
-    if (refreshing) {
-      return;
-    }
     setRefreshing(true);
-    await dispatch(getExplorePeopleService({ page: 1, limit: FRIEND_SUGG_LIMIT }));
-    await dispatch(getFriendsSuggestionService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
-      .unwrap()
-      .then((response: GetFriendsSuggestionResponseI) => {})
-      .finally(() => setRefreshing(false));
+    try {
+      await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }));
+      await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }));
+    } catch (err) {
+      console.error("error: ", err);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const getFriendsSuggestions = async () => {
-    await dispatch(getFriendsSuggestionService({ page: friendSuggestions.page, limit: FRIEND_SUGG_LIMIT }))
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
       .unwrap()
-      .then(() => setSuggestedFriend(friendSuggestions));
+      .catch((err) => console.log("err: ", err));
   };
 
   const getExplorePeople = async () => {
-    await dispatch(getExplorePeopleService({ page: explorePeople.page, limit: EXPLORE_PEOPLE_LIMIT }))
+    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
       .unwrap()
-      .then(() => setPeopleToExplore(explorePeople));
+      .catch((err) => console.log("err: ", err));
   };
 
   useEffect(() => {
-    getFriendsSuggestions();
-  }, []);
-
-  useEffect(() => {
+    // if (isFocused) {
     getExplorePeople();
+    getFriendsSuggestions();
+    // }
   }, []);
 
   const ListHeader = () => {
     return (
       <>
         <AppHeading title="People may know" />
-        {friendSuggestions.docs.length === 0 && !refreshing && !loading ? (
-          <EmptyListText text="No Suggestions!" />
-        ) : (
-          <View style={styles.suggestionsContainer}>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: 10 }}
-              data={friendSuggestions.docs}
-              keyExtractor={(_, i) => i.toString()}
-              renderItem={({ item }) => (
-                <View key={item._id}>
-                  <UserSuggestionCard
-                    item={item}
-                    onViewPress={() => navigation.navigate("publicProfile", { item })}
-                    onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
-                  />
-                </View>
-              )}
-            />
-          </View>
-        )}
+        <View style={styles.suggestionsContainer}>
+          {/* {fLoading ? (
+            <ActivityIndicator />
+          ) : ( */}
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 10 }}
+            data={friendSuggestions?.docs || []}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={({ item }: { item: FriendI }) => (
+              <View key={item._id}>
+                <UserSuggestionCard
+                  item={item}
+                  onViewPress={() => navigation.navigate("publicProfile", { item })}
+                  btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
+                  onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
+                />
+              </View>
+            )}
+            ListEmptyComponent={() =>
+              !refreshing &&
+              !fLoading &&
+              friendSuggestions?.docs.length === 0 && (
+                <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
+              )
+            }
+          />
+          {/* )} */}
+        </View>
 
         <AppHeading title="Explore" rightTitle="View All" onRightPress={() => navigation.navigate("searchPeople")} />
       </>
@@ -115,41 +120,47 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   };
 
   return (
-    <View style={[styles.container, darkMode ? styles.blackBg : styles.whiteBg]}>
+    <View style={styles.container}>
       <View style={styles.appHeader}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <MaterialCommunityIcons name="menu" color={darkMode ? colors.lightShade : colors.textDark} size={24} />
+          <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
-        <Text text="YOOCHAT" preset="logo" style={{ color: darkMode ? colors.white : colors.black }} />
+        <Text text="YOOCHAT" preset="logo" style={styles.heading} />
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={darkMode ? colors.lightShade : colors.textDark} size={20} />
+          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={20} />
         </TouchableOpacity>
 
         <PopupMenu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
       </View>
 
       <View style={styles.exploreContainer}>
+        {/* {eLoading ? (
+          <View>
+            <ActivityIndicator />
+          </View>
+        ) : ( */}
         <FlatList
-          data={explorePeople.docs}
+          data={explorePeople?.docs || []}
           keyExtractor={(item: FriendI, index: number) => item?._id || index.toString()}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ListHeader}
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: FriendI }) => (
             <ContactUserCard
               item={item}
-              btnTitle={"Add"}
-              onAddBtnPress={() => onAddFriendBtnPress(item._id)}
+              btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
+              onBtnPress={() => onAddFriendBtnPress(item._id)}
               onViewPress={() => navigation.navigate("publicProfile", { item })}
             />
           )}
           ListEmptyComponent={() =>
-            !explorePeople.listRefreshing &&
             !refreshing &&
-            explorePeople.list.length === 0 && <EmptyListText text="No People to Explore!" />
+            explorePeople.docs.length === 0 &&
+            !eLoading && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
+        {/* )} */}
       </View>
 
       <AlertBox

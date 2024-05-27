@@ -1,18 +1,28 @@
 import * as React from "react";
-import { View, TextInput } from "react-native";
-import { StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import { wp } from "utils/responsive";
 import { colors, typography } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export function SearchBar() {
+interface SearchBarProps {
+  iconColor?: string;
+  placeholderColor?: string;
+  containerStyle?: ViewStyle | ViewStyle[];
+  inputStyle?: TextStyle | TextStyle[];
+}
+
+export const SearchBar: React.FC<SearchBarProps> = ({ containerStyle, inputStyle, iconColor, placeholderColor }) => {
   return (
-    <View style={styles.searchbarContainer}>
-      <Ionicons name="search-outline" size={20} />
-      <TextInput placeholder="Search" style={styles.searchbarInput} />
+    <View style={StyleSheet.flatten([styles.searchbarContainer, containerStyle])}>
+      <Ionicons name="search-outline" size={20} color={iconColor} />
+      <TextInput
+        placeholder="Search"
+        style={StyleSheet.flatten([styles.searchbarInput, inputStyle])}
+        placeholderTextColor={placeholderColor}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   searchbarContainer: {

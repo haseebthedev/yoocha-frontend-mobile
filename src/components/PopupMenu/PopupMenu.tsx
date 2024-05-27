@@ -2,9 +2,14 @@ import React, { useRef } from "react";
 import { Modal, TouchableOpacity, View, SafeAreaView, Animated, Easing } from "react-native";
 import { Text } from "components/General/text/text";
 import { MenuI, MenuOptionI } from "interfaces";
-import styles from "./styles";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 
 export const PopupMenu = ({ isVisible, menuOptions, setMenuVisible, setMenuOption }: MenuI) => {
+  const { theme } = useAppTheme();
+
+  const styles = createStyles(theme);
+
   const scale = useRef(new Animated.Value(0)).current;
 
   const resize = (to: number) => {
@@ -34,7 +39,7 @@ export const PopupMenu = ({ isVisible, menuOptions, setMenuVisible, setMenuOptio
                 style={[styles.option, index !== menuOptions.length - 1 && styles.optionWithBorder]}
                 onPress={() => onPressMenuOption(item)}
               >
-                <Text preset="light" text={item.title} numberOfLines={1} />
+                <Text preset="light" text={item.title} numberOfLines={1} style={styles.optionText} />
               </TouchableOpacity>
             ))}
           </View>

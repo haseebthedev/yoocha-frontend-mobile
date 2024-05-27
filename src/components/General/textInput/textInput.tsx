@@ -8,6 +8,7 @@ import { TextInputProps } from "./textInput.props";
 import { colors, typography } from "theme";
 import { RootState, useAppSelector } from "store";
 import ErrorMessage from "../errorMessage/error-message";
+import { useAppTheme } from "hooks";
 
 export function TextInput(props: TextInputProps) {
   const {
@@ -25,18 +26,16 @@ export function TextInput(props: TextInputProps) {
   } = props;
 
   const style = [styles.inputFieldStyle, styleOverride];
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
-  const headingColor: string = darkMode ? colors.white : colors.black;
-  const textColor: string = darkMode ? colors.lightShade : colors.black;
+  const { theme } = useAppTheme();
 
   return (
     <>
-      {label && <Text text={label} preset="labelHeading" style={[styles.label, { color: headingColor }]} />}
+      {label && <Text text={label} preset="labelHeading" style={[styles.label, { color: theme.colors.heading }]} />}
 
       <View>
         <ReactNativeTextInput
           value={value}
-          style={[style, { color: textColor }]}
+          style={[style, { color: theme.colors.heading }]}
           autoCapitalize="none"
           placeholderTextColor={colors.darkGrey}
           secureTextEntry={isPassword === false || undefined ? true : false}
@@ -50,7 +49,7 @@ export function TextInput(props: TextInputProps) {
             name={rightIcon}
             size={22}
             style={styles.rightIconStyle}
-            color={darkMode ? colors.lightShade : colors.textDim}
+            color={theme.colors.iconColor}
           />
         )}
         <ErrorMessage error={error} visible={visible} />

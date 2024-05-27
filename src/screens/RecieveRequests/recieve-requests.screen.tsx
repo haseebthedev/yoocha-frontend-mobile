@@ -16,7 +16,8 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import styles from "./recieve-requests.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./recieve-requests.styles";
 
 const LIMIT: number = 10;
 
@@ -26,7 +27,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { darkMode } = useAppSelector((state: RootState) => state.mode);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
@@ -137,6 +140,10 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
     };
   }, []);
 
+  useEffect(() => {
+    console.log("list: === ", state.list);
+  }, [state]);
+
   return (
     <View style={styles.container}>
       <Header
@@ -147,7 +154,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         iconStyle={colors.white}
       />
 
-      <View style={[styles.roundedContainer, darkMode ? styles.blackBg : styles.whiteBg]}>
+      <View style={styles.roundedContainer}>
         <AppHeading title="Recieved Requests" />
 
         <FlatList
@@ -156,7 +163,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
               item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
-              onAddBtnPress={() => acceptRequest(item?._id, item?.initiator._id)}
+              onBtnPress={() => acceptRequest(item?._id, item?.initiator._id)}
               btnTitle="Accept"
             />
           )}
@@ -166,7 +173,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           ListEmptyComponent={() =>
             !state.listRefreshing &&
             !refreshing &&
-            state.list.length === 0 && <EmptyListText text="You don't have any Friend Requests!" />
+            state.list.length === 0 && (
+              <EmptyListText text="You don't have any Friend Requests!" textStyle={styles.emptyTextPlaceholder} />
+            )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

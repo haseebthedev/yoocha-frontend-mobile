@@ -1,12 +1,12 @@
 const colors = {
   white: "#FFFFFF",
   black: "#000000",
-  charcoalBlack: "#161A1D",
+  charcoalBlack: "#1E1E1E",
   blackDrawer: "#282828",
   lightBlack: "#3A3A3A",
 
   primary: "#3563CF",
-  lightPrimary: "#3563CF6E",
+  lightPrimary: "#5935CF6E",
   rgbPrimary: "rgba(53, 99, 207, .1)",
   primaryLight: "#3C6FDD",
   lightShade: "#F0F0F0",
