@@ -13,6 +13,7 @@ export type GetFriendsSuggestionResponseI = PaginationListResultI<UserI>;
 export interface PayloadI {
   page?: number;
   limit?: number;
+  name?: string;
 }
 
 export type SuggestedFriendsPayloadI = PayloadI;

@@ -46,7 +46,7 @@ const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsetti
           textColor={theme.colors.heading}
         />
         <AppSettingsItem
-          iconName="push-outline"
+          iconName="notifications"
           itemText="Allow Push Notifications"
           iconColor={theme.colors.iconColor}
           switchValue={pushNotifications}

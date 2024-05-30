@@ -88,6 +88,11 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     // }
   }, []);
 
+  useEffect(() => {
+    console.log(explorePeople);
+    console.log(friendSuggestions);
+  }, []);
+
   const ListHeader = () => {
     return (
       <>
@@ -117,7 +122,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
               ListEmptyComponent={() =>
                 !refreshing &&
                 !loading &&
-                friendSuggestions?.docs.length === 0 && (
+                friendSuggestions?.docs?.length === 0 && (
                   <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
                 )
               }
@@ -167,7 +172,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
             />
           )}
           ListEmptyComponent={() =>
-            explorePeople?.docs.length === 0 &&
+            explorePeople?.docs?.length === 0 &&
             !loading && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

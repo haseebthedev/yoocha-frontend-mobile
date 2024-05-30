@@ -35,7 +35,7 @@ export const getSearchExploreService: any = createAsyncThunk(
   async (payload: ExplorePeoplePayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<ExplorePeopleResponseI> = await AxiosInstance.get(
-        `/chat/explore-people?page=${payload.page}&limit=${payload.limit}`
+        `/chat/explore-people?page=${payload.page}&limit=${payload.limit}&name=${payload.name}`
       );
 
       return response.data;

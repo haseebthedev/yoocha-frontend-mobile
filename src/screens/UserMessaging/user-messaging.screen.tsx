@@ -143,10 +143,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
     }
   }, [socket]);
 
-  useEffect(() => {
-    console.log("other user === ", otherUser);
-  }, [otherUser]);
-
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>

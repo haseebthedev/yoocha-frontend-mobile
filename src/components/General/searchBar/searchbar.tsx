@@ -9,9 +9,18 @@ interface SearchBarProps {
   placeholderColor?: string;
   containerStyle?: ViewStyle | ViewStyle[];
   inputStyle?: TextStyle | TextStyle[];
+  setSearchPeople: (text: string) => void;
+  onSearchSubmit: () => void;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ containerStyle, inputStyle, iconColor, placeholderColor }) => {
+export const SearchBar: React.FC<SearchBarProps> = ({
+  containerStyle,
+  inputStyle,
+  iconColor,
+  placeholderColor,
+  setSearchPeople,
+  onSearchSubmit,
+}) => {
   return (
     <View style={StyleSheet.flatten([styles.searchbarContainer, containerStyle])}>
       <Ionicons name="search-outline" size={20} color={iconColor} />
@@ -19,6 +28,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ containerStyle, inputStyle
         placeholder="Search"
         style={StyleSheet.flatten([styles.searchbarInput, inputStyle])}
         placeholderTextColor={placeholderColor}
+        onChangeText={setSearchPeople}
+        onSubmitEditing={onSearchSubmit}
       />
     </View>
   );

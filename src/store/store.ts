@@ -11,7 +11,7 @@ import appConfigReducer from "./slice/appConfig/appConfigReducer";
 const persistConfig: PersistConfig<any> = {
   key: "root",
   storage: AsyncStorage,
-  // blacklist: ["contacts"],
+  blacklist: ["contacts"],
 };
 
 const rootReducer = combineReducers({

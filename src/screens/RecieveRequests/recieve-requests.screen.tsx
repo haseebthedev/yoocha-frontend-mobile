@@ -140,10 +140,6 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
     };
   }, []);
 
-  useEffect(() => {
-    console.log("list: === ", state.list);
-  }, [state]);
-
   return (
     <View style={styles.container}>
       <Header

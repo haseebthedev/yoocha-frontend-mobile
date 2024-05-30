@@ -4,6 +4,7 @@ import { ListRoomItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import { useAppTheme } from "hooks";
 import createStyles from "./styles";
+import { useEffect } from "react";
 
 interface ChatCardI {
   item: ListRoomItemI;

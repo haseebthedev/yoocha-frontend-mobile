@@ -21,9 +21,10 @@ const createStyles = (theme) =>
     },
     suggestionsContainer: {
       flexDirection: "row",
+      height: hp(20),
       gap: wp(4),
-      alignItems: "center",
-      justifyContent: "center",
+      // alignItems: "center",
+      // justifyContent: "center",
     },
     loaderContainer: {
       height: hp(18),

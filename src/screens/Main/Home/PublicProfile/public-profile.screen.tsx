@@ -4,15 +4,11 @@ import { Image, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { socket } from "socket";
 import { colors } from "theme";
 import { useAppTheme } from "hooks";
-import { MY_PROFILE_DATA } from "constant";
 import { NavigatorParamList } from "navigators";
-import { EventEnum, EventEnumRole } from "enums";
-import { SendFriendReqPayloadI, UserStatusI } from "interfaces";
-import { AddFriendButton, Header, StatusModal, Text } from "components";
-import { UserI, sendFriendRequest, useAppDispatch } from "store";
+import { AddFriendButton, AlertBox, Header, Text } from "components";
+import { UserI, removeFriendRequest, sendFriendRequest, useAppDispatch } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./public-profile.styles";
 
@@ -26,31 +22,47 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   const styles = createStyles(theme);
 
   const { item }: { item: UserI } = route.params;
-  const [viewStatus, setViewStatus] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("Photos");
-  const [statusData, setStatusData] = useState<UserStatusI>({
-    id: "",
-    name: "",
-    profilePic: "",
-    date: "",
-    statusImage: "",
-  });
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
-  const onViewPress = (selectedItem) => {
-    setStatusData({
-      id: selectedItem.id,
-      statusImage: selectedItem.media,
-      name: "My Post",
-      date: selectedItem.date,
-      profilePic: selectedItem.profilePic,
-    });
-    setViewStatus((prev) => !prev);
+  // const [viewStatus, setViewStatus] = useState<boolean>(false);
+  // const [activeTab, setActiveTab] = useState<string>("Photos");
+  // const [statusData, setStatusData] = useState<UserStatusI>({
+  //   id: "",
+  //   name: "",
+  //   profilePic: "",
+  //   date: "",
+  //   statusImage: "",
+  // });
+
+  // const onViewPress = (selectedItem) => {
+  //   setStatusData({
+  //     id: selectedItem.id,
+  //     statusImage: selectedItem.media,
+  //     name: "My Post",
+  //     date: selectedItem.date,
+  //     profilePic: selectedItem.profilePic,
+  //   });
+  //   setViewStatus((prev) => !prev);
+  // };
+
+  const [personId, setPersonId] = useState<string>("");
+
+  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
+    if (isFriendReqSent) {
+      setAlertModalVisible((prev: boolean) => !prev);
+      setPersonId(id);
+    } else {
+      await dispatch(sendFriendRequest({ inviteeId: id }))
+        .unwrap()
+        .catch((err) => console.error("error: ", err));
+    }
   };
 
-  const onAddFriendBtnPress = async () => {
-    await dispatch(sendFriendRequest({ inviteeId: item._id }))
+  const cancelFriendRequest = async () => {
+    await dispatch(removeFriendRequest({ inviteeId: personId }))
       .unwrap()
-      .catch((error) => console.log("Error sending friend request:", error));
+      .catch((err) => console.error("error: ", err))
+      .finally(() => setAlertModalVisible((prev: boolean) => !prev));
   };
 
   return (
@@ -99,7 +111,10 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
               </View> */}
 
             <View style={styles.addFriendBtnContainer}>
-              <AddFriendButton title={item?.isFriendReqSent ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
+              <AddFriendButton
+                title={item?.isFriendReqSent ? "Pending" : "Add Friend"}
+                onPress={() => onBtnPress(item?._id, item?.isFriendReqSent)}
+              />
             </View>
           </View>
 
@@ -192,7 +207,18 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
         numColumns={3}
       /> */}
 
-      <StatusModal isVisible={viewStatus} selectedItem={statusData} onPressClose={() => setViewStatus(false)} />
+      {/* <StatusModal isVisible={viewStatus} selectedItem={statusData} onPressClose={() => setViewStatus(false)} /> */}
+
+      <AlertBox
+        open={alertModalVisible}
+        title="Cancel Request!"
+        description="Are you sure you want to cancel request?"
+        onClose={() => setAlertModalVisible((prev) => !prev)}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Remove"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={cancelFriendRequest}
+      />
     </View>
   );
 };

@@ -25,9 +25,14 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const [searchPeople, setSearchPeople] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
+
+  const onSearchSubmit = async () => {
+    getSearchPeople(searchPeople);
+  };
 
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
@@ -51,7 +56,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await dispatch(getSearchExploreService({ page: 1, limit: LIMIT }))
+    await dispatch(getSearchExploreService({ name: "", page: 1, limit: LIMIT }))
       .unwrap()
       .finally(() => setRefreshing(false));
   };
@@ -64,8 +69,8 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
     }
   }, [searchExplorePeople, loading, dispatch]);
 
-  const getSearchPeople = async (page: number = 1) => {
-    await dispatch(getSearchExploreService({ page, limit: LIMIT }))
+  const getSearchPeople = async (name: string = "", page: number = 1) => {
+    await dispatch(getSearchExploreService({ name, page, limit: LIMIT }))
       .unwrap()
       .catch((err) => console.log("error: ", err));
   };
@@ -100,14 +105,11 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
             inputStyle={styles.searchBarText}
             iconColor={theme.colors.heading}
             placeholderColor={theme.colors.placeholderColor}
+            setSearchPeople={setSearchPeople}
+            onSearchSubmit={onSearchSubmit}
           />
         </View>
 
-        {/* {loading ? (
-          <View>
-            <ActivityIndicator />
-          </View>
-        ) : ( */}
         <FlatList
           data={searchExplorePeople?.docs || []}
           keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
@@ -126,13 +128,12 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
           // onEndReachedThreshold={0.5}
           ListEmptyComponent={() =>
             !refreshing &&
-            searchExplorePeople.result.docs.length === 0 && (
+            searchExplorePeople?.docs?.length === 0 && (
               <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
             )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
-        {/* )} */}
       </View>
 
       <AlertBox
