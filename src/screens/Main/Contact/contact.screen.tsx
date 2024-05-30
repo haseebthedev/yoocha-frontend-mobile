@@ -11,10 +11,11 @@ import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
 import {
-  FriendI,
   RootState,
+  UserI,
   getExplorePeopleService,
   getFriendsSuggestionService,
+  removeFriendRequest,
   sendFriendRequest,
   useAppDispatch,
   useAppSelector,
@@ -31,21 +32,29 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const {
-    friendSuggestionsLoading: fLoading,
-    explorePeopleLoading: eLoading,
-    friendSuggestions,
-    explorePeople,
-  } = useAppSelector((state: RootState) => state.contacts);
+  const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [personId, setPersonId] = useState<string>("");
 
-  const onAddFriendBtnPress = async (id: string) => {
-    await dispatch(sendFriendRequest({ inviteeId: id }))
+  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
+    if (isFriendReqSent) {
+      setAlertModalVisible((prev: boolean) => !prev);
+      setPersonId(id);
+    } else {
+      await dispatch(sendFriendRequest({ inviteeId: id }))
+        .unwrap()
+        .catch((err) => console.error("error: ", err));
+    }
+  };
+
+  const cancelFriendRequest = async () => {
+    await dispatch(removeFriendRequest({ inviteeId: personId }))
       .unwrap()
-      .catch((err) => console.error("error: ", err));
+      .catch((err) => console.error("error: ", err))
+      .finally(() => setAlertModalVisible((prev: boolean) => !prev));
   };
 
   const onRefresh = async () => {
@@ -84,40 +93,49 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       <>
         <AppHeading title="People may know" />
         <View style={styles.suggestionsContainer}>
-          {/* {fLoading ? (
-            <ActivityIndicator />
-          ) : ( */}
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 10 }}
-            data={friendSuggestions?.docs || []}
-            keyExtractor={(_, i) => i.toString()}
-            renderItem={({ item }: { item: FriendI }) => (
-              <View key={item._id}>
-                <UserSuggestionCard
-                  item={item}
-                  onViewPress={() => navigation.navigate("publicProfile", { item })}
-                  btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
-                  onAddFriendBtnPress={() => onAddFriendBtnPress(item._id)}
-                />
-              </View>
-            )}
-            ListEmptyComponent={() =>
-              !refreshing &&
-              !fLoading &&
-              friendSuggestions?.docs.length === 0 && (
-                <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
-              )
-            }
-          />
-          {/* )} */}
+          {refreshing ? (
+            <View style={styles.activityIndicatorContainer}>
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 10 }}
+              data={friendSuggestions?.docs || []}
+              keyExtractor={(_, i) => i.toString()}
+              renderItem={({ item }: { item: UserI }) => (
+                <View key={item._id}>
+                  <UserSuggestionCard
+                    item={item}
+                    onViewPress={() => navigation.navigate("publicProfile", { item })}
+                    btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
+                    onBtnPress={onBtnPress}
+                  />
+                </View>
+              )}
+              ListEmptyComponent={() =>
+                !refreshing &&
+                !loading &&
+                friendSuggestions?.docs.length === 0 && (
+                  <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
+                )
+              }
+            />
+          )}
         </View>
 
         <AppHeading title="Explore" rightTitle="View All" onRightPress={() => navigation.navigate("searchPeople")} />
       </>
     );
   };
+
+  const renderFooter = () =>
+    refreshing && (
+      <View style={styles.activityIndicatorContainer}>
+        <ActivityIndicator />
+      </View>
+    );
 
   return (
     <View style={styles.container}>
@@ -135,32 +153,26 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
       </View>
 
       <View style={styles.exploreContainer}>
-        {/* {eLoading ? (
-          <View>
-            <ActivityIndicator />
-          </View>
-        ) : ( */}
         <FlatList
-          data={explorePeople?.docs || []}
-          keyExtractor={(item: FriendI, index: number) => item?._id || index.toString()}
+          data={refreshing ? [] : explorePeople?.docs || []}
+          keyExtractor={(_, index: number) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ListHeader}
-          renderItem={({ item }: { item: FriendI }) => (
+          renderItem={({ item }: { item: UserI }) => (
             <ContactUserCard
               item={item}
               btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-              onBtnPress={() => onAddFriendBtnPress(item._id)}
+              onBtnPress={onBtnPress}
               onViewPress={() => navigation.navigate("publicProfile", { item })}
             />
           )}
           ListEmptyComponent={() =>
-            !refreshing &&
-            explorePeople.docs.length === 0 &&
-            !eLoading && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
+            explorePeople?.docs.length === 0 &&
+            !loading && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          ListFooterComponent={renderFooter}
         />
-        {/* )} */}
       </View>
 
       <AlertBox
@@ -171,6 +183,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         secondaryButtonText="Cancel"
         primaryButtonText="Remove"
         secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={cancelFriendRequest}
       />
     </View>
   );

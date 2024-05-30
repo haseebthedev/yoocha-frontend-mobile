@@ -10,11 +10,11 @@ import styles from "./styles";
 interface UserSuggestionCardI {
   item: UserI;
   btnTitle: string;
-  onAddFriendBtnPress: (id: string) => void;
+  onBtnPress: (id: string, isFriendReqSent?: boolean) => void;
   onViewPress?: () => void;
 }
 
-const UserSuggestionCard = ({ item, btnTitle, onAddFriendBtnPress, onViewPress }: UserSuggestionCardI) => {
+const UserSuggestionCard = ({ item, btnTitle, onBtnPress, onViewPress }: UserSuggestionCardI) => {
   const fullname: string = `${item.firstname} ${item.lastname}`;
 
   return (
@@ -27,7 +27,7 @@ const UserSuggestionCard = ({ item, btnTitle, onAddFriendBtnPress, onViewPress }
       <View style={styles.bottomAbsoluteBlock}>
         <Text text={fullname} preset="semiBold" style={styles.nameText} numberOfLines={1} />
         <TouchableOpacity
-          onPress={() => onAddFriendBtnPress(item?._id)}
+          onPress={() => onBtnPress(item?._id, item.isFriendReqSent)}
           style={styles.addFriendBlock}
           activeOpacity={0.7}
         >

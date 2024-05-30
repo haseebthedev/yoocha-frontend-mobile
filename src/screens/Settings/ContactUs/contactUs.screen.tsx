@@ -1,30 +1,43 @@
 import { FC, useState } from "react";
-import { Keyboard, View, TextInput as TextInputField } from "react-native";
+import { ActivityIndicator, Keyboard, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useFormikHook } from "hooks/UseFormikHook";
 import { contactUsValidationSchema } from "utils/validations";
-import { AppButton, Header, TextInput } from "components";
-import { colors } from "theme";
+import { AlertBox, AppButton, Header, TextInput } from "components";
 import { useAppTheme } from "hooks";
 import createStyles from "./contactUs.styles";
+import { ContactUsI } from "interfaces";
+import { contactUsService, useAppDispatch } from "store";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const validationSchema = contactUsValidationSchema;
-  const initialValues = { name: "", email: "", message: "" };
+  const [loading, setLoading] = useState<boolean>(false);
+  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
 
-  const submit = () => {
-    try {
-      Keyboard.dismiss();
-      console.log("message by: ", values.name, values.email, values.message);
-    } catch (error) {
-      console.log("Submission Error: ", error);
-    }
+  const validationSchema = contactUsValidationSchema;
+  const initialValues: ContactUsI = { name: "", email: "", message: "" };
+
+  const onCloseAlertBoxPress = () => {
+    setSuccessModalVisible((prev) => !prev);
+    navigation.goBack();
+  };
+
+  const submit = async ({ name, email, message }) => {
+    Keyboard.dismiss();
+    setLoading(true);
+    await dispatch(contactUsService({ name, email, message }))
+      .unwrap()
+      .catch((error) => console.log(error.message))
+      .finally(() => {
+        setLoading(false);
+        setSuccessModalVisible(true);
+      });
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
@@ -71,8 +84,22 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           style={{ textAlignVertical: "top" }}
         />
 
-        <AppButton text={"Submit"} preset="filled" onPress={handleSubmit} />
+        <AppButton
+          preset="filled"
+          text={loading ? "" : "Submit"}
+          onPress={handleSubmit}
+          disabled={loading}
+          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+        />
       </View>
+
+      <AlertBox
+        checkIcon={true}
+        open={successModalVisible}
+        type="success"
+        description="Your message has been sent successfully."
+        onClose={onCloseAlertBoxPress}
+      />
     </View>
   );
 };

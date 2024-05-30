@@ -126,14 +126,6 @@ export interface ListUserRequestsPayloadI {
 
 export type ListUserRequestsResponseI = PaginationListResultI<UserInfo>;
 
-interface sendFriendReqPayloadI {
-  inviteeId: string;
-}
-
-// export type sendFriendReqResponseI = ResponseWithStatus;
-export type RemoveFriendReqPayloadI = Pick<sendFriendReqPayloadI, "inviteeId">;
-export type RemoveFriendReqResponseI = ResponseWithStatus;
-
 export interface AcceptFriendReqPayloadI {
   roomId: string;
 }

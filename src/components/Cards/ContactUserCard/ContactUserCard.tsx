@@ -2,15 +2,15 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 import { Text } from "components";
 import { useAppTheme } from "hooks";
-import { FriendI, UserI } from "store";
+import { UserI } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./styles";
 
 interface ContactUserCardI {
-  item: FriendI | UserI;
+  item: UserI;
   btnTitle?: string;
   onViewPress?: () => void;
-  onBtnPress: () => void;
+  onBtnPress: (id: string, isFriendReqSent?: boolean) => void;
 }
 
 const ContactUserCard = ({ item, onBtnPress, btnTitle, onViewPress }: ContactUserCardI) => {
@@ -31,7 +31,11 @@ const ContactUserCard = ({ item, onBtnPress, btnTitle, onViewPress }: ContactUse
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.sideBtn} onPress={() => onBtnPress()} activeOpacity={0.5}>
+      <TouchableOpacity
+        style={styles.sideBtn}
+        onPress={() => onBtnPress(item._id, item.isFriendReqSent)}
+        activeOpacity={0.5}
+      >
         <Text text={btnTitle ? btnTitle : "Add"} style={styles.btnText} />
       </TouchableOpacity>
     </View>

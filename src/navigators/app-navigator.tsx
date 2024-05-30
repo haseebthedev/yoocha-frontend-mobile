@@ -25,7 +25,7 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { FriendI, ListRoomItemI, RootState, UserI, useAppSelector } from "store";
+import { UserI, ListRoomItemI, RootState, useAppSelector } from "store";
 import { disconnectSocketIO, initSocketIO } from "socket";
 
 export type NavigatorParamList = {
@@ -56,7 +56,7 @@ export type NavigatorParamList = {
   reportIssue: undefined;
   notifications: undefined;
   searchPeople: undefined;
-  publicProfile: { item: FriendI };
+  publicProfile: { item: UserI };
   changePassword: undefined;
 };
 

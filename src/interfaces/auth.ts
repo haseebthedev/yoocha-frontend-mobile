@@ -15,3 +15,5 @@ export interface ReportIssueI {
   email: string;
   message: string;
 }
+
+export type ContactUsI = ReportIssueI;

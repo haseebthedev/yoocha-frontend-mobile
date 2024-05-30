@@ -6,12 +6,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ListWithPagination, MenuOptionI } from "interfaces";
 import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
 import {
-  FriendI,
+  UserI,
   ListMessageResponseI,
   MessageItemI,
   RootState,
   SendMessageResponseI,
-  UserI,
   blockUserService,
   getListMessageService,
   sendMessageService,

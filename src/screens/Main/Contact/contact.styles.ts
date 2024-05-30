@@ -22,7 +22,6 @@ const createStyles = (theme) =>
     suggestionsContainer: {
       flexDirection: "row",
       gap: wp(4),
-      height: hp(20),
       alignItems: "center",
       justifyContent: "center",
     },
@@ -62,6 +61,11 @@ const createStyles = (theme) =>
     },
     emptyTextPlaceholder: {
       color: theme.colors.subHeading,
+    },
+    activityIndicatorContainer: {
+      height: hp(19),
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 

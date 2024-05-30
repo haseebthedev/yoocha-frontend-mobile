@@ -1,28 +1,11 @@
 import { UserI } from "../auth/types";
 import { PaginationListResultI, ResponseWithStatus } from "../chat/types";
 
-export interface FriendI {
-  profilePicture: string | null;
-  firstname: string;
-  lastname: string;
-  email: string;
-  isEmailVerified: boolean;
-  _id: string;
-  dateOfBirth: string | null;
-  country: string | null;
-  city?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  isFriendReqSent?: boolean;
-}
-
 export interface InitialStateI {
-  friendSuggestionsLoading: boolean;
-  explorePeopleLoading: boolean;
-  searchExplorePeopleLoading: boolean;
-  friendSuggestions: PaginationListResultI<FriendI>;
-  explorePeople: PaginationListResultI<FriendI>;
-  searchExplorePeople: PaginationListResultI<FriendI>;
+  loading: boolean;
+  friendSuggestions: PaginationListResultI<UserI>;
+  explorePeople: PaginationListResultI<UserI>;
+  searchExplorePeople: PaginationListResultI<UserI>;
 }
 
 export type GetFriendsSuggestionResponseI = PaginationListResultI<UserI>;
@@ -41,3 +24,6 @@ export interface sendFriendReqPayloadI {
 }
 
 export type sendFriendReqResponseI = ResponseWithStatus;
+
+export type RemoveFriendReqPayloadI = Pick<sendFriendReqPayloadI, "inviteeId">;
+export type RemoveFriendReqResponseI = ResponseWithStatus;

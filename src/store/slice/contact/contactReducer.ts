@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { FriendI, InitialStateI } from "./types";
+import { InitialStateI } from "./types";
 import {
   getExplorePeopleService,
   getFriendsSuggestionService,
   getSearchExploreService,
+  removeFriendRequest,
   sendFriendRequest,
 } from "./contactService";
+import { UserI } from "../auth/types";
 
-const initialUser: FriendI = {
+const initialUser: UserI = {
   profilePicture: "" || null,
   firstname: "",
   lastname: "",
@@ -34,9 +36,7 @@ const initialResult = {
 };
 
 const initialState: InitialStateI = {
-  friendSuggestionsLoading: false,
-  explorePeopleLoading: false,
-  searchExplorePeopleLoading: false,
+  loading: false,
   friendSuggestions: { result: { ...initialResult } },
   explorePeople: { result: { ...initialResult } },
   searchExplorePeople: { result: { ...initialResult } },
@@ -51,7 +51,7 @@ export const contactSlice = createSlice({
     builder
       // For listing Friends Suggestion
       .addCase(getFriendsSuggestionService.pending, (state) => {
-        state.friendSuggestionsLoading = true;
+        state.loading = true;
       })
       .addCase(getFriendsSuggestionService.fulfilled, (state, action) => {
         const friendSuggestionsWithReqSent = action.payload.result.docs.map((friend) => ({
@@ -63,14 +63,14 @@ export const contactSlice = createSlice({
           ...action.payload.result,
           docs: friendSuggestionsWithReqSent,
         };
-        state.friendSuggestionsLoading = false;
+        state.loading = false;
       })
       .addCase(getFriendsSuggestionService.rejected, (state, action) => {
-        state.friendSuggestionsLoading = false;
+        state.loading = false;
       })
 
       .addCase(getSearchExploreService.pending, (state) => {
-        state.searchExplorePeopleLoading = true;
+        state.loading = true;
       })
       .addCase(getSearchExploreService.fulfilled, (state, action) => {
         // state.searchExplorePeople = action.payload.result;
@@ -91,15 +91,15 @@ export const contactSlice = createSlice({
           };
         }
 
-        state.searchExplorePeopleLoading = false;
+        state.loading = false;
       })
       .addCase(getSearchExploreService.rejected, (state, action) => {
-        state.searchExplorePeopleLoading = false;
+        state.loading = false;
       })
 
       // For listing explore people
       .addCase(getExplorePeopleService.pending, (state) => {
-        state.explorePeopleLoading = true;
+        state.loading = true;
       })
       .addCase(getExplorePeopleService.fulfilled, (state, action) => {
         // state.explorePeople = action.payload.result;
@@ -114,40 +114,63 @@ export const contactSlice = createSlice({
           docs: explorePeopleWithReqSent,
         };
 
-        state.explorePeopleLoading = false;
+        state.loading = false;
       })
       .addCase(getExplorePeopleService.rejected, (state, action) => {
-        state.explorePeopleLoading = false;
+        state.loading = false;
       })
 
       .addCase(sendFriendRequest.pending, (state) => {
-        state.explorePeopleLoading = true;
-        state.friendSuggestionsLoading = true;
+        state.loading = true;
       })
       .addCase(sendFriendRequest.fulfilled, (state, action) => {
         const inviteeId = action.meta.arg.inviteeId;
 
         state.friendSuggestions.docs &&
-          (state.friendSuggestions.docs = state.friendSuggestions.docs.map((friend: FriendI) =>
+          (state.friendSuggestions.docs = state.friendSuggestions.docs.map((friend: UserI) =>
             friend._id === inviteeId ? { ...friend, isFriendReqSent: true } : friend
           ));
 
         state.explorePeople.docs &&
-          (state.explorePeople.docs = state.explorePeople.docs.map((friend: FriendI) =>
+          (state.explorePeople.docs = state.explorePeople.docs.map((friend: UserI) =>
             friend._id === inviteeId ? { ...friend, isFriendReqSent: true } : friend
           ));
 
         state.searchExplorePeople.docs &&
-          (state.searchExplorePeople.docs = state.searchExplorePeople.docs.map((friend: FriendI) =>
+          (state.searchExplorePeople.docs = state.searchExplorePeople.docs.map((friend: UserI) =>
             friend._id === inviteeId ? { ...friend, isFriendReqSent: true } : friend
           ));
 
-        state.explorePeopleLoading = false;
-        state.friendSuggestionsLoading = false;
+        state.loading = false;
       })
       .addCase(sendFriendRequest.rejected, (state, action) => {
-        state.explorePeopleLoading = false;
-        state.friendSuggestionsLoading = false;
+        state.loading = false;
+      })
+
+      .addCase(removeFriendRequest.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeFriendRequest.fulfilled, (state, action) => {
+        const inviteeId = action.meta.arg.inviteeId;
+        state.friendSuggestions.docs &&
+          (state.friendSuggestions.docs = state.friendSuggestions.docs.map((friend: UserI) =>
+            friend._id === inviteeId ? { ...friend, isFriendReqSent: false } : friend
+          ));
+
+        state.explorePeople.docs &&
+          (state.explorePeople.docs = state.explorePeople.docs.map((friend: UserI) =>
+            friend._id === inviteeId ? { ...friend, isFriendReqSent: false } : friend
+          ));
+
+        state.searchExplorePeople.docs &&
+          (state.searchExplorePeople.docs = state.searchExplorePeople.docs.map((friend: UserI) =>
+            friend._id === inviteeId ? { ...friend, isFriendReqSent: false } : friend
+          ));
+
+        state.loading = false;
+      })
+      .addCase(removeFriendRequest.rejected, (state, action) => {
+        state.loading = false;
       });
   },
 });

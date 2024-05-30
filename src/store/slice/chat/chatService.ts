@@ -15,8 +15,6 @@ import {
   ListUserRequestsResponseI,
   SendMessagePayloadI,
   SendMessageResponseI,
-  RemoveFriendReqPayloadI,
-  RemoveFriendReqResponseI,
   AcceptFriendReqPayloadI,
   AcceptFriendReqResponseI,
 } from "./types";
@@ -40,25 +38,6 @@ export const getListRoomsService: any = createAsyncThunk(
   }
 );
 
-// export const sendFriendRequest: any = createAsyncThunk(
-//   "chat/sendFriendRequest",
-//   async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
-//     try {
-//       const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.get(
-//         `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
-//       );
-
-//       showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });
-
-//       return response.data;
-//     } catch (error: any) {
-//       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
-
-//       return rejectWithValue(error?.response?.data || "Something went wrong!");
-//     }
-//   }
-// );
-
 export const acceptFriendRequest: any = createAsyncThunk(
   "chat/acceptFriendRequest",
   async (payload: AcceptFriendReqPayloadI, { rejectWithValue }) => {
@@ -68,25 +47,6 @@ export const acceptFriendRequest: any = createAsyncThunk(
       );
 
       showFlashMessage({ type: "success", message: `${response.data.result.status || "Request is Accepted!"}` });
-
-      return response.data;
-    } catch (error: any) {
-      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
-
-      return rejectWithValue(error?.response?.data || "Something went wrong!");
-    }
-  }
-);
-
-export const removeFriendRequest: any = createAsyncThunk(
-  "chat/removeFriendRequest",
-  async (payload: RemoveFriendReqPayloadI, { rejectWithValue }) => {
-    try {
-      const response: AxiosResponse<RemoveFriendReqResponseI> = await AxiosInstance.get(
-        `/chat/cancel-friend-req?inviteeId=${payload.inviteeId}`
-      );
-
-      showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been cancelled!"}` });
 
       return response.data;
     } catch (error: any) {

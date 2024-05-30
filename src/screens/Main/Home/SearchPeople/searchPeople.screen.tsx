@@ -3,13 +3,12 @@ import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { NavigatorParamList } from "navigators";
 import { colors } from "theme";
-import { ContactUserCard, EmptyListText, Header, SearchBar } from "components";
+import { AlertBox, ContactUserCard, EmptyListText, Header, SearchBar } from "components";
 import {
-  ExplorePeopleResponseI,
-  FriendI,
   RootState,
   UserI,
   getSearchExploreService,
+  removeFriendRequest,
   sendFriendRequest,
   useAppDispatch,
   useAppSelector,
@@ -21,22 +20,34 @@ const LIMIT: number = 11;
 
 const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchPeople">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
-  const { searchExplorePeopleLoading: eLoading, searchExplorePeople } = useAppSelector(
-    (state: RootState) => state.contacts
-  );
+  const { loading, searchExplorePeople } = useAppSelector((state: RootState) => state.contacts);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [personId, setPersonId] = useState<string>("");
 
-  const onViewPress = (item: FriendI) => navigation.navigate("publicProfile", { item });
-
-  const onAddBtnPress = async (id: string) => {
-    await dispatch(sendFriendRequest({ inviteeId: id }))
-      .unwrap()
-      .catch((error) => console.log("Error: ", error));
+  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
+    if (isFriendReqSent) {
+      setAlertModalVisible((prev: boolean) => !prev);
+      setPersonId(id);
+    } else {
+      await dispatch(sendFriendRequest({ inviteeId: id }))
+        .unwrap()
+        .catch((err) => console.error("error: ", err));
+    }
   };
+
+  const cancelFriendRequest = async () => {
+    await dispatch(removeFriendRequest({ inviteeId: personId }))
+      .unwrap()
+      .catch((err) => console.error("error: ", err))
+      .finally(() => setAlertModalVisible((prev: boolean) => !prev));
+  };
+
+  const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -46,12 +57,12 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
   };
 
   const loadMoreItems = useCallback(() => {
-    if (searchExplorePeople?.hasNextPage && !eLoading) {
+    if (searchExplorePeople?.hasNextPage && !loading) {
       dispatch(getSearchExploreService({ page: searchExplorePeople?.page + 1, limit: LIMIT }))
         .unwrap()
         .catch((error) => console.log("Error loading more items:", error));
     }
-  }, [searchExplorePeople, eLoading, dispatch]);
+  }, [searchExplorePeople, loading, dispatch]);
 
   const getSearchPeople = async (page: number = 1) => {
     await dispatch(getSearchExploreService({ page, limit: LIMIT }))
@@ -65,7 +76,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
 
   const renderLoader = () => {
     return (
-      eLoading && (
+      loading && (
         <View style={styles.loaderStyle}>
           <ActivityIndicator color={colors.primary} />
         </View>
@@ -92,37 +103,48 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
           />
         </View>
 
-        {eLoading ? (
+        {/* {loading ? (
           <View>
             <ActivityIndicator />
           </View>
-        ) : (
-          <FlatList
-            data={searchExplorePeople?.docs || []}
-            keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-            contentContainerStyle={styles.listContainerStyle}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }: { item: FriendI }) => (
-              <ContactUserCard
-                item={item}
-                btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-                onBtnPress={() => onAddBtnPress(item._id)}
-                onViewPress={() => onViewPress(item)}
-              />
-            )}
-            onEndReached={loadMoreItems}
-            ListFooterComponent={renderLoader}
-            // onEndReachedThreshold={0.5}
-            ListEmptyComponent={() =>
-              !refreshing &&
-              searchExplorePeople.result.docs.length === 0 && (
-                <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
-              )
-            }
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          />
-        )}
+        ) : ( */}
+        <FlatList
+          data={searchExplorePeople?.docs || []}
+          keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+          contentContainerStyle={styles.listContainerStyle}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }: { item: UserI }) => (
+            <ContactUserCard
+              item={item}
+              btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
+              onBtnPress={onBtnPress}
+              onViewPress={() => onViewPress(item)}
+            />
+          )}
+          onEndReached={loadMoreItems}
+          ListFooterComponent={renderLoader}
+          // onEndReachedThreshold={0.5}
+          ListEmptyComponent={() =>
+            !refreshing &&
+            searchExplorePeople.result.docs.length === 0 && (
+              <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
+            )
+          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        />
+        {/* )} */}
       </View>
+
+      <AlertBox
+        open={alertModalVisible}
+        title="Cancel Request!"
+        description="Are you sure you want to cancel request?"
+        onClose={() => setAlertModalVisible((prev) => !prev)}
+        secondaryButtonText="Cancel"
+        primaryButtonText="Remove"
+        secondaryOnClick={() => setAlertModalVisible((prev) => !prev)}
+        primaryOnClick={cancelFriendRequest}
+      />
     </View>
   );
 };

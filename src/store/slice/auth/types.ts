@@ -10,6 +10,7 @@ export interface UserI {
   city?: string | null;
   createdAt: string;
   updatedAt: string;
+  isFriendReqSent?: boolean;
 }
 
 export interface SignupPayloadI {
@@ -73,3 +74,5 @@ export interface ChangePasswordResponseI {
     result: string;
   };
 }
+
+export type ContactUsResponseI = ChangePasswordResponseI;

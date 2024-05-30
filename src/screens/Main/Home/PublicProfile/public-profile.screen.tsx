@@ -12,7 +12,7 @@ import { NavigatorParamList } from "navigators";
 import { EventEnum, EventEnumRole } from "enums";
 import { SendFriendReqPayloadI, UserStatusI } from "interfaces";
 import { AddFriendButton, Header, StatusModal, Text } from "components";
-import { FriendI, UserI, sendFriendRequest, useAppDispatch } from "store";
+import { UserI, sendFriendRequest, useAppDispatch } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./public-profile.styles";
 
@@ -25,7 +25,7 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { item }: { item: FriendI } = route.params;
+  const { item }: { item: UserI } = route.params;
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Photos");
   const [statusData, setStatusData] = useState<UserStatusI>({

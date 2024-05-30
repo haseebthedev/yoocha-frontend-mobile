@@ -11,7 +11,7 @@ import appConfigReducer from "./slice/appConfig/appConfigReducer";
 const persistConfig: PersistConfig<any> = {
   key: "root",
   storage: AsyncStorage,
-  // blacklist: ['contacts']
+  // blacklist: ["contacts"],
 };
 
 const rootReducer = combineReducers({
@@ -19,7 +19,6 @@ const rootReducer = combineReducers({
   chat: chatReducer,
   contacts: contactReducer,
   appConfig: appConfigReducer,
-  // contacts: contactsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
