@@ -1,15 +1,23 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useIsFocused } from "@react-navigation/native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, PopupMenu, Text, UserSuggestionCard } from "components";
+import {
+  AlertBox,
+  AppHeading,
+  ContactUserCard,
+  EmptyListText,
+  LoadingIndicator,
+  PopupMenu,
+  Text,
+  UserSuggestionCard,
+} from "components";
 import {
   RootState,
   UserI,
@@ -21,17 +29,18 @@ import {
   useAppSelector,
 } from "store";
 import createStyles from "./contact.styles";
+import { createNotificationService } from "store/slice/notification/notificationService";
 
 const EXPLORE_PEOPLE_LIMIT: number = 10;
 const FRIEND_SUGG_LIMIT: number = 4;
 
 const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
-  const isFocused = useIsFocused();
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const { user } = useAppSelector((state: RootState) => state.auth);
   const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
@@ -46,6 +55,17 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     } else {
       await dispatch(sendFriendRequest({ inviteeId: id }))
         .unwrap()
+        .then(async (response) => {
+          await dispatch(
+            createNotificationService({
+              message: `${user.firstname} has sent you friend request.`,
+              recipientId: id,
+              senderId: user._id,
+            })
+          )
+            .unwrap()
+            .catch((err) => console.error("error: ", err));
+        })
         .catch((err) => console.error("error: ", err));
     }
   };
@@ -70,27 +90,27 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   };
 
   const getFriendsSuggestions = async () => {
+    setRefreshing(true);
     await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
       .unwrap()
-      .catch((err) => console.log("err: ", err));
+      .catch((err) => console.log("err: ", err))
+      .finally(() => setRefreshing(false));
   };
 
   const getExplorePeople = async () => {
+    setRefreshing(true);
     await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
       .unwrap()
-      .catch((err) => console.log("err: ", err));
+      .catch((err) => console.log("err: ", err))
+      .finally(() => setRefreshing(false));
   };
 
   useEffect(() => {
-    // if (isFocused) {
-    getExplorePeople();
     getFriendsSuggestions();
-    // }
   }, []);
 
   useEffect(() => {
-    console.log(explorePeople);
-    console.log(friendSuggestions);
+    getExplorePeople();
   }, []);
 
   const ListHeader = () => {
@@ -99,9 +119,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         <AppHeading title="People may know" />
         <View style={styles.suggestionsContainer}>
           {refreshing ? (
-            <View style={styles.activityIndicatorContainer}>
-              <ActivityIndicator />
-            </View>
+            <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
           ) : (
             <FlatList
               horizontal
@@ -135,12 +153,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
     );
   };
 
-  const renderFooter = () =>
-    refreshing && (
-      <View style={styles.activityIndicatorContainer}>
-        <ActivityIndicator />
-      </View>
-    );
+  const renderFooter = () => refreshing && <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />;
 
   return (
     <View style={styles.container}>

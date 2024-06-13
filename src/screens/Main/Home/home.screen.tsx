@@ -1,15 +1,15 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } from "react-native";
+import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { ListWithPagination, UserStatusI } from "interfaces";
-import { Text, ChatCard, StatusModal, Divider, EmptyListText } from "components";
+import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
 import createStyles from "./home.styles";
 
@@ -44,13 +44,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   // }, []);
 
   const renderLoader = useCallback(() => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator containerStyle={styles.loaderStyle} color={colors.primary} />;
   }, [state.listRefreshing]);
 
   const loadMoreItems = useCallback(() => {

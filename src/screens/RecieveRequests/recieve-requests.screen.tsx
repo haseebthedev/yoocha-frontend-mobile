@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { colors } from "theme";
 import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
 import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
@@ -18,6 +20,7 @@ import {
 } from "store";
 import { useAppTheme } from "hooks";
 import createStyles from "./recieve-requests.styles";
+import { createNotificationService } from "store/slice/notification/notificationService";
 
 const LIMIT: number = 10;
 
@@ -61,7 +64,19 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
       hasNext: prev?.hasNext,
     }));
 
-    await dispatch(acceptFriendRequest({ roomId: roomId }));
+    await dispatch(acceptFriendRequest({ roomId: roomId }))
+      .unwrap()
+      .then(async (response) => {
+        await dispatch(
+          createNotificationService({
+            message: `${user.firstname} has accepted your friend request.`,
+            recipientId: friendId,
+            senderId: user._id,
+          })
+        )
+          .unwrap()
+          .catch((err) => console.error("error: ", err));
+      });
   };
 
   const getUserRequests = async () => {
@@ -123,13 +138,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   useEffect(() => {

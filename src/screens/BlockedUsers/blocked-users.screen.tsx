@@ -1,10 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View, RefreshControl } from "react-native";
+import { FlatList, View, RefreshControl } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { colors } from "theme";
+import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   BlockedUserInfo,
   ListBlockedUsersResponseI,
@@ -15,7 +18,6 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { useAppTheme } from "hooks";
 import createStyles from "./blocked-users.styles";
 
 const LIMIT: number = 10;
@@ -119,13 +121,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blocked
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   useEffect(() => {

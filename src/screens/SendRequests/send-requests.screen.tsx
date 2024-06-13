@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View, RefreshControl } from "react-native";
+import { FlatList, View, RefreshControl } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   ListUserRequestsResponseI,
   RootState,
@@ -92,13 +92,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   const onRefresh = async () => {

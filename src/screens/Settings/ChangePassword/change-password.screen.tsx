@@ -1,16 +1,17 @@
 import { FC, useState } from "react";
-import { Keyboard, View, ActivityIndicator } from "react-native";
+import { Keyboard, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useFormikHook } from "hooks/UseFormikHook";
 import { ChangePasswordI } from "interfaces/user";
 import { NavigatorParamList } from "navigators";
-import { AppButton, Header, TextInput } from "components";
+import { AppButton, Header, LoadingIndicator, TextInput } from "components";
 import { changePasswordValidationSchema } from "utils/validations";
 import { RootState, changePasswordService, useAppDispatch, useAppSelector } from "store";
 import { useAppTheme } from "hooks";
 import createStyles from "./change-password.styles";
+import { colors } from "theme";
 
 const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -88,7 +89,7 @@ const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "chang
           text={loading ? "" : "Save"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
       </View>
     </View>

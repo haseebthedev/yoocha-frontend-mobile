@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -8,7 +8,7 @@ import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
-import { UserI, removeFriendRequest, sendFriendRequest, useAppDispatch } from "store";
+import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./public-profile.styles";
 
@@ -17,12 +17,17 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   route,
 }) => {
   const dispatch = useAppDispatch();
+  const { loading, searchExplorePeople, friendSuggestions, explorePeople } = useAppSelector(
+    (state: RootState) => state.contacts
+  );
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const { item }: { item: UserI } = route.params;
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+  const [personId, setPersonId] = useState<string>("");
+  const [publicProfile, setPublicProfile] = useState<UserI>();
 
   // const [viewStatus, setViewStatus] = useState<boolean>(false);
   // const [activeTab, setActiveTab] = useState<string>("Photos");
@@ -45,8 +50,6 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
   //   setViewStatus((prev) => !prev);
   // };
 
-  const [personId, setPersonId] = useState<string>("");
-
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
       setAlertModalVisible((prev: boolean) => !prev);
@@ -64,6 +67,20 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
       .catch((err) => console.error("error: ", err))
       .finally(() => setAlertModalVisible((prev: boolean) => !prev));
   };
+
+  useEffect(() => {
+    const filteredExplorePeople = explorePeople?.docs?.find((user) => user._id === item._id);
+    const filteredFriendSuggestions = friendSuggestions?.docs?.find((user) => user._id === item._id);
+    const filteredSearchExplorePeople = searchExplorePeople?.docs?.find((user) => user._id === item._id);
+
+    if (filteredExplorePeople) {
+      setPublicProfile(filteredExplorePeople);
+    } else if (filteredFriendSuggestions) {
+      setPublicProfile(filteredFriendSuggestions);
+    } else if (filteredSearchExplorePeople) {
+      setPublicProfile({ ...filteredSearchExplorePeople });
+    }
+  }, [explorePeople, searchExplorePeople, friendSuggestions, item._id]);
 
   return (
     <View style={styles.publicProfileContainer}>
@@ -112,8 +129,8 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "public
 
             <View style={styles.addFriendBtnContainer}>
               <AddFriendButton
-                title={item?.isFriendReqSent ? "Pending" : "Add Friend"}
-                onPress={() => onBtnPress(item?._id, item?.isFriendReqSent)}
+                title={publicProfile?.isFriendReqSent ? "Pending" : "Add Friend"}
+                onPress={() => onBtnPress(item?._id, publicProfile?.isFriendReqSent)}
               />
             </View>
           </View>

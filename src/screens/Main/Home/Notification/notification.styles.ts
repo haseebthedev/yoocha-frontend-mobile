@@ -19,6 +19,13 @@ const createStyles = (theme) =>
       height: 1,
       width: wp(100),
     },
+    loaderStyle: {
+      marginVertical: 16,
+      alignItems: "center",
+    },
+    emptyTextPlaceholder: {
+      color: theme.colors.subHeading,
+    },
   });
 
 export default createStyles;

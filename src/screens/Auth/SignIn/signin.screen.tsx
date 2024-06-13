@@ -1,12 +1,15 @@
 import { FC, useState } from "react";
-import { ActivityIndicator, Keyboard, TouchableOpacity, View } from "react-native";
+import { Keyboard, TouchableOpacity, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { AppButton, Header, Text, TextInput } from "components";
-import { signinValidationSchema } from "utils/validations";
-import { useFormikHook } from "hooks/UseFormikHook";
-import { signinService, useAppDispatch } from "store";
+
+import { colors } from "theme";
 import { SigninI } from "interfaces/auth";
+import { useFormikHook } from "hooks/UseFormikHook";
+import { NavigatorParamList } from "navigators";
+import { signinValidationSchema } from "utils/validations";
+import { signinService, useAppDispatch } from "store";
+import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
 import styles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
@@ -64,7 +67,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           text={loading ? "" : "Login"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
 
         <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>

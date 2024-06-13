@@ -1,10 +1,16 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { colors } from "theme";
-import { NavigatorParamList } from "navigators";
+import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { colors } from "theme";
+import { socket } from "socket/socketIo";
+import { EventEnum } from "enums";
+import { useAppTheme } from "hooks";
+import { NavigatorParamList } from "navigators";
+import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
+import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -17,13 +23,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { EventEnum } from "enums";
-import { socket } from "socket/socketIo";
-import { userMessageScreenOptions } from "constant";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personplaceholder from "assets/images/personplaceholder.png";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import createStyles from "./styles";
-import { useAppTheme } from "hooks";
 
 const LIMIT: number = 50;
 
@@ -75,13 +77,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   const getMessages = async () => {
@@ -154,7 +150,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
 
             <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: "row" }} onPress={() => {}}>
               <Image
-                source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personPlaceholder}
+                source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
                 style={styles.profileImage}
               />
               <View>

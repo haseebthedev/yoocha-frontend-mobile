@@ -1,12 +1,15 @@
 import { FC, useState } from "react";
-import { ActivityIndicator, Keyboard, ScrollView, View } from "react-native";
+import { Keyboard, ScrollView, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { AppButton, Header, Text, TextInput } from "components";
-import { signupValidationSchema } from "utils/validations";
-import { useFormikHook } from "hooks/UseFormikHook";
-import { signupService, useAppDispatch } from "store";
+
+import { colors } from "theme";
 import { SignupI } from "interfaces/auth";
+import { useFormikHook } from "hooks/UseFormikHook";
+import { NavigatorParamList } from "navigators";
+import { signupValidationSchema } from "utils/validations";
+import { signupService, useAppDispatch } from "store";
+import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
 import styles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
@@ -106,7 +109,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           text={loading ? "" : "Sign Up"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
 
         <View style={styles.haveAccContainer}>

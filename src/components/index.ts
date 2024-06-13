@@ -37,10 +37,13 @@ export * from "./Modal/ImagePickerModal/ImagePickerModal";
 export * from "./Modal/StatusModal/StatusModal";
 
 // Divider
-export * from "./Divider/Divider";
+export * from "./Divider/divider";
 
 export * from "./General/emptyListText/emptyListText";
 
 // Menu
 export * from "./Menu/menu";
-export * from "./PopupMenu/PopupMenu";
+export * from "./PopupMenu/popupMenu";
+
+// LoadinIndicator
+export * from "./LoadingIndicator/loadingIndicator";

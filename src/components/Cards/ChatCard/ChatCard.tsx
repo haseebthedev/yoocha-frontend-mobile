@@ -1,10 +1,10 @@
 import { Image, TouchableOpacity, View } from "react-native";
+
 import { Text } from "components";
+import { useAppTheme } from "hooks";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import { useAppTheme } from "hooks";
 import createStyles from "./styles";
-import { useEffect } from "react";
 
 interface ChatCardI {
   item: ListRoomItemI;
@@ -27,7 +27,11 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
         <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
           <Text preset="semiBold" text={fullName} numberOfLines={1} style={styles.name} />
-          <Text text={item?.lastMessage && item.lastMessage} numberOfLines={1} style={styles.lastMessageText} />
+          <Text
+            text={item?.lastMessage ? item.lastMessage : "Start a conversation!"}
+            numberOfLines={1}
+            style={styles.lastMessageText}
+          />
         </View>
       </View>
 

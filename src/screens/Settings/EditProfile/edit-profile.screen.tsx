@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -15,7 +15,16 @@ import { formatDateToDMY } from "utils/dateAndTime";
 import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
 import { UpdateUserI, UserUpdateI } from "interfaces/user";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import {
+  AlertBox,
+  AppButton,
+  CountryPickerModal,
+  Header,
+  ImagePickerModal,
+  LoadingIndicator,
+  Text,
+  TextInput,
+} from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./edit-profile.styles";
@@ -198,7 +207,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           text={loading ? "" : "Save Changes"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
       </ScrollView>
 

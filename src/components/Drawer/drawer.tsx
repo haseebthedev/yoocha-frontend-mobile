@@ -4,7 +4,7 @@ import { AlertBox, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootState, logoutUser, useAppDispatch, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personplaceholder from "assets/images/personplaceholder.png";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAppTheme } from "hooks";
 import createStyles from "./styles";
@@ -31,7 +31,7 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.flexAlignCenter}>
         <Image
-          source={user?.profilePicture ? { uri: user?.profilePicture } : personPlaceholder}
+          source={user?.profilePicture ? { uri: user?.profilePicture } : personplaceholder}
           style={styles.profilePic}
         />
         <View style={styles.spacingTop}>

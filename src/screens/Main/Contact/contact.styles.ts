@@ -23,8 +23,7 @@ const createStyles = (theme) =>
       flexDirection: "row",
       height: hp(20),
       gap: wp(4),
-      // alignItems: "center",
-      // justifyContent: "center",
+      justifyContent: "center",
     },
     loaderContainer: {
       height: hp(18),
@@ -65,6 +64,7 @@ const createStyles = (theme) =>
     },
     activityIndicatorContainer: {
       height: hp(19),
+      width: wp(90),
       alignItems: "center",
       justifyContent: "center",
     },

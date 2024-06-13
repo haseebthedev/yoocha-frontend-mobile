@@ -1,9 +1,12 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
+import { FC, useCallback, useState } from "react";
+import { FlatList, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
+
 import { colors } from "theme";
-import { AlertBox, ContactUserCard, EmptyListText, Header, SearchBar } from "components";
+import { useAppTheme } from "hooks";
+import { NavigatorParamList } from "navigators";
+import { AlertBox, ContactUserCard, EmptyListText, Header, LoadingIndicator, SearchBar } from "components";
 import {
   RootState,
   UserI,
@@ -13,7 +16,6 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { useAppTheme } from "hooks";
 import createStyles from "./searchPeople.styles";
 
 const LIMIT: number = 11;
@@ -25,14 +27,17 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [searchPeople, setSearchPeople] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loadMore, setLoadMore] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
 
-  const onSearchSubmit = async () => {
-    getSearchPeople(searchPeople);
+  const onSearchSubmit = async (searchText: string) => {
+    if (searchText) {
+      await getSearchPeople(searchText);
+    }
   };
+
+  const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
 
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
@@ -52,20 +57,13 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
       .finally(() => setAlertModalVisible((prev: boolean) => !prev));
   };
 
-  const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await dispatch(getSearchExploreService({ name: "", page: 1, limit: LIMIT }))
-      .unwrap()
-      .finally(() => setRefreshing(false));
-  };
-
-  const loadMoreItems = useCallback(() => {
+  const loadMoreItems = useCallback(async () => {
     if (searchExplorePeople?.hasNextPage && !loading) {
-      dispatch(getSearchExploreService({ page: searchExplorePeople?.page + 1, limit: LIMIT }))
+      setLoadMore(true);
+      await dispatch(getSearchExploreService({ page: searchExplorePeople?.page + 1, limit: LIMIT }))
         .unwrap()
-        .catch((error) => console.log("Error loading more items:", error));
+        .catch((error) => console.log("Error loading more items:", error))
+        .finally(() => setLoadMore((prev: boolean) => !prev));
     }
   }, [searchExplorePeople, loading, dispatch]);
 
@@ -75,18 +73,8 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
       .catch((err) => console.log("error: ", err));
   };
 
-  useEffect(() => {
-    getSearchPeople();
-  }, []);
-
   const renderLoader = () => {
-    return (
-      loading && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return loadMore && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   return (
@@ -105,35 +93,38 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
             inputStyle={styles.searchBarText}
             iconColor={theme.colors.heading}
             placeholderColor={theme.colors.placeholderColor}
-            setSearchPeople={setSearchPeople}
             onSearchSubmit={onSearchSubmit}
           />
         </View>
 
-        <FlatList
-          data={searchExplorePeople?.docs || []}
-          keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
-          contentContainerStyle={styles.listContainerStyle}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }: { item: UserI }) => (
-            <ContactUserCard
-              item={item}
-              btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-              onBtnPress={onBtnPress}
-              onViewPress={() => onViewPress(item)}
-            />
-          )}
-          onEndReached={loadMoreItems}
-          ListFooterComponent={renderLoader}
-          // onEndReachedThreshold={0.5}
-          ListEmptyComponent={() =>
-            !refreshing &&
-            searchExplorePeople?.docs?.length === 0 && (
-              <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
-            )
-          }
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        />
+        {loading && <LoadingIndicator />}
+
+        {searchExplorePeople?.docs ? (
+          <FlatList
+            data={searchExplorePeople?.docs}
+            keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
+            contentContainerStyle={styles.listContainerStyle}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }: { item: UserI }) => (
+              <ContactUserCard
+                item={item}
+                btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
+                onBtnPress={onBtnPress}
+                onViewPress={() => onViewPress(item)}
+              />
+            )}
+            onEndReached={loadMoreItems}
+            ListFooterComponent={renderLoader}
+            // onEndReachedThreshold={0.5}
+            ListEmptyComponent={() =>
+              searchExplorePeople?.docs?.length === 0 && (
+                <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
+              )
+            }
+          />
+        ) : (
+          <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
+        )}
       </View>
 
       <AlertBox

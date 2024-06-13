@@ -3,10 +3,12 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { formatDate } from "utils/dateAndTime";
 import { useAppTheme } from "hooks";
+import { NotificationI } from "store/slice/notification/types";
+import personPlaceholder from "assets/images/personPlaceholder.jpeg";
 import createStyles from "./styles";
 
 interface NotificationCardI {
-  item: any;
+  item: NotificationI;
   onPress?: () => void;
 }
 
@@ -14,19 +16,23 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const senderName: string = `${item.senderId.firstname} ${item.senderId.lastname}` || "";
+  const profileImage: any = item?.senderId.profilePicture;
+
   return (
     <TouchableOpacity
-      style={[styles.container, item.unReadNotification && { backgroundColor: theme.colors.unReadBg }]}
+      style={[styles.container, !item.isRead && { backgroundColor: theme.colors.unReadBg }]}
       onPress={onPress}
+      activeOpacity={0.5}
     >
       <View style={styles.profileContainer}>
-        <Image source={{ uri: item.profilePic }} style={styles.profileImage} />
+        <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
           <View style={styles.nameWithDate}>
-            <Text preset="semiBold" text={item.name} numberOfLines={1} style={styles.name} />
-            <Text preset="default" style={styles.time} text={formatDate(item.notificationDateTime)} numberOfLines={1} />
+            <Text preset="semiBold" text={senderName} numberOfLines={1} style={styles.name} />
+            <Text preset="default" style={styles.time} text={formatDate(item.createdAt)} numberOfLines={1} />
           </View>
-          <Text text={item.notification} numberOfLines={1} style={styles.notificationText} />
+          <Text text={item.message} numberOfLines={1} style={styles.notificationText} />
         </View>
       </View>
     </TouchableOpacity>

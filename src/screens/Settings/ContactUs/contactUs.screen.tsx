@@ -1,16 +1,17 @@
 import { FC, useState } from "react";
-import { ActivityIndicator, Keyboard, View } from "react-native";
+import { Keyboard, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { useFormikHook } from "hooks/UseFormikHook";
 import { contactUsValidationSchema } from "utils/validations";
-import { AlertBox, AppButton, Header, TextInput } from "components";
+import { AlertBox, AppButton, Header, LoadingIndicator, TextInput } from "components";
 import { useAppTheme } from "hooks";
 import createStyles from "./contactUs.styles";
 import { ContactUsI } from "interfaces";
 import { contactUsService, useAppDispatch } from "store";
+import { colors } from "theme";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -89,7 +90,7 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           text={loading ? "" : "Submit"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
       </View>
 
