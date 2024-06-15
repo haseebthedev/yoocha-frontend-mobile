@@ -2,15 +2,16 @@ import { StyleSheet } from "react-native";
 import { colors } from "theme";
 import { hp } from "utils/responsive";
 
-const styles = StyleSheet.create({
-  spacing: {
-    paddingVertical: hp(1.2),
-  },
-  divider: {
-    width: "100%",
-    height: 1,
-    backgroundColor: colors.lightShade,
-  },
-});
+const createStyles = (theme) =>
+  StyleSheet.create({
+    spacing: {
+      paddingVertical: hp(2),
+    },
+    divider: {
+      width: "100%",
+      height: 1,
+      backgroundColor: theme.colors.borderColor,
+    },
+  });
 
-export default styles;
+export default createStyles;

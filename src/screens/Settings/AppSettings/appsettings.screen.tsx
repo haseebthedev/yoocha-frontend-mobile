@@ -1,14 +1,28 @@
-import { FC } from "react";
-import { Text } from "components";
-import { Switch, TouchableOpacity, View } from "react-native";
+import { FC, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
+
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { hp, wp } from "utils/responsive";
-import { colors, typography } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./appsettings.styles";
+
+import { colors } from "theme";
+import { setMode } from "store/slice/appConfig/appConfigReducer";
+import { AppSettingsItem, Text } from "components";
+import { useAppDispatch } from "store";
+import { useAppTheme } from "hooks";
+import createStyles from "./appsettings.styles";
 
 const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsettings">> = ({ navigation, route }) => {
+  const dispatch = useAppDispatch();
+
+  const { theme, darkMode } = useAppTheme();
+
+  const styles = createStyles(theme);
+
+  const [pushNotifications, setPushNotifications] = useState<boolean>(false);
+  const [messageNotifications, setMessageNotifications] = useState<boolean>(false);
+  const [friendRequestNotifications, setFriendRequestNotifications] = useState<boolean>(false);
+
   return (
     <View style={styles.container}>
       {/* App Header */}
@@ -20,86 +34,41 @@ const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsetti
         <Ionicons name="chevron-forward" color={colors.primary} size={24} />
       </View>
 
-      <View
-        style={{
-          backgroundColor: colors.white,
-          flex: 1,
-          borderTopRightRadius: 40,
-          borderTopLeftRadius: 40,
-          paddingHorizontal: wp(5),
-          paddingTop: hp(4),
-        }}
-      >
-        <Text text="GENERAL" style={{ color: colors.textDim, fontSize: 14, marginBottom: 10 }} />
+      <View style={styles.contentContainer}>
+        <Text text="GENERAL" style={{ color: theme.colors.heading }} />
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 15,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons name="invert-mode-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Dark Mode"
-              style={{ fontFamily: typography.regular, fontSize: 14, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <Switch />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 15,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons name="push-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Allow Push Notifcations"
-              style={{ fontFamily: typography.regular, fontSize: 14, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <Switch />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 15,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons name="chatbubbles-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Message Notifitions"
-              style={{ fontFamily: typography.regular, fontSize: 14, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <Switch />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingVertical: 15,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons name="people-circle-outline" size={20} color={colors.textDim} />
-            <Text
-              text="Friend Request Notification"
-              style={{ fontFamily: typography.regular, fontSize: 14, marginTop: 3, color: colors.textDark }}
-            />
-          </View>
-          <Switch />
-        </View>
+        <AppSettingsItem
+          iconName="invert-mode-outline"
+          itemText="Dark Mode"
+          iconColor={theme.colors.iconColor}
+          switchValue={darkMode}
+          onSwitchChange={() => dispatch(setMode(!darkMode))}
+          textColor={theme.colors.heading}
+        />
+        <AppSettingsItem
+          iconName="notifications"
+          itemText="Allow Push Notifications"
+          iconColor={theme.colors.iconColor}
+          switchValue={pushNotifications}
+          onSwitchChange={() => setPushNotifications(!pushNotifications)}
+          textColor={theme.colors.heading}
+        />
+        <AppSettingsItem
+          iconName="chatbubbles-outline"
+          itemText="Message Notifications"
+          iconColor={theme.colors.iconColor}
+          switchValue={messageNotifications}
+          onSwitchChange={() => setMessageNotifications(!messageNotifications)}
+          textColor={theme.colors.heading}
+        />
+        <AppSettingsItem
+          iconName="people-circle-outline"
+          itemText="Friend Request Notifications"
+          iconColor={theme.colors.iconColor}
+          switchValue={friendRequestNotifications}
+          onSwitchChange={() => setFriendRequestNotifications(!friendRequestNotifications)}
+          textColor={theme.colors.heading}
+        />
       </View>
     </View>
   );

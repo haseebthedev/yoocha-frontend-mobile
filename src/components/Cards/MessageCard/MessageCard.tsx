@@ -4,8 +4,9 @@ import { Text } from "components";
 import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
 import { formatTime } from "utils/dateAndTime";
-import userPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./styles";
+import userPlaceholder from "assets/images/personplaceholder.png";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 
 interface MessageCardI {
   item: MessageItemI;
@@ -13,6 +14,9 @@ interface MessageCardI {
 }
 
 const MessageCard = ({ item }: MessageCardI) => {
+  const { theme, darkMode } = useAppTheme();
+  const styles = createStyles(theme);
+
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const isSentByUser = user?._id === item.sender._id;
@@ -37,8 +41,8 @@ const MessageCard = ({ item }: MessageCardI) => {
           style={[
             styles.messageText,
             {
-              backgroundColor: isSentByUser ? colors.primaryLight : colors.white,
-              color: isSentByUser ? colors.white : colors.textDim,
+              backgroundColor: isSentByUser ? colors.primaryLight : theme.colors.messageCardBg,
+              color: isSentByUser ? colors.white : theme.colors.heading,
               borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
               borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
             },

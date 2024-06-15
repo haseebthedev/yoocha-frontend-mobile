@@ -12,11 +12,13 @@ import {
   getMyProfileResponseI,
   ChangePasswordPayloadI,
   ChangePasswordResponseI,
+  ContactUsResponseI,
 } from "./types";
 import { API_URL } from "config/config.dev";
 import { saveString } from "utils/storage";
 import { showFlashMessage } from "utils/flashMessage";
 import AxiosInstance from "services/api/api";
+import { ContactUsI } from "interfaces";
 
 export const signupService: any = createAsyncThunk(
   "auth/signup",
@@ -130,6 +132,25 @@ export const changePasswordService: any = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+      return rejectWithValue(error?.response?.data || "Something went wrong!");
+    }
+  }
+);
+
+export const contactUsService: any = createAsyncThunk(
+  "auth/contactUsService",
+  async (payload: ContactUsI, { rejectWithValue }) => {
+    try {
+      const response: AxiosResponse<ContactUsResponseI> = await AxiosInstance.post(`/user/contact-us`, {
+        name: payload.name,
+        email: payload.email,
+        message: payload.message,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+
       return rejectWithValue(error?.response?.data || "Something went wrong!");
     }
   }

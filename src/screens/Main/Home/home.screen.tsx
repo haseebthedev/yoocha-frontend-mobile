@@ -1,21 +1,29 @@
-import React, { FC, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, ActivityIndicator, RefreshControl } from "react-native";
-import { colors } from "theme";
-import { NavigatorParamList } from "navigators";
+import React, { FC, useCallback, useEffect, useState } from "react";
+import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ListWithPagination, UserStatusI } from "interfaces";
-import { HOME_STATUS_DATA, HOME_STATUS_DATA_I } from "constant";
-import { Text, HomeUserStatus, ChatCard, StatusModal, Divider, EmptyListText } from "components";
-import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./home.styles";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
+import { colors } from "theme";
+import { useAppTheme } from "hooks";
+import { NotificationI } from "store/slice/notification/types";
+import { NavigatorParamList } from "navigators";
+import { listNotificationService } from "store/slice/notification/notificationService";
+import { ListWithPagination, UserStatusI } from "interfaces";
+import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
+import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
+import createStyles from "./home.styles";
 
 const LIMIT: number = 10;
 
 const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
+  const [unreadNotification, setUnreadNotification] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
@@ -33,29 +41,23 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     listRefreshing: false,
   });
 
-  const onViewPress = (selectedItem: UserStatusI) => {
-    setStatusData(selectedItem);
-    setViewStatus((prev: boolean) => !prev);
-  };
+  // const onViewPress = useCallback((selectedItem: UserStatusI) => {
+  //   setStatusData(selectedItem);
+  //   setViewStatus((prev) => !prev);
+  // }, []);
 
-  const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
-  };
+  const renderLoader = useCallback(() => {
+    return state.listRefreshing && <LoadingIndicator containerStyle={styles.loaderStyle} color={colors.primary} />;
+  }, [state.listRefreshing]);
 
-  const loadMoreItems = () => {
+  const loadMoreItems = useCallback(() => {
     if (!state.listRefreshing && state.hasNext) {
       getChatRooms();
     }
-  };
+  }, [state.listRefreshing, state.hasNext]);
 
-  const getChatRooms = async () => {
-    setState((prev: ListWithPagination<ListRoomItemI>) => ({
+  const getChatRooms = useCallback(async () => {
+    setState((prev) => ({
       ...prev,
       listRefreshing: true,
     }));
@@ -63,20 +65,20 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListWithPagination<ListRoomItemI>) => ({
+          setState((prev) => ({
             ...prev,
             list: prev.list.concat(response?.result?.docs),
-            page: 1 + prev?.page,
+            page: prev.page + 1,
             hasNext: response?.result?.hasNextPage,
             listRefreshing: false,
           }));
         }
       });
-  };
+  }, [state.page, dispatch]);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setState((prev: ListWithPagination<ListRoomItemI>) => ({
+    setState((prev) => ({
       ...prev,
       page: 1,
       hasNext: false,
@@ -86,7 +88,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .unwrap()
       .then((response: ListRoomResponseI) => {
         if (response?.result?.docs) {
-          setState((prev: ListWithPagination<ListRoomItemI>) => ({
+          setState((prev) => ({
             ...prev,
             list: response?.result?.docs,
             page: 2,
@@ -96,26 +98,45 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
         }
       })
       .finally(() => setRefreshing(false));
+  }, [dispatch]);
+
+  const getNotificationList = async () => {
+    await dispatch(listNotificationService())
+      .unwrap()
+      .then((response: PaginationListResultI<NotificationI>) => {
+        const filteredItems = response?.result?.docs.filter((item: NotificationI) => item.isRead != true);
+        setUnreadNotification(filteredItems.length);
+      })
+      .catch((error) => console.log("error: ", error));
   };
 
   useEffect(() => {
     getChatRooms();
-
     return () => {
       setState({ ...state, list: [], page: 1, hasNext: false });
     };
   }, []);
 
+  useEffect(() => {
+    getNotificationList();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.appHeader}>
+      <View style={[styles.appHeader]}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <MaterialCommunityIcons name="menu" color={colors.textDark} size={24} />
+          <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
-        <Text text="YOOCHAT" preset="logo" />
+        <Text text="YOOCHAT" preset="logo" style={styles.heading} />
         <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
-          <Ionicons name="notifications-outline" color={colors.textDark} size={24} />
+          <Ionicons name="notifications-outline" color={theme.colors.iconColor} size={24} />
+
+          {unreadNotification > 0 && (
+            <View style={styles.unreadMessageContainer}>
+              <Text text={unreadNotification.toString()} style={styles.unreadMessageText} />
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -159,7 +180,9 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             ListEmptyComponent={() =>
               !refreshing &&
               !state.listRefreshing &&
-              state.list.length === 0 && <EmptyListText text="You don't any friends yet!" />
+              state.list.length === 0 && (
+                <EmptyListText text="You don't any friends yet!" textStyle={styles.emptyTextPlaceholder} />
+              )
             }
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />

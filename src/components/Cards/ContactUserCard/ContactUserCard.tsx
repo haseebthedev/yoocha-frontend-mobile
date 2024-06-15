@@ -1,36 +1,44 @@
 import { Image, TouchableOpacity, View } from "react-native";
+
 import { Text } from "components";
+import { useAppTheme } from "hooks";
 import { UserI } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./styles";
+import personPlaceholder from "assets/images/personplaceholder.png";
+import createStyles from "./styles";
 
 interface ContactUserCardI {
   item: UserI;
-  btnTitle: string;
+  btnTitle?: string;
   onViewPress?: () => void;
-  onAddBtnPress: () => void;
+  onBtnPress: (id: string, isFriendReqSent?: boolean) => void;
 }
 
-const ContactUserCard = ({ item, btnTitle, onAddBtnPress, onViewPress }: ContactUserCardI) => {
+const ContactUserCard = ({ item, onBtnPress, btnTitle, onViewPress }: ContactUserCardI) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const username = `${item.firstname} ${item.lastname}`;
   const location = item.country ? item.country : "Unknown";
   const profilePicture = item.profilePicture ? { uri: item.profilePicture } : personPlaceholder;
 
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onViewPress}>
-      <View style={styles.leftContainer}>
+    <View style={styles.cardContainer}>
+      <TouchableOpacity style={styles.leftContainer} onPress={onViewPress} activeOpacity={0.5}>
         <Image source={profilePicture} style={styles.profileImage} />
-
         <View>
-          <Text preset="semiBold" text={username} numberOfLines={1} />
-          <Text text={location} numberOfLines={1} />
+          <Text preset="semiBold" text={username} numberOfLines={1} style={styles.username} />
+          <Text text={location} numberOfLines={1} style={styles.location} />
         </View>
-      </View>
-
-      <TouchableOpacity style={styles.sideBtn} onPress={() => onAddBtnPress()}>
-        <Text text={btnTitle} />
       </TouchableOpacity>
-    </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.sideBtn}
+        onPress={() => onBtnPress(item._id, item.isFriendReqSent)}
+        activeOpacity={0.5}
+      >
+        <Text text={btnTitle ? btnTitle : "Add"} style={styles.btnText} />
+      </TouchableOpacity>
+    </View>
   );
 };
 

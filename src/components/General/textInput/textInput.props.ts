@@ -11,6 +11,7 @@ export interface TextInputProps extends TextInputAndroidProps {
   error?: string | undefined | string[] | any;
   visible?: boolean | any;
   multiline?: boolean;
+  isEditable?: boolean;
   onBlur?: () => void;
   onRightPress?: () => void;
   onChangeText?: (text: string) => void;

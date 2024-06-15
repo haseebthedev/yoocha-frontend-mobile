@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, View } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { colors } from "theme";
 import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
 import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
@@ -16,7 +18,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import styles from "./recieve-requests.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./recieve-requests.styles";
+import { createNotificationService } from "store/slice/notification/notificationService";
 
 const LIMIT: number = 10;
 
@@ -26,6 +30,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
 }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
@@ -57,7 +64,19 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
       hasNext: prev?.hasNext,
     }));
 
-    await dispatch(acceptFriendRequest({ roomId: roomId }));
+    await dispatch(acceptFriendRequest({ roomId: roomId }))
+      .unwrap()
+      .then(async (response) => {
+        await dispatch(
+          createNotificationService({
+            message: `${user.firstname} has accepted your friend request.`,
+            recipientId: friendId,
+            senderId: user._id,
+          })
+        )
+          .unwrap()
+          .catch((err) => console.error("error: ", err));
+      });
   };
 
   const getUserRequests = async () => {
@@ -119,13 +138,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   useEffect(() => {
@@ -146,7 +159,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
         iconStyle={colors.white}
       />
 
-      <View style={styles.containerWithWhiteBg}>
+      <View style={styles.roundedContainer}>
         <AppHeading title="Recieved Requests" />
 
         <FlatList
@@ -155,7 +168,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
               item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
-              onAddBtnPress={() => acceptRequest(item?._id, item?.initiator._id)}
+              onBtnPress={() => acceptRequest(item?._id, item?.initiator._id)}
               btnTitle="Accept"
             />
           )}
@@ -165,7 +178,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "reci
           ListEmptyComponent={() =>
             !state.listRefreshing &&
             !refreshing &&
-            state.list.length === 0 && <EmptyListText text="You don't have any Friend Requests!" />
+            state.list.length === 0 && (
+              <EmptyListText text="You don't have any Friend Requests!" textStyle={styles.emptyTextPlaceholder} />
+            )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

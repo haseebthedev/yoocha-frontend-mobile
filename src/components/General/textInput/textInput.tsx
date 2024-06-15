@@ -1,12 +1,14 @@
-import * as React from "react";
-import { TextInput as ReactNativeTextInput, View } from "react-native";
-import { TextInputProps } from "./textInput.props";
-import { StyleSheet } from "react-native";
-import { hp, wp } from "utils/responsive";
-import { colors, typography } from "theme";
-import { Text } from "../text/text";
+import { TextInput as ReactNativeTextInput, View, StyleSheet } from "react-native";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
+
+import { Text } from "../text/text";
+import { hp, wp } from "utils/responsive";
+import { TextInputProps } from "./textInput.props";
+import { colors, typography } from "theme";
+import { RootState, useAppSelector } from "store";
 import ErrorMessage from "../errorMessage/error-message";
+import { useAppTheme } from "hooks";
 
 export function TextInput(props: TextInputProps) {
   const {
@@ -19,26 +21,37 @@ export function TextInput(props: TextInputProps) {
     style: styleOverride,
     error,
     visible,
+    isEditable = true,
     ...rest
   } = props;
 
   const style = [styles.inputFieldStyle, styleOverride];
+  const { theme } = useAppTheme();
 
   return (
     <>
-      {label && <Text text={label} preset="labelHeading" style={styles.label} />}
+      {label && <Text text={label} preset="labelHeading" style={[styles.label, { color: theme.colors.heading }]} />}
 
       <View>
         <ReactNativeTextInput
           value={value}
-          style={style}
+          style={[style, { color: theme.colors.heading }]}
           autoCapitalize="none"
           placeholderTextColor={colors.darkGrey}
           secureTextEntry={isPassword === false || undefined ? true : false}
+          editable={isEditable}
           {...rest}
         />
 
-        {rightIcon && <Ionicons onPress={onRightPress} name={rightIcon} size={22} style={styles.rightIconStyle} />}
+        {rightIcon && (
+          <Ionicons
+            onPress={onRightPress}
+            name={rightIcon}
+            size={22}
+            style={styles.rightIconStyle}
+            color={theme.colors.iconColor}
+          />
+        )}
         <ErrorMessage error={error} visible={visible} />
       </View>
     </>
@@ -61,7 +74,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: hp(2.8),
     right: wp(3),
-    backgroundColor: "white",
     paddingLeft: wp(3),
   },
 });

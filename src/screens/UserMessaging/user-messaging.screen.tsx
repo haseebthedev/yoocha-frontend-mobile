@@ -1,28 +1,31 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-import { colors } from "theme";
-import { NavigatorParamList } from "navigators";
+import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { colors } from "theme";
+import { socket } from "socket/socketIo";
+import { EventEnum } from "enums";
+import { useAppTheme } from "hooks";
+import { NavigatorParamList } from "navigators";
+import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, MessageCard, PopupMenu, Text } from "components";
+import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
 import {
+  UserI,
   ListMessageResponseI,
   MessageItemI,
   RootState,
   SendMessageResponseI,
-  UserI,
   blockUserService,
   getListMessageService,
   sendMessageService,
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { EventEnum } from "enums";
-import { socket } from "socket/socketIo";
-import { userMessageScreenOptions } from "constant";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personplaceholder from "assets/images/personplaceholder.png";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./styles";
+import createStyles from "./styles";
 
 const LIMIT: number = 50;
 
@@ -33,6 +36,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   const { roomId, friendName, item } = route.params;
 
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const flatListRef = useRef<FlatList>(null);
   const messageInputRef = useRef<TextInput>(null);
@@ -71,13 +77,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   const getMessages = async () => {
@@ -145,22 +145,24 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         <View style={styles.appHeader}>
           <View style={styles.flexAlignCenter}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back" color={colors.textDark} size={20} />
+              <Ionicons name="chevron-back" color={theme.colors.iconColor} size={24} />
             </TouchableOpacity>
 
-            <Image
-              source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personPlaceholder}
-              style={styles.profileImage}
-            />
-            <View>
-              <Text text={friendName} preset="heading" />
-              <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
-            </View>
+            <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: "row" }} onPress={() => {}}>
+              <Image
+                source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
+                style={styles.profileImage}
+              />
+              <View>
+                <Text text={friendName} preset="semiBold" style={styles.name} />
+                <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={colors.textDark} size={16} />
+          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
 
         <PopupMenu
@@ -190,7 +192,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
               !state.listRefreshing &&
               state.list.length === 0 && (
                 <View style={{ transform: [{ scaleY: -1 }] }}>
-                  <EmptyListText text="There are no messages yet. Start a conversation!" />
+                  <EmptyListText
+                    text="There are no messages yet. Start a conversation!"
+                    textStyle={styles.emptyTextPlaceholder}
+                  />
                 </View>
               )
             }
@@ -199,7 +204,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         </View>
 
         {isUserBlock ? (
-          <EmptyListText text="User is Blocked!" />
+          <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />
         ) : (
           <View style={styles.inputFieldBlock}>
             <TextInput

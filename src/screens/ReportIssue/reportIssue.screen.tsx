@@ -45,13 +45,14 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">>
         />
         <TextInput
           label="message"
-          placeholder="Enter Message"
+          placeholder="Type your issue here"
           onBlur={() => setFieldTouched("message")}
           onChangeText={handleChange("message")}
           error={errors.message}
           visible={touched.message}
           multiline
           numberOfLines={4}
+          style={{ textAlignVertical: "top" }}
         />
         <AppButton preset="filled" text="Submit" onPress={handleSubmit} />
       </View>

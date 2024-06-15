@@ -1,9 +1,8 @@
-// Heading.tsx
-
 import React, { ReactNode } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "components";
-import styles from "./styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 interface AppHeadingI {
   title: string;
@@ -12,9 +11,13 @@ interface AppHeadingI {
 }
 
 const AppHeading: React.FC<AppHeadingI> = ({ title, rightTitle, onRightPress }) => {
+  const { theme } = useAppTheme();
+
+  const styles = createStyles(theme);
+
   return (
     <View style={styles.container}>
-      <Text text={title} preset="heading" />
+      <Text text={title} preset="heading" style={styles.headingText} />
       {rightTitle && (
         <TouchableOpacity onPress={onRightPress}>
           <Text text="View All" preset="semiBold" style={styles.rightText} />

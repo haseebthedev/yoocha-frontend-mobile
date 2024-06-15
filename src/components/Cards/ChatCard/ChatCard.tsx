@@ -1,8 +1,10 @@
 import { Image, TouchableOpacity, View } from "react-native";
+
 import { Text } from "components";
+import { useAppTheme } from "hooks";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./styles";
+import personPlaceholder from "assets/images/personplaceholder.png";
+import createStyles from "./styles";
 
 interface ChatCardI {
   item: ListRoomItemI;
@@ -11,17 +13,25 @@ interface ChatCardI {
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const friend = item.initiator._id === user?._id ? item.invitee : item.initiator;
   const fullName: string = friend ? `${friend.firstname} ${friend.lastname}` : "Friend Name Here...";
   const profileImage = friend?.profilePicture;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)}>
+    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)} activeOpacity={0.5}>
       <View style={styles.profileContainer}>
         <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
         <View style={styles.textContainer}>
-          <Text preset="semiBold" text={fullName} numberOfLines={1} />
-          <Text text={item?.lastMessage ? item.lastMessage : ''} numberOfLines={1} style={styles.lastMessageText} />
+          <Text preset="semiBold" text={fullName} numberOfLines={1} style={styles.name} />
+          <Text
+            text={item?.lastMessage ? item.lastMessage : "Start a conversation!"}
+            numberOfLines={1}
+            style={styles.lastMessageText}
+          />
         </View>
       </View>
 

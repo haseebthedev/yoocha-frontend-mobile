@@ -75,8 +75,6 @@ export interface LoadingI {
   loading: boolean;
 }
 
-export type GetFriendsSuggestionResponseI = PaginationListResultI<UserI>;
-
 export interface BlockUserPayloadI {
   id: string;
 }
@@ -87,8 +85,6 @@ export interface ListBlockedUsersPayloadI {
   page?: number;
   limit?: number;
 }
-
-export type SuggestedFriendsPayloadI = ListBlockedUsersPayloadI;
 
 export interface BlockedUserInfo {
   _id: string;
@@ -128,18 +124,7 @@ export interface ListUserRequestsPayloadI {
   limit?: number;
 }
 
-export type ExplorePeoplePayloadI = ListBlockedUsersPayloadI;
-
 export type ListUserRequestsResponseI = PaginationListResultI<UserInfo>;
-export type ExplorePeopleResponseI = PaginationListResultI<UserI>;
-
-export interface sendFriendReqPayloadI {
-  inviteeId: string;
-}
-
-export type sendFriendReqResponseI = ResponseWithStatus;
-export type RemoveFriendReqPayloadI = Pick<sendFriendReqPayloadI, "inviteeId">;
-export type RemoveFriendReqResponseI = ResponseWithStatus;
 
 export interface AcceptFriendReqPayloadI {
   roomId: string;

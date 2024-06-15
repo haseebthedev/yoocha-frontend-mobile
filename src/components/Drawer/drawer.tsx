@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
-import { colors } from "theme";
 import { AlertBox, Text } from "components";
 import { NavigatorParamList } from "navigators";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RootState, logoutUser, useAppDispatch, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personplaceholder from "assets/images/personplaceholder.png";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import styles from "./styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 type CustomHomeDrawerProps = {
   navigation: DrawerNavigationProp<NavigatorParamList, "main">;
@@ -17,6 +17,10 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { user } = useAppSelector((state: RootState) => state.auth);
+  const { theme } = useAppTheme();
+
+  const styles = createStyles(theme);
+
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
   const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
@@ -27,7 +31,7 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.flexAlignCenter}>
         <Image
-          source={user?.profilePicture ? { uri: user?.profilePicture } : personPlaceholder}
+          source={user?.profilePicture ? { uri: user?.profilePicture } : personplaceholder}
           style={styles.profilePic}
         />
         <View style={styles.spacingTop}>
@@ -39,45 +43,45 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
       <View style={styles.bottomBlock}>
         <TouchableOpacity onPress={() => navigation.navigate("home")} style={styles.optionBlock}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="home-outline" size={20} color={colors.white} />
+            <Ionicons name="home-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Home" style={styles.navText} />
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.white} />
+          <Ionicons name="chevron-forward" size={16} color={theme.colors.iconColor} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("contacts")} style={styles.optionBlock}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="chatbubbles-outline" size={20} color={colors.white} />
+            <Ionicons name="chatbubbles-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Contacts" style={styles.navText} />
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.white} />
+          <Ionicons name="chevron-forward" size={16} color={theme.colors.iconColor} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("profile")} style={styles.optionBlock}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="person-outline" size={20} color={colors.white} />
+            <Ionicons name="person-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Profile" style={styles.navText} />
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.white} />
+          <Ionicons name="chevron-forward" size={16} color={theme.colors.iconColor} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionBlock}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="shield-checkmark-outline" size={20} color={colors.white} />
+            <Ionicons name="shield-checkmark-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Privacy Policy" style={styles.navText} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionBlock} onPress={() => navigation.navigate("reportIssue")}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="alert-circle-outline" size={20} color={colors.white} />
+            <Ionicons name="alert-circle-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Report an Issue" style={styles.navText} />
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionBlock} onPress={onLogoutPress}>
           <View style={styles.innerLeftBlock}>
-            <Ionicons name="log-out-outline" size={20} color={colors.white} />
+            <Ionicons name="log-out-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Logout" style={styles.navText} />
           </View>
         </TouchableOpacity>

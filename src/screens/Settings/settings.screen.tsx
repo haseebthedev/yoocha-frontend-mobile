@@ -1,14 +1,20 @@
 import { FC, useState } from "react";
 import { View } from "react-native";
+
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { colors } from "theme";
 import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { logoutUser, useAppDispatch } from "store";
 import { AlertBox, Header, SettingListItem } from "components";
-import styles from "./settings.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./settings.styles";
 
 const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
@@ -56,14 +62,16 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
             onPress={() => navigation.navigate("contactUs")}
           />
           <SettingListItem iconName="log-out-outline" listText="Logout" onPress={onLogoutPress} />
-          <SettingListItem
-            iconName="trash-outline"
-            iconColor={colors.red}
-            textColor={colors.red}
-            listText="Delete Account"
-            onPress={() => setDeleteAccModalVisible((prev) => !prev)}
-          />
         </View>
+      </View>
+      <View style={styles.deleteAccount}>
+        <SettingListItem
+          iconName="trash-outline"
+          iconColor={colors.red}
+          textColor={colors.red}
+          listText="Delete Account"
+          onPress={() => setDeleteAccModalVisible((prev) => !prev)}
+        />
       </View>
 
       <AlertBox

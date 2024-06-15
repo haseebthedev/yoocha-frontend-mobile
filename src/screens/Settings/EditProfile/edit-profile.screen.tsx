@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -10,19 +10,32 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import DatePicker from "react-native-date-picker";
 
 import { colors } from "theme";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
 import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
 import { UpdateUserI, UserUpdateI } from "interfaces/user";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import { AlertBox, AppButton, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import {
+  AlertBox,
+  AppButton,
+  CountryPickerModal,
+  Header,
+  ImagePickerModal,
+  LoadingIndicator,
+  Text,
+  TextInput,
+} from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
-import styles from "./edit-profile.styles";
+import personPlaceholder from "assets/images/personplaceholder.png";
+import createStyles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
@@ -112,7 +125,12 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <Header headerText="Edit Profile" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+      <Header
+        headerText="Edit Profile"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: theme.colors.heading }}
+      />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
@@ -131,6 +149,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("firstname")}
             error={errors.firstname}
             visible={touched.firstname}
+            style={{ color: theme.colors.heading }}
           />
 
           <TextInput
@@ -141,6 +160,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("lastname")}
             error={errors.lastname}
             visible={touched.lastname}
+            style={{ color: theme.colors.heading }}
           />
 
           <TextInput
@@ -151,21 +171,33 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
             onChangeText={handleChange("email")}
             error={errors.email}
             visible={touched.email}
+            isEditable={false}
+            style={{ color: theme.colors.heading }}
           />
 
-          <Text text="Date of Birth" preset="labelHeading" style={styles.topSpacing} />
+          <Text
+            text="Date of Birth"
+            preset="labelHeading"
+            style={[styles.topSpacing, { color: theme.colors.heading }]}
+          />
           <TouchableOpacity onPress={() => setDateModalVisible(true)} style={styles.pickerInputField}>
             <Text
               text={dateOfBirth ? formatDateToDMY(dateOfBirth) : "Select Date"}
               preset={dateOfBirth ? "inputText" : "inputTextPlaceholder"}
+              style={{ color: theme.colors.heading }}
             />
           </TouchableOpacity>
 
-          <Text text="Country / Region" preset="labelHeading" style={styles.topSpacing} />
+          <Text
+            text="Country / Region"
+            preset="labelHeading"
+            style={[styles.topSpacing, { color: theme.colors.heading }]}
+          />
           <TouchableOpacity onPress={() => setCountryModalVisible((prev) => !prev)} style={styles.pickerInputField}>
             <Text
               text={selectedCountry ? String(selectedCountry) : "Select Country"}
               preset={selectedCountry ? "inputText" : "inputTextPlaceholder"}
+              style={{ color: theme.colors.heading }}
             />
           </TouchableOpacity>
         </View>
@@ -175,7 +207,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
           text={loading ? "" : "Save Changes"}
           onPress={handleSubmit}
           disabled={loading}
-          RightAccessory={() => loading && <ActivityIndicator color="white" />}
+          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
       </ScrollView>
 

@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View, RefreshControl } from "react-native";
+import { FlatList, View, RefreshControl } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { EventEnumRole } from "enums";
 import { ListWithPagination } from "interfaces";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   ListUserRequestsResponseI,
   RootState,
@@ -17,13 +17,17 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import styles from "./send-requests.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./send-requests.styles";
 
 const LIMIT: number = 10;
 
 const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendrequests">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [friendId, setFriendId] = useState<string>("");
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
@@ -88,13 +92,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
   };
 
   const renderLoader = () => {
-    return (
-      state.listRefreshing && (
-        <View style={styles.loaderStyle}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )
-    );
+    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
   const onRefresh = async () => {
@@ -146,7 +144,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
         iconStyle={colors.white}
       />
 
-      <View style={styles.containerWithWhiteBg}>
+      <View style={styles.roundedContainer}>
         <AppHeading title="Sent requests" />
 
         <FlatList
@@ -156,7 +154,7 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           renderItem={({ item }: { item: UserInfo }) => (
             <ContactUserCard
               item={item?.initiator._id === user?._id ? item.invitee : item.initiator}
-              onAddBtnPress={() => {
+              onBtnPress={() => {
                 removeRequest(item?.invitee?._id);
               }}
               btnTitle="Pending"
@@ -168,7 +166,9 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendreq
           ListEmptyComponent={() =>
             !state.listRefreshing &&
             !refreshing &&
-            state.list.length === 0 && <EmptyListText text="No requests are sent!" />
+            state.list.length === 0 && (
+              <EmptyListText text="No friend requests sent!" textStyle={styles.emptyTextPlaceholder} />
+            )
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />

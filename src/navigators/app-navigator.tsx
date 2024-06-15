@@ -25,7 +25,7 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { ListRoomItemI, RootState, UserI, useAppSelector } from "store";
+import { UserI, ListRoomItemI, RootState, useAppSelector } from "store";
 import { disconnectSocketIO, initSocketIO } from "socket";
 
 export type NavigatorParamList = {
