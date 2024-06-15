@@ -24,6 +24,23 @@ const createStyles = (theme) =>
       paddingHorizontal: wp(5),
       paddingVertical: hp(2),
     },
+    unreadMessageContainer: {
+      backgroundColor: colors.primary,
+      width: wp(5),
+      height: wp(5),
+      borderRadius: wp(5),
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: hp(1),
+
+      position: "absolute",
+      left: 15,
+      top: -8,
+    },
+    unreadMessageText: {
+      color: colors.white,
+      fontSize: hp(1.5),
+    },
     sidebarContainer: {
       width: wp(20),
       backgroundColor: colors.lightShade,

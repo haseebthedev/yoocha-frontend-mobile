@@ -7,10 +7,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import { colors } from "theme";
 import { useAppTheme } from "hooks";
+import { NotificationI } from "store/slice/notification/types";
 import { NavigatorParamList } from "navigators";
+import { listNotificationService } from "store/slice/notification/notificationService";
 import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
-import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI } from "store";
+import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
 import createStyles from "./home.styles";
 
 const LIMIT: number = 10;
@@ -21,6 +23,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const [unreadNotification, setUnreadNotification] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
   const [statusData, setStatusData] = useState<UserStatusI>({
@@ -97,12 +100,25 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
       .finally(() => setRefreshing(false));
   }, [dispatch]);
 
+  const getNotificationList = async () => {
+    await dispatch(listNotificationService())
+      .unwrap()
+      .then((response: PaginationListResultI<NotificationI>) => {
+        const filteredItems = response?.result?.docs.filter((item: NotificationI) => item.isRead != true);
+        setUnreadNotification(filteredItems.length);
+      })
+      .catch((error) => console.log("error: ", error));
+  };
+
   useEffect(() => {
     getChatRooms();
-
     return () => {
       setState({ ...state, list: [], page: 1, hasNext: false });
     };
+  }, []);
+
+  useEffect(() => {
+    getNotificationList();
   }, []);
 
   return (
@@ -115,6 +131,12 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
         <Text text="YOOCHAT" preset="logo" style={styles.heading} />
         <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
           <Ionicons name="notifications-outline" color={theme.colors.iconColor} size={24} />
+
+          {unreadNotification > 0 && (
+            <View style={styles.unreadMessageContainer}>
+              <Text text={unreadNotification.toString()} style={styles.unreadMessageText} />
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 

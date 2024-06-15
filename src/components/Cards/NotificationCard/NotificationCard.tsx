@@ -9,7 +9,7 @@ import createStyles from "./styles";
 
 interface NotificationCardI {
   item: NotificationI;
-  onPress?: () => void;
+  onPress: (id: string) => void;
 }
 
 const NotificationCard = ({ item, onPress }: NotificationCardI) => {
@@ -17,12 +17,12 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
   const styles = createStyles(theme);
 
   const senderName: string = `${item.senderId.firstname} ${item.senderId.lastname}` || "";
-  const profileImage: any = item?.senderId.profilePicture;
+  const profileImage: string | null = item?.senderId.profilePicture;
 
   return (
     <TouchableOpacity
       style={[styles.container, !item.isRead && { backgroundColor: theme.colors.unReadBg }]}
-      onPress={onPress}
+      onPress={() => onPress(item._id)}
       activeOpacity={0.5}
     >
       <View style={styles.profileContainer}>

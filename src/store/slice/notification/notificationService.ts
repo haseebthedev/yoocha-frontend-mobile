@@ -40,11 +40,17 @@ export const listNotificationService: any = createAsyncThunk(
   "notification/listNotification",
   async (payload: ListNotificationPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<ListNotificationResponseI> = await AxiosInstance.get(
-        `/notification/list-notifications?page=${payload.page}&limit=${payload.limit}`
-      );
-
-      return response.data;
+      if (payload?.page && payload?.limit) {
+        const response: AxiosResponse<ListNotificationResponseI> = await AxiosInstance.get(
+          `/notification/list-notifications?page=${payload.page}&limit=${payload.limit}`
+        );
+        return response.data;
+      } else {
+        const response: AxiosResponse<ListNotificationResponseI> = await AxiosInstance.get(
+          `/notification/list-notifications`
+        );
+        return response.data;
+      }
     } catch (error: any) {
       console.log("error: ", error);
 

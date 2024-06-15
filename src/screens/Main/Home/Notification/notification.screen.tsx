@@ -8,8 +8,8 @@ import { useAppTheme } from "hooks";
 import { useAppDispatch } from "store";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { listNotificationService } from "store/slice/notification/notificationService";
-import { ListNotificationResponseI, NotificationI } from "store/slice/notification/types";
+import { listNotificationService, readNotificationService } from "store/slice/notification/notificationService";
+import { ListNotificationResponseI, NotificationI, NotificationResponseI } from "store/slice/notification/types";
 import { EmptyListText, Header, LoadingIndicator, NotificationCard } from "components";
 import createStyles from "./notification.styles";
 
@@ -21,13 +21,30 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notific
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<NotificationI>>({
     list: [],
     page: 1,
     hasNext: false,
     listRefreshing: false,
   });
+
+  const onNotificationPress = async (id: string) => {
+    await dispatch(readNotificationService({ id }))
+      .unwrap()
+      .then((response: NotificationResponseI) => {
+        if (response?.result) {
+          setState((prev: ListWithPagination<NotificationI>) => ({
+            ...prev,
+            list: prev.list.map((notification) =>
+              notification._id === id ? { ...notification, isRead: true } : notification
+            ),
+          }));
+        }
+      })
+      .then(() => navigation.navigate("recieverequests"))
+      .catch((error) => console.log("error", error));
+  };
 
   const getNotificationList = async () => {
     setState((prev: ListWithPagination<NotificationI>) => ({
@@ -63,12 +80,6 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notific
     }
 
     setRefreshing(true);
-
-    setState((prev: ListWithPagination<NotificationI>) => ({
-      ...prev,
-      page: 1,
-      hasNext: false,
-    }));
 
     await dispatch(listNotificationService({ page: 1, limit: LIMIT }))
       .unwrap()
@@ -113,7 +124,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notific
         data={state.list}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <NotificationCard item={item} onPress={() => {}} />}
+        renderItem={({ item }) => <NotificationCard item={item} onPress={onNotificationPress} />}
         style={styles.notiList}
         contentContainerStyle={styles.notiListContainer}
         onEndReached={loadMoreItems}
