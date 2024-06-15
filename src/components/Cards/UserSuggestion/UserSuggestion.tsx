@@ -1,9 +1,11 @@
 import { Image, TouchableOpacity, View } from "react-native";
+
+import Ionicons from "react-native-vector-icons/Ionicons";
+import LinearGradient from "react-native-linear-gradient";
+
 import { Text } from "components";
 import { UserI } from "store";
 import { colors } from "theme";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import LinearGradient from "react-native-linear-gradient";
 import personPlaceholder from "assets/images/personplaceholder.png";
 import styles from "./styles";
 

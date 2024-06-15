@@ -10,6 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import DatePicker from "react-native-date-picker";
 
 import { colors } from "theme";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
 import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
@@ -26,9 +27,8 @@ import {
   TextInput,
 } from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
-import personplaceholder from "assets/images/personplaceholder.png";
+import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./edit-profile.styles";
-import { useAppTheme } from "hooks";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprof
   const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
   const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
   const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personplaceholder);
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);

@@ -30,6 +30,7 @@ import {
 } from "store";
 import createStyles from "./contact.styles";
 import { createNotificationService } from "store/slice/notification/notificationService";
+import { wp } from "utils/responsive";
 
 const EXPLORE_PEOPLE_LIMIT: number = 10;
 const FRIEND_SUGG_LIMIT: number = 4;
@@ -141,7 +142,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 !refreshing &&
                 !loading &&
                 friendSuggestions?.docs?.length === 0 && (
-                  <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
+                  <View style={styles.emptyText}>
+                    <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
+                  </View>
                 )
               }
             />

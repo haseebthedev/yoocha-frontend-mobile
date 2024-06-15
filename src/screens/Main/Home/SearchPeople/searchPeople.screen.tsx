@@ -99,7 +99,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
 
         {loading && <LoadingIndicator />}
 
-        {searchExplorePeople?.docs ? (
+        {searchExplorePeople?.docs && !loading ? (
           <FlatList
             data={searchExplorePeople?.docs}
             keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
@@ -115,7 +115,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
             )}
             onEndReached={loadMoreItems}
             ListFooterComponent={renderLoader}
-            // onEndReachedThreshold={0.5}
+            onEndReachedThreshold={0.5}
             ListEmptyComponent={() =>
               searchExplorePeople?.docs?.length === 0 && (
                 <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />

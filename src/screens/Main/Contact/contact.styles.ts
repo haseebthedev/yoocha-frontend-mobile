@@ -59,6 +59,7 @@ const createStyles = (theme) =>
       marginVertical: 16,
       alignItems: "center",
     },
+    emptyText: { width: wp(90) },
     emptyTextPlaceholder: {
       color: theme.colors.subHeading,
     },
