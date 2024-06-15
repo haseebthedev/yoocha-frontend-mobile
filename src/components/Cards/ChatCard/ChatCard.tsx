@@ -3,7 +3,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { useAppTheme } from "hooks";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./styles";
 
 interface ChatCardI {

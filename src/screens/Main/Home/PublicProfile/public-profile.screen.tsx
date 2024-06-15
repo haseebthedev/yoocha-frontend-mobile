@@ -9,7 +9,7 @@ import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
 import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./public-profile.styles";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "publicProfile">> = ({

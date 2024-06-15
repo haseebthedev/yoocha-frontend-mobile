@@ -4,7 +4,7 @@ import { Text } from "components";
 import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
 import { formatTime } from "utils/dateAndTime";
-import userPlaceholder from "assets/images/personPlaceholder.jpeg";
+import userPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./styles";
 import { useAppTheme } from "hooks";
 

@@ -4,7 +4,7 @@ import { UserI } from "store";
 import { colors } from "theme";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import LinearGradient from "react-native-linear-gradient";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personPlaceholder from "assets/images/personplaceholder.png";
 import styles from "./styles";
 
 interface UserSuggestionCardI {

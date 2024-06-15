@@ -11,7 +11,7 @@ import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { RootState, getMyProfileService, useAppDispatch, useAppSelector } from "store";
 import createStyles from "./profile.styles";
-import noImage from "assets/images/personPlaceholder.jpeg";
+import personplaceholder from "assets/images/personplaceholder.png";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -44,7 +44,10 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
 
       <View style={styles.mainContainer}>
         <View style={styles.roundedContainer}>
-          <Image source={user?.profilePicture ? { uri: user.profilePicture } : noImage} style={styles.profilePic} />
+          <Image
+            source={user?.profilePicture ? { uri: user.profilePicture } : personplaceholder}
+            style={styles.profilePic}
+          />
           <Text text={userName} preset="largeHeading" style={styles.name} />
 
           <View style={styles.location}>

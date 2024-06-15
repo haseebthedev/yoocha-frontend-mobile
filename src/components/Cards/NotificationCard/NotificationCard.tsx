@@ -4,7 +4,7 @@ import { Text } from "components";
 import { formatDate } from "utils/dateAndTime";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
-import personPlaceholder from "assets/images/personPlaceholder.jpeg";
+import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./styles";
 
 interface NotificationCardI {
