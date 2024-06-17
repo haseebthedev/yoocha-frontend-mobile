@@ -5,7 +5,7 @@ import { hp } from "utils/responsive";
 const createStyles = (theme) =>
   StyleSheet.create({
     spacing: {
-      paddingVertical: hp(2),
+      paddingVertical: hp(1.5),
     },
     divider: {
       width: "100%",

@@ -14,6 +14,7 @@ import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
 import createStyles from "./home.styles";
+import { ScreenEnum } from "enums";
 
 const LIMIT: number = 10;
 
@@ -163,7 +164,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
               <ChatCard
                 item={item}
                 onPress={(fullName: string) =>
-                  navigation.navigate("usermessaging", {
+                  navigation.navigate(ScreenEnum.USER_MESSAGING, {
                     roomId: item._id,
                     friendName: fullName,
                     item: item,

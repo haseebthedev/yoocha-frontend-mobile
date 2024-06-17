@@ -16,9 +16,10 @@ export const initSocketIO = async () => {
   socket = io(API_URL, { transports: ["websocket"], extraHeaders });
 };
 
-export const disconnectSocketIO = () => {
+export const disconnectSocketIO = async () => {
   if (socket) {
-    socket.disconnect();
+    await socket.disconnect();
+    return;
   }
 
   socket = null;

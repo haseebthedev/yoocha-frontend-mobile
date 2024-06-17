@@ -119,6 +119,7 @@ export const AppNavigator = (props: NavigationProps) => {
 
   useEffect(() => {
     if (token) {
+      console.log("Initializing the client socket!")
       initSocketIO();
     }
 

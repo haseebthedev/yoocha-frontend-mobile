@@ -87,7 +87,6 @@ export const sendMessageService: any = createAsyncThunk(
           message: payload.message,
         },
       });
-
       return response.data;
     } catch (error: any) {
       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });

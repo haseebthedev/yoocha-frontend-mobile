@@ -15,7 +15,6 @@ const createStyles = (theme) =>
     mainContainer: {
       flex: 1,
       flexDirection: "row",
-      paddingRight: wp(5),
     },
     appHeader: {
       flexDirection: "row",

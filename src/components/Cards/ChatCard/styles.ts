@@ -5,6 +5,7 @@ import { hp, wp } from "utils/responsive";
 const createStyles = (theme) =>
   StyleSheet.create({
     container: {
+      flex: 1,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
@@ -35,7 +36,7 @@ const createStyles = (theme) =>
 
     infoText: {
       color: theme.colors.subHeading,
-      fontSize: hp(1.6),
+      fontSize: hp(1.2),
     },
     unreadMessageContainer: {
       backgroundColor: colors.primary,
