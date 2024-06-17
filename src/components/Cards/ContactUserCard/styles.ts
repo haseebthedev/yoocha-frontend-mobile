@@ -9,7 +9,6 @@ const createStyles = (theme) =>
       justifyContent: "space-between",
       alignItems: "center",
       gap: 10,
-      // paddingHorizontal: wp(5),
       paddingBottom: 15,
     },
     leftContainer: {
@@ -25,7 +24,7 @@ const createStyles = (theme) =>
     },
     sideBtn: {
       borderWidth: 1,
-      borderColor: theme.colors.outlinedBtnColor,
+      borderColor: theme.colors.borderColor,
       borderRadius: 8,
       paddingHorizontal: 20,
       paddingVertical: 8,

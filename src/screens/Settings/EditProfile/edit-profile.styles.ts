@@ -41,7 +41,7 @@ const createStyles = (theme) =>
     pickerInputField: {
       paddingVertical: hp(1.7),
       borderWidth: 1,
-      borderColor: colors.lightShade,
+      borderColor: theme.colors.borderColor,
       borderRadius: 8,
       paddingHorizontal: wp(3.6),
       marginVertical: hp(1),
@@ -49,9 +49,6 @@ const createStyles = (theme) =>
     topSpacing: {
       marginTop: hp(1.6),
     },
-
-    //
-
     body: {
       backgroundColor: colors.white,
       alignItems: "center",

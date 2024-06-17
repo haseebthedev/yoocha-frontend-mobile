@@ -25,8 +25,8 @@ const createStyles = (theme) =>
     },
     unreadMessageContainer: {
       backgroundColor: colors.primary,
-      width: wp(5),
-      height: wp(5),
+      width: wp(4),
+      height: wp(4),
       borderRadius: wp(5),
       justifyContent: "center",
       alignItems: "center",
@@ -38,7 +38,7 @@ const createStyles = (theme) =>
     },
     unreadMessageText: {
       color: colors.white,
-      fontSize: hp(1.5),
+      fontSize: hp(1.2),
     },
     sidebarContainer: {
       width: wp(20),

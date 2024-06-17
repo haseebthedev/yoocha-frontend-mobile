@@ -12,6 +12,11 @@ const createStyles = (theme) =>
     heading: {
       color: theme.colors.heading,
     },
+    iconBlock: {
+      width: 24,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     appHeader: {
       flexDirection: "row",
       justifyContent: "space-between",

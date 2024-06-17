@@ -1,19 +1,15 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { colors } from "theme";
 import { hp } from "utils/responsive";
 import { isIOS } from "utils/deviceInfo";
 import { CustomHomeDrawer } from "components";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-
 import { HomeScreen } from "screens/Main/Home/home.screen";
 import { ContactScreen } from "screens/Main/Contact/contact.screen";
 import { ProfileScreen } from "screens/Main/Profile/profile.screen";
-
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { RootState, useAppSelector } from "store";
 import { useAppTheme } from "hooks";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export type AppNavigatorParamList = {
   home: undefined;
@@ -52,11 +48,12 @@ const HomeNavigator = () => {
             screenOptions={({ route }) => ({
               tabBarButton: (props) => <TouchableOpacity {...props} />,
               tabBarIcon: ({ color, size }) => <Ionicons name={BottomTabIcon[route.name]} size={size} color={color} />,
-              tabBarActiveTintColor: colors.primary,
-              tabBarInactiveTintColor: colors.grey,
+              tabBarActiveTintColor: theme.colors.primary,
+              tabBarInactiveTintColor: theme.colors.iconColor,
               tabBarStyle: {
                 height: BOTTOM_TAB_HEIGHT,
                 backgroundColor: theme.colors.bgColor,
+                borderTopColor: theme.colors.borderColor
               },
               tabBarShowLabel: false,
               headerShown: false,

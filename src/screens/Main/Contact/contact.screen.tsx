@@ -35,14 +35,18 @@ import { wp } from "utils/responsive";
 const EXPLORE_PEOPLE_LIMIT: number = 10;
 const FRIEND_SUGG_LIMIT: number = 4;
 
-const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> = ({ navigation }) => {
+const ContactScreen: FC<
+  NativeStackScreenProps<NavigatorParamList, "contacts">
+> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
+  const { loading, friendSuggestions, explorePeople } = useAppSelector(
+    (state: RootState) => state.contacts
+  );
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
@@ -81,8 +85,12 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }));
-      await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }));
+      await dispatch(
+        getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT })
+      );
+      await dispatch(
+        getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT })
+      );
     } catch (err) {
       console.error("error: ", err);
     } finally {
@@ -92,7 +100,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
 
   const getFriendsSuggestions = async () => {
     setRefreshing(true);
-    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
+    await dispatch(
+      getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT })
+    )
       .unwrap()
       .catch((err) => console.log("err: ", err))
       .finally(() => setRefreshing(false));
@@ -100,7 +110,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
 
   const getExplorePeople = async () => {
     setRefreshing(true);
-    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
+    await dispatch(
+      getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT })
+    )
       .unwrap()
       .catch((err) => console.log("err: ", err))
       .finally(() => setRefreshing(false));
@@ -120,7 +132,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
         <AppHeading title="People may know" />
         <View style={styles.suggestionsContainer}>
           {refreshing ? (
-            <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
+            <LoadingIndicator
+              containerStyle={styles.activityIndicatorContainer}
+            />
           ) : (
             <FlatList
               horizontal
@@ -132,7 +146,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 <View key={item._id}>
                   <UserSuggestionCard
                     item={item}
-                    onViewPress={() => navigation.navigate("publicProfile", { item })}
+                    onViewPress={() =>
+                      navigation.navigate("publicProfile", { item })
+                    }
                     btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
                     onBtnPress={onBtnPress}
                   />
@@ -143,7 +159,10 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
                 !loading &&
                 friendSuggestions?.docs?.length === 0 && (
                   <View style={styles.emptyText}>
-                    <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
+                    <EmptyListText
+                      text="There are no friends suggestion!"
+                      textStyle={styles.emptyTextPlaceholder}
+                    />
                   </View>
                 )
               }
@@ -151,26 +170,48 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           )}
         </View>
 
-        <AppHeading title="Explore" rightTitle="View All" onRightPress={() => navigation.navigate("searchPeople")} />
+        <AppHeading
+          title="Explore"
+          rightTitle="View All"
+          onRightPress={() => navigation.navigate("searchPeople")}
+        />
       </>
     );
   };
 
-  const renderFooter = () => refreshing && <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />;
+  const renderFooter = () =>
+    refreshing && (
+      <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
+    );
 
   return (
     <View style={styles.container}>
       <View style={styles.appHeader}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
+          <MaterialCommunityIcons
+            name="menu"
+            color={theme.colors.iconColor}
+            size={24}
+          />
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={styles.heading} />
-        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={20} />
+        <TouchableOpacity
+          onPress={() => setMenuVisible(!menuVisible)}
+          style={styles.iconBlock}
+        >
+          <Ionicons
+            name="ellipsis-vertical-sharp"
+            color={theme.colors.iconColor}
+            size={18}
+          />
         </TouchableOpacity>
 
-        <PopupMenu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
+        <PopupMenu
+          isVisible={menuVisible}
+          setMenuVisible={setMenuVisible}
+          menuOptions={contactScreenOptions}
+        />
       </View>
 
       <View style={styles.exploreContainer}>
@@ -189,16 +230,23 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, "contacts">> 
           )}
           ListEmptyComponent={() =>
             explorePeople?.docs?.length === 0 &&
-            !loading && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
+            !loading && (
+              <EmptyListText
+                text="No People to Explore!"
+                textStyle={styles.emptyTextPlaceholder}
+              />
+            )
           }
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           ListFooterComponent={renderFooter}
         />
       </View>
 
       <AlertBox
         open={alertModalVisible}
-        title="Cancel Request!"
+        title="Cancel Request"
         description="Are you sure you want to cancel request?"
         onClose={() => setAlertModalVisible((prev) => !prev)}
         secondaryButtonText="Cancel"

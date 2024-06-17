@@ -11,7 +11,7 @@ const createStyles = (theme) =>
       marginBottom: hp(1.6),
     },
     rightText: {
-      fontSize: hp(1.4),
+      fontSize: hp(1.6),
       color: colors.primary,
     },
     headingText: {

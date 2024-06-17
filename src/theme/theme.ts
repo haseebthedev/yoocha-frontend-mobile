@@ -33,7 +33,7 @@ export const darkTheme = {
     bgColor: "#1E1E1E",
     chatScreenBgColor: "#1E1E1E",
     drawerBgColor: "#282828",
-    iconColor: "#E7E7E7",
+    iconColor: "#a6a6a6",
     heading: "#E7E7E7",
     subHeading: "#C3C3C3",
     placeholderColor: "#AFAFAF",

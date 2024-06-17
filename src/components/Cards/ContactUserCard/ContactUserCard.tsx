@@ -32,9 +32,9 @@ const ContactUserCard = ({ item, onBtnPress, btnTitle, onViewPress }: ContactUse
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.sideBtn}
-        onPress={() => onBtnPress(item._id, item.isFriendReqSent)}
         activeOpacity={0.5}
+        onPress={() => onBtnPress(item._id, item.isFriendReqSent)}
+        style={styles.sideBtn}
       >
         <Text text={btnTitle ? btnTitle : "Add"} style={styles.btnText} />
       </TouchableOpacity>

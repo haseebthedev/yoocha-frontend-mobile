@@ -1,5 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -10,7 +16,14 @@ import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
+import {
+  AlertBox,
+  EmptyListText,
+  LoadingIndicator,
+  MessageCard,
+  PopupMenu,
+  Text,
+} from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -29,10 +42,9 @@ import createStyles from "./styles";
 
 const LIMIT: number = 50;
 
-const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "usermessaging">> = ({
-  navigation,
-  route,
-}) => {
+const UserMessagingScreen: FC<
+  NativeStackScreenProps<NavigatorParamList, "usermessaging">
+> = ({ navigation, route }) => {
   const { roomId, friendName, item } = route.params;
 
   const dispatch = useAppDispatch();
@@ -72,17 +84,26 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   };
 
   const sendMessage = async () => {
-    await dispatch(sendMessageService({ roomId: roomId, message: message }));
     messageInputRef.current?.clear();
+    await dispatch(sendMessageService({ roomId: roomId, message: message }));
   };
 
   const renderLoader = () => {
-    return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
+    return (
+      state.listRefreshing && (
+        <LoadingIndicator
+          color={colors.primary}
+          containerStyle={styles.loaderStyle}
+        />
+      )
+    );
   };
 
   const getMessages = async () => {
     setState((prev) => ({ ...prev, listRefreshing: true }));
-    await dispatch(getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT }))
+    await dispatch(
+      getListMessageService({ roomId: roomId, page: state.page, limit: LIMIT })
+    )
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
@@ -118,7 +139,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
   }, [menuOption]);
 
   useEffect(() => {
-    const otherUser = item?.initiator._id === user?._id ? item.invitee : item.initiator;
+    const otherUser =
+      item?.initiator._id === user?._id ? item.invitee : item.initiator;
     setOtherUser(otherUser);
   }, []);
 
@@ -145,12 +167,24 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         <View style={styles.appHeader}>
           <View style={styles.flexAlignCenter}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back" color={theme.colors.iconColor} size={24} />
+              <Ionicons
+                name="chevron-back"
+                color={theme.colors.iconColor}
+                size={24}
+              />
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: "row" }} onPress={() => {}}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={{ flexDirection: "row" }}
+              onPress={() => {}}
+            >
               <Image
-                source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
+                source={
+                  otherUser?.profilePicture
+                    ? { uri: otherUser?.profilePicture }
+                    : personplaceholder
+                }
                 style={styles.profileImage}
               />
               <View>
@@ -162,7 +196,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         </View>
 
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={24} />
+          <Ionicons
+            name="ellipsis-vertical-sharp"
+            color={theme.colors.iconColor}
+            size={24}
+          />
         </TouchableOpacity>
 
         <PopupMenu
@@ -184,7 +222,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
             keyExtractor={(item: MessageItemI) => String(item._id)}
             contentContainerStyle={styles.listContainer}
             renderItem={({ item }) => <MessageCard item={item} />}
-            ItemSeparatorComponent={() => <View style={styles.paddingVertical} />}
+            ItemSeparatorComponent={() => (
+              <View style={styles.paddingVertical} />
+            )}
             onEndReached={loadMoreItems}
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderLoader}
@@ -204,7 +244,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
         </View>
 
         {isUserBlock ? (
-          <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />
+          <EmptyListText
+            text="User has been blocked!"
+            textStyle={styles.emptyTextPlaceholder}
+          />
         ) : (
           <View style={styles.inputFieldBlock}>
             <TextInput
@@ -215,7 +258,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, "userme
               placeholderTextColor={colors.textDim}
               style={styles.inputfield}
             />
-            <TouchableOpacity onPress={sendMessage}>
+            <TouchableOpacity
+              onPress={sendMessage}
+              style={{ paddingVertical: 10, paddingRight: 20 }}
+            >
               <Ionicons name="send" color={colors.primary} size={20} />
             </TouchableOpacity>
           </View>

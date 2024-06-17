@@ -129,7 +129,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
 
       <AlertBox
         open={alertModalVisible}
-        title="Cancel Request!"
+        title="Cancel Request"
         description="Are you sure you want to cancel request?"
         onClose={() => setAlertModalVisible((prev) => !prev)}
         secondaryButtonText="Cancel"

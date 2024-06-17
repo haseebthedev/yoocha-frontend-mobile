@@ -1,14 +1,11 @@
 import { TextInput as ReactNativeTextInput, View, StyleSheet } from "react-native";
-
-import Ionicons from "react-native-vector-icons/Ionicons";
-
 import { Text } from "../text/text";
 import { hp, wp } from "utils/responsive";
 import { TextInputProps } from "./textInput.props";
 import { colors, typography } from "theme";
-import { RootState, useAppSelector } from "store";
-import ErrorMessage from "../errorMessage/error-message";
 import { useAppTheme } from "hooks";
+import ErrorMessage from "../errorMessage/error-message";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export function TextInput(props: TextInputProps) {
   const {
@@ -25,14 +22,17 @@ export function TextInput(props: TextInputProps) {
     ...rest
   } = props;
 
-  const style = [styles.inputFieldStyle, styleOverride];
   const { theme } = useAppTheme();
+  const styles = appStyles(theme)
+
+  const style = [styles.inputFieldStyle, styleOverride];
 
   return (
     <>
       {label && <Text text={label} preset="labelHeading" style={[styles.label, { color: theme.colors.heading }]} />}
 
-      <View>
+      <>
+        {/* @ts-ignore */}
         <ReactNativeTextInput
           value={value}
           style={[style, { color: theme.colors.heading }]}
@@ -53,15 +53,15 @@ export function TextInput(props: TextInputProps) {
           />
         )}
         <ErrorMessage error={error} visible={visible} />
-      </View>
+      </>
     </>
   );
 }
 
-const styles = StyleSheet.create({
+const appStyles = (theme) => StyleSheet.create({
   inputFieldStyle: {
     marginVertical: hp(1),
-    borderColor: colors.lightShade,
+    borderColor: theme.colors.borderColor,
     borderWidth: 1,
     borderRadius: hp(1),
     paddingHorizontal: wp(4),
