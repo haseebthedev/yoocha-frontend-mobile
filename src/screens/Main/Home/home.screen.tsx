@@ -6,6 +6,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
 import { NavigatorParamList } from "navigators";
@@ -14,11 +15,10 @@ import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
 import createStyles from "./home.styles";
-import { ScreenEnum } from "enums";
 
 const LIMIT: number = 10;
 
-const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
+const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
@@ -130,7 +130,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={styles.heading} />
-        <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
+        <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.NOTIFICATIONS)}>
           <Ionicons name="notifications-outline" color={theme.colors.iconColor} size={24} />
 
           {unreadNotification > 0 && (

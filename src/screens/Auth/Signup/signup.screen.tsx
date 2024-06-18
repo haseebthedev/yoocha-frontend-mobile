@@ -4,7 +4,8 @@ import { Keyboard, ScrollView, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { SignupI } from "interfaces/auth";
+import { SignupI } from "interfaces";
+import { ScreenEnum } from "enums";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { signupValidationSchema } from "utils/validations";
@@ -12,7 +13,7 @@ import { signupService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
 import styles from "./signup.styles";
 
-const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = ({ navigation }) => {
+const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_UP>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
@@ -35,7 +36,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
         })
       )
         .unwrap()
-        .then((response) => navigation.navigate("signin"))
+        .then((response) => navigation.navigate(ScreenEnum.SIGN_IN))
         .catch((error) => console.log("error: ", error));
     } catch (error) {
       console.error("Error occurred during sign-up:", error);
@@ -116,7 +117,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, "signup">> = (
           <Text style={styles.haveAccText} preset="default">
             Already have an Account?
           </Text>
-          <AppButton preset="link" text="Sign In" onPress={() => navigation.navigate("signin")} />
+          <AppButton preset="link" text="Sign In" onPress={() => navigation.navigate(ScreenEnum.SIGN_IN)} />
         </View>
       </ScrollView>
     </View>

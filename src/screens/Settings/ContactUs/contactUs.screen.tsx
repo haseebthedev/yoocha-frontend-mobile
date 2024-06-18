@@ -4,16 +4,17 @@ import { Keyboard, View } from "react-native";
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
+import { colors } from "theme";
+import { ContactUsI } from "interfaces";
+import { ScreenEnum } from "enums";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { contactUsValidationSchema } from "utils/validations";
-import { AlertBox, AppButton, Header, LoadingIndicator, TextInput } from "components";
-import { useAppTheme } from "hooks";
-import createStyles from "./contactUs.styles";
-import { ContactUsI } from "interfaces";
 import { contactUsService, useAppDispatch } from "store";
-import { colors } from "theme";
+import { AlertBox, AppButton, Header, LoadingIndicator, TextInput } from "components";
+import createStyles from "./contactUs.styles";
 
-const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs">> = ({ navigation }) => {
+const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CONTACT_US>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -74,7 +75,7 @@ const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, "contactUs"
           visible={touched.email}
         />
         <TextInput
-          label="message"
+          label="Message"
           placeholder="Type your message here"
           onBlur={() => setFieldTouched("message")}
           onChangeText={handleChange("message")}

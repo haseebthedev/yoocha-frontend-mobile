@@ -5,8 +5,9 @@ import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { EventEnumRole } from "enums";
+import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
+import { EventEnumRole, ScreenEnum } from "enums";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   ListUserRequestsResponseI,
@@ -17,12 +18,14 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { useAppTheme } from "hooks";
 import createStyles from "./send-requests.styles";
 
 const LIMIT: number = 10;
 
-const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "sendrequests">> = ({ navigation, route }) => {
+const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SEND_REQUESTS>> = ({
+  navigation,
+  route,
+}) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 

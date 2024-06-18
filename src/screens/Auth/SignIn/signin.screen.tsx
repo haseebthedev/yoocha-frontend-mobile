@@ -4,7 +4,8 @@ import { Keyboard, TouchableOpacity, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { SigninI } from "interfaces/auth";
+import { SigninI } from "interfaces";
+import { ScreenEnum } from "enums";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
@@ -12,7 +13,7 @@ import { signinService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
 import styles from "./signin.styles";
 
-const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = ({ navigation }) => {
+const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -26,7 +27,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
     setLoading(true);
     await dispatch(signinService({ email, password }))
       .unwrap()
-      .then((response) => navigation.navigate("main"))
+      .then((response) => navigation.navigate(ScreenEnum.MAIN))
       .catch((error) => console.log(error.message))
       .finally(() => {
         // resetForm();
@@ -70,7 +71,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
 
-        <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate("forgetPassword")}>
+        <TouchableOpacity style={styles.forgetPassword} onPress={() => navigation.navigate(ScreenEnum.FORGET_PASSWORD)}>
           <Text style={styles.forgetPasswordText} preset="heading">
             Forget Password?
           </Text>
@@ -80,7 +81,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, "signin">> = (
           <Text style={styles.dontHaveAccText} preset="default">
             Don't have an Account yet?
           </Text>
-          <AppButton preset="link" text="Sign Up" onPress={() => navigation.navigate("signup")} />
+          <AppButton preset="link" text="Sign Up" onPress={() => navigation.navigate(ScreenEnum.SIGN_UP)} />
         </View>
       </View>
     </View>

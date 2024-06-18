@@ -4,13 +4,14 @@ import { View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
+import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { logoutUser, useAppDispatch } from "store";
 import { AlertBox, Header, SettingListItem } from "components";
-import { useAppTheme } from "hooks";
 import createStyles from "./settings.styles";
 
-const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">> = ({ navigation, route }) => {
+const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SETTINGS>> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
@@ -39,27 +40,27 @@ const SettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "settings">>
           <SettingListItem
             iconName="person-circle-outline"
             listText="Account Details"
-            onPress={() => navigation.navigate("editprofile")}
+            onPress={() => navigation.navigate(ScreenEnum.EDIT_PROFILE)}
           />
           <SettingListItem
             iconName="key-outline"
             listText="Change Password"
-            onPress={() => navigation.navigate("changePassword")}
+            onPress={() => navigation.navigate(ScreenEnum.CHANGE_PASSWORD)}
           />
           <SettingListItem
             iconName="settings-outline"
             listText="Settings"
-            onPress={() => navigation.navigate("appsettings")}
+            onPress={() => navigation.navigate(ScreenEnum.APP_SETTNGS)}
           />
           <SettingListItem
             iconName="lock-closed-outline"
             listText="Blocked Users"
-            onPress={() => navigation.navigate("blockedusers")}
+            onPress={() => navigation.navigate(ScreenEnum.BLOCKED_USERS)}
           />
           <SettingListItem
             iconName="mail-outline"
             listText="Contact Us"
-            onPress={() => navigation.navigate("contactUs")}
+            onPress={() => navigation.navigate(ScreenEnum.CONTACT_US)}
           />
           <SettingListItem iconName="log-out-outline" listText="Logout" onPress={onLogoutPress} />
         </View>

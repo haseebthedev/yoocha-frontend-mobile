@@ -4,6 +4,7 @@ import { FlatList, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AlertBox, ContactUserCard, EmptyListText, Header, LoadingIndicator, SearchBar } from "components";
@@ -20,7 +21,9 @@ import createStyles from "./searchPeople.styles";
 
 const LIMIT: number = 11;
 
-const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchPeople">> = ({ navigation }) => {
+const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SEARCH_PEOPLE>> = ({
+  navigation,
+}) => {
   const dispatch = useAppDispatch();
   const { loading, searchExplorePeople } = useAppSelector((state: RootState) => state.contacts);
 
@@ -37,7 +40,7 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, "searchP
     }
   };
 
-  const onViewPress = (item: UserI) => navigation.navigate("publicProfile", { item });
+  const onViewPress = (item: UserI) => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item });
 
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {

@@ -8,12 +8,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components";
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { RootState, getMyProfileService, useAppDispatch, useAppSelector } from "store";
 import createStyles from "./profile.styles";
 import personplaceholder from "assets/images/personplaceholder.png";
 
-const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> = ({ navigation }) => {
+const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PROFILE>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
@@ -37,7 +38,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={styles.headerText} />
 
-        <TouchableOpacity onPress={() => navigation.navigate("settings")}>
+        <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.SETTINGS)}>
           <Ionicons name="settings-outline" color={colors.white} size={24} />
         </TouchableOpacity>
       </View>
@@ -75,7 +76,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "profile">> =
         </View> */}
 
           <View style={styles.btnContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("editprofile")} style={styles.btn}>
+            <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.EDIT_PROFILE)} style={styles.btn}>
               <Text text="Edit Profile" style={styles.btnText} />
             </TouchableOpacity>
           </View>
