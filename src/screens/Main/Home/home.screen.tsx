@@ -14,7 +14,6 @@ import { listNotificationService } from "store/slice/notification/notificationSe
 import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
-import noFriends from "../../../assets/images/noFriends.png";
 import createStyles from "./home.styles";
 
 const LIMIT: number = 10;
