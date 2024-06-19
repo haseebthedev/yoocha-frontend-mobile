@@ -2,9 +2,6 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, RefreshControl, Image } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
@@ -14,6 +11,9 @@ import { listNotificationService } from "store/slice/notification/notificationSe
 import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import createStyles from "./home.styles";
 
 const LIMIT: number = 10;
