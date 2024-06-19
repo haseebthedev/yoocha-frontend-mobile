@@ -1,8 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
-
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { useAppTheme } from "hooks";
@@ -160,8 +158,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={24} />
+        <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center'}}>
+          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={18} />
         </TouchableOpacity>
 
         <PopupMenu
