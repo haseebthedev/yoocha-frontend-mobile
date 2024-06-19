@@ -20,7 +20,7 @@ const AppHeading: React.FC<AppHeadingI> = ({ title, rightTitle, onRightPress }) 
       <Text text={title} preset="heading" style={styles.headingText} />
       {rightTitle && (
         <TouchableOpacity onPress={onRightPress}>
-          <Text text="View All" preset="semiBold" style={styles.rightText} />
+          <Text text="View All" preset="inputText" style={styles.rightText} />
         </TouchableOpacity>
       )}
     </View>

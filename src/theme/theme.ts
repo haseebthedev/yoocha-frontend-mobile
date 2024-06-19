@@ -19,9 +19,9 @@ export const lightTheme = {
     messageCardBg: "#FFFFFF",
 
     outlinedBtnColor: "#CECECE",
-    thumbColor: "#3563CF",
+    thumbColor: "#ffffff",
     trackColor: "#D5D5D5",
-    trackActiveColor: "#5935CF6E",
+    trackActiveColor: "#3C75F8",
   },
 };
 

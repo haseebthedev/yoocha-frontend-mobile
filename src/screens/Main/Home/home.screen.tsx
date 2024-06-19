@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
+import { FlatList, TouchableOpacity, View, RefreshControl, Image } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -14,6 +14,7 @@ import { listNotificationService } from "store/slice/notification/notificationSe
 import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
+import noFriends from "../../../assets/images/noFriends.png";
 import createStyles from "./home.styles";
 
 const LIMIT: number = 10;
@@ -42,10 +43,14 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
     listRefreshing: false,
   });
 
-  // const onViewPress = useCallback((selectedItem: UserStatusI) => {
-  //   setStatusData(selectedItem);
-  //   setViewStatus((prev) => !prev);
-  // }, []);
+  const listEmptyComponent = () =>
+    !refreshing &&
+    !state.listRefreshing &&
+    state.list.length === 0 && (
+      <View style={styles.emptyListContainer}>
+        <EmptyListText text="No Friends Added yet!" textStyle={styles.emptyTextPlaceholder} />
+      </View>
+    );
 
   const renderLoader = useCallback(() => {
     return state.listRefreshing && <LoadingIndicator containerStyle={styles.loaderStyle} color={colors.primary} />;
@@ -178,13 +183,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
-            ListEmptyComponent={() =>
-              !refreshing &&
-              !state.listRefreshing &&
-              state.list.length === 0 && (
-                <EmptyListText text="You don't any friends yet!" textStyle={styles.emptyTextPlaceholder} />
-              )
-            }
+            ListEmptyComponent={listEmptyComponent}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
         </View>

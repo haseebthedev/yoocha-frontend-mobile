@@ -72,6 +72,11 @@ const createStyles = (theme) =>
       justifyContent: "center",
       marginBottom: hp(2.2),
     },
+    emptyListContainer: {
+      height: hp(75),
+      justifyContent: "center",
+      alignItems: "center",
+    },
     emptyTextPlaceholder: {
       color: theme.colors.subHeading,
     },
