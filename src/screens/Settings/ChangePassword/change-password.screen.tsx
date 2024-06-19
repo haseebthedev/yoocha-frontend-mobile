@@ -3,17 +3,20 @@ import { Keyboard, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
+import { colors } from "theme";
+import { ScreenEnum } from "enums";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { ChangePasswordI } from "interfaces/user";
 import { NavigatorParamList } from "navigators";
-import { AppButton, Header, LoadingIndicator, TextInput } from "components";
 import { changePasswordValidationSchema } from "utils/validations";
+import { AppButton, Header, LoadingIndicator, TextInput } from "components";
 import { RootState, changePasswordService, useAppDispatch, useAppSelector } from "store";
-import { useAppTheme } from "hooks";
 import createStyles from "./change-password.styles";
-import { colors } from "theme";
 
-const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "changePassword">> = ({ navigation }) => {
+const ChangePasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CHANGE_PASSWORD>> = ({
+  navigation,
+}) => {
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state: RootState) => state.auth);
 

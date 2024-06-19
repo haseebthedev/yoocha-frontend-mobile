@@ -1,13 +1,18 @@
 import { FC, useState } from "react";
 import { Keyboard, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { AppButton, Header, Text, TextInput } from "components";
+
+import { ScreenEnum } from "enums";
 import { useFormikHook } from "hooks/UseFormikHook";
+import { NavigatorParamList } from "navigators";
 import { newPasswordValidation } from "utils/validations";
+import { AppButton, Header, Text, TextInput } from "components";
 import styles from "./resetPassword.styles";
 
-const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetPassword">> = ({ navigation }) => {
+const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.RESET_PASSWORD>> = ({
+  navigation,
+}) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
@@ -16,7 +21,7 @@ const ResetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "resetP
 
   const submit = ({ newPassword, confirmPassword }) => {
     Keyboard.dismiss();
-    navigation.navigate("signin");
+    navigation.navigate(ScreenEnum.SIGN_IN);
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

@@ -1,14 +1,17 @@
 import { FC } from "react";
 import { Keyboard, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { ScreenEnum } from "enums";
+import { ReportIssueI } from "interfaces/auth";
+import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, TextInput } from "components";
 import { reportAnIssueValidationSchema } from "utils/validations";
-import { useFormikHook } from "hooks/UseFormikHook";
-import { ReportIssueI } from "interfaces/auth";
 import styles from "./reportIssue.styles";
 
-const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">> = ({ navigation }) => {
+const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.REPORT_ISSUE>> = ({ navigation }) => {
   const validationSchema = reportAnIssueValidationSchema;
   const initialValues: ReportIssueI = { name: "", email: "", message: "" };
 
@@ -44,7 +47,7 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, "reportIssue">>
           visible={touched.email}
         />
         <TextInput
-          label="message"
+          label="Message"
           placeholder="Type your issue here"
           onBlur={() => setFieldTouched("message")}
           onChangeText={handleChange("message")}

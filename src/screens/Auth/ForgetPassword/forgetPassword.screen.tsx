@@ -1,15 +1,20 @@
 import { FC } from "react";
 import { Keyboard, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { NavigatorParamList } from "navigators";
-import { Header, Text, TextInput, AppButton } from "components";
-import { forgotPasswordValidation } from "utils/validations";
+
+import { ScreenEnum } from "enums";
 import { useFormikHook } from "hooks/UseFormikHook";
-import { forgetPasswordService, useAppDispatch } from "store";
 import { ForgetPasswordI } from "interfaces/auth";
+import { NavigatorParamList } from "navigators";
+import { forgotPasswordValidation } from "utils/validations";
+import { Header, Text, TextInput, AppButton } from "components";
+import { forgetPasswordService, useAppDispatch } from "store";
 import styles from "./forgetPassword.styles";
 
-const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forgetPassword">> = ({ navigation }) => {
+const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.FORGET_PASSWORD>> = ({
+  navigation,
+}) => {
   const dispatch = useAppDispatch();
 
   const validationSchema = forgotPasswordValidation;
@@ -18,7 +23,7 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, "forge
   const submit = async ({ email }: ForgetPasswordI) => {
     Keyboard.dismiss();
     await dispatch(forgetPasswordService({ email }));
-    navigation.navigate("otpVerification");
+    navigation.navigate(ScreenEnum.OTP_VERIFICATION);
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(

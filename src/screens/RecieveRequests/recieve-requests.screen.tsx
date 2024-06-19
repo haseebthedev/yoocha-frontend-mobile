@@ -4,9 +4,11 @@ import { FlatList, RefreshControl, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { EventEnumRole } from "enums";
+import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
+import { createNotificationService } from "store/slice/notification/notificationService";
+import { EventEnumRole, ScreenEnum } from "enums";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
 import {
   BlockedUserInfo,
@@ -18,13 +20,11 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import { useAppTheme } from "hooks";
 import createStyles from "./recieve-requests.styles";
-import { createNotificationService } from "store/slice/notification/notificationService";
 
 const LIMIT: number = 10;
 
-const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, "recieverequests">> = ({
+const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.RECIEVED_REQUESTS>> = ({
   navigation,
   route,
 }) => {

@@ -1,11 +1,16 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { TextInput, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
+import { ScreenEnum } from "enums";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, Text } from "components";
 import styles from "./otpVerification.styles";
 
-const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpVerification">> = ({ navigation }) => {
+const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.OTP_VERIFICATION>> = ({
+  navigation,
+}) => {
   const TIMER: number = 30;
   const [timer, setTimer] = useState<number>(TIMER);
   const [otpDisableBtn, setOptDisableBtn] = useState<boolean>(false);
@@ -24,9 +29,8 @@ const OTPVerificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "otpV
 
   const onPressVerifyHandler = () => {
     let verificationCode = Object.values(otp).join("");
-    // console.log("Verification Code === ", verificationCode);
 
-    navigation.navigate("resetPassword");
+    navigation.navigate(ScreenEnum.RESET_PASSWORD);
   };
 
   const onPressResendCodeHandler = () => {

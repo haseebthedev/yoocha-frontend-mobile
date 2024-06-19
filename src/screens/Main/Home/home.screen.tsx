@@ -1,11 +1,12 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
+import { FlatList, TouchableOpacity, View, RefreshControl, Image } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
 import { NavigatorParamList } from "navigators";
@@ -14,11 +15,10 @@ import { ListWithPagination, UserStatusI } from "interfaces";
 import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
 import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
 import createStyles from "./home.styles";
-import { ScreenEnum } from "enums";
 
 const LIMIT: number = 10;
 
-const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ navigation }) => {
+const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
@@ -42,10 +42,14 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
     listRefreshing: false,
   });
 
-  // const onViewPress = useCallback((selectedItem: UserStatusI) => {
-  //   setStatusData(selectedItem);
-  //   setViewStatus((prev) => !prev);
-  // }, []);
+  const listEmptyComponent = () =>
+    !refreshing &&
+    !state.listRefreshing &&
+    state.list.length === 0 && (
+      <View style={styles.emptyListContainer}>
+        <EmptyListText text="No Friends Added yet!" textStyle={styles.emptyTextPlaceholder} />
+      </View>
+    );
 
   const renderLoader = useCallback(() => {
     return state.listRefreshing && <LoadingIndicator containerStyle={styles.loaderStyle} color={colors.primary} />;
@@ -130,7 +134,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
           <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={styles.heading} />
-        <TouchableOpacity onPress={() => navigation.navigate("notifications")}>
+        <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.NOTIFICATIONS)}>
           <Ionicons name="notifications-outline" color={theme.colors.iconColor} size={24} />
 
           {unreadNotification > 0 && (
@@ -178,13 +182,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, "home">> = ({ na
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.4}
             ItemSeparatorComponent={() => <Divider />}
-            ListEmptyComponent={() =>
-              !refreshing &&
-              !state.listRefreshing &&
-              state.list.length === 0 && (
-                <EmptyListText text="You don't any friends yet!" textStyle={styles.emptyTextPlaceholder} />
-              )
-            }
+            ListEmptyComponent={listEmptyComponent}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           />
         </View>

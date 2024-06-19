@@ -4,6 +4,7 @@ import { FlatList, View, RefreshControl } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
@@ -22,7 +23,10 @@ import createStyles from "./blocked-users.styles";
 
 const LIMIT: number = 10;
 
-const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, "blockedusers">> = ({ navigation, route }) => {
+const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.BLOCKED_USERS>> = ({
+  navigation,
+  route,
+}) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 

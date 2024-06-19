@@ -7,12 +7,16 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
 import { setMode } from "store/slice/appConfig/appConfigReducer";
-import { AppSettingsItem, Text } from "components";
-import { useAppDispatch } from "store";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
+import { useAppDispatch } from "store";
+import { AppSettingsItem, Text } from "components";
 import createStyles from "./appsettings.styles";
 
-const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, "appsettings">> = ({ navigation, route }) => {
+const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.APP_SETTNGS>> = ({
+  navigation,
+  route,
+}) => {
   const dispatch = useAppDispatch();
 
   const { theme, darkMode } = useAppTheme();

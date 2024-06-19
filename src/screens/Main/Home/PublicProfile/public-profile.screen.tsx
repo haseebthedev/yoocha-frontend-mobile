@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
@@ -12,7 +13,7 @@ import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatc
 import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./public-profile.styles";
 
-const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "publicProfile">> = ({
+const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PUBLIC_PROFILE>> = ({
   navigation,
   route,
 }) => {

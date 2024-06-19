@@ -27,6 +27,7 @@ import {
 import { colors } from "theme";
 import { UserI, ListRoomItemI, RootState, useAppSelector } from "store";
 import { disconnectSocketIO, initSocketIO } from "socket";
+import { ScreenEnum } from "enums";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -71,25 +72,25 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="main"
+      initialRouteName={ScreenEnum.MAIN}
     >
-      <Stack.Screen name="signin" component={SignInScreen} />
-      <Stack.Screen name="signup" component={SignUpScreen} />
+      <Stack.Screen name={ScreenEnum.SIGN_IN} component={SignInScreen} />
+      <Stack.Screen name={ScreenEnum.SIGN_UP} component={SignUpScreen} />
 
-      <Stack.Screen name="main" component={MainScreen} />
-      <Stack.Screen name="notifications" component={NotificationScreen} />
-      <Stack.Screen name="searchPeople" component={SearchPeopleScreen} />
-      <Stack.Screen name="publicProfile" component={PublicProfileScreen} />
-      <Stack.Screen name="usermessaging" component={UserMessagingScreen} />
-      <Stack.Screen name="blockedusers" component={BlockedUsersScreen} />
-      <Stack.Screen name="sendrequests" component={SendRequestsScreen} />
-      <Stack.Screen name="recieverequests" component={RecieveRequestsScreen} />
-      <Stack.Screen name="settings" component={SettingsScreen} />
-      <Stack.Screen name="editprofile" component={EditProfileScreen} />
-      <Stack.Screen name="appsettings" component={AppSettingsScreen} />
-      <Stack.Screen name="contactUs" component={ContactUsScreen} />
-      <Stack.Screen name="changePassword" component={ChangePasswordScreen} />
-      <Stack.Screen name="reportIssue" component={ReportIssue} />
+      <Stack.Screen name={ScreenEnum.MAIN} component={MainScreen} />
+      <Stack.Screen name={ScreenEnum.NOTIFICATIONS} component={NotificationScreen} />
+      <Stack.Screen name={ScreenEnum.SEARCH_PEOPLE} component={SearchPeopleScreen} />
+      <Stack.Screen name={ScreenEnum.PUBLIC_PROFILE} component={PublicProfileScreen} />
+      <Stack.Screen name={ScreenEnum.USER_MESSAGING} component={UserMessagingScreen} />
+      <Stack.Screen name={ScreenEnum.BLOCKED_USERS} component={BlockedUsersScreen} />
+      <Stack.Screen name={ScreenEnum.SEND_REQUESTS} component={SendRequestsScreen} />
+      <Stack.Screen name={ScreenEnum.RECIEVED_REQUESTS} component={RecieveRequestsScreen} />
+      <Stack.Screen name={ScreenEnum.SETTINGS} component={SettingsScreen} />
+      <Stack.Screen name={ScreenEnum.EDIT_PROFILE} component={EditProfileScreen} />
+      <Stack.Screen name={ScreenEnum.APP_SETTNGS} component={AppSettingsScreen} />
+      <Stack.Screen name={ScreenEnum.CONTACT_US} component={ContactUsScreen} />
+      <Stack.Screen name={ScreenEnum.CHANGE_PASSWORD} component={ChangePasswordScreen} />
+      <Stack.Screen name={ScreenEnum.REPORT_ISSUE} component={ReportIssue} />
     </Stack.Navigator>
   ) : (
     <Stack.Navigator
@@ -97,13 +98,13 @@ const AppStack = () => {
         headerShown: false,
         animation: "slide_from_right",
       }}
-      initialRouteName="signin"
+      initialRouteName={ScreenEnum.SIGN_IN}
     >
-      <Stack.Screen name="signin" component={SignInScreen} />
-      <Stack.Screen name="signup" component={SignUpScreen} />
-      <Stack.Screen name="otpVerification" component={OTPVerificationScreen} />
-      <Stack.Screen name="forgetPassword" component={ForgetPasswordScreen} />
-      <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen name={ScreenEnum.SIGN_IN} component={SignInScreen} />
+      <Stack.Screen name={ScreenEnum.SIGN_UP} component={SignUpScreen} />
+      <Stack.Screen name={ScreenEnum.OTP_VERIFICATION} component={OTPVerificationScreen} />
+      <Stack.Screen name={ScreenEnum.FORGET_PASSWORD} component={ForgetPasswordScreen} />
+      <Stack.Screen name={ScreenEnum.RESET_PASSWORD} component={ResetPasswordScreen} />
     </Stack.Navigator>
   );
 };
@@ -111,15 +112,13 @@ const AppStack = () => {
 interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = (props: NavigationProps) => {
-  const colorScheme = useColorScheme();
-
   const { token } = useAppSelector((state) => state.auth);
 
   useBackButtonHandler(canExit);
 
   useEffect(() => {
     if (token) {
-      console.log("Initializing the client socket!")
+      console.log("Initializing the client socket!");
       initSocketIO();
     }
 

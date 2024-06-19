@@ -5,9 +5,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
+import { createNotificationService } from "store/slice/notification/notificationService";
 import {
   AlertBox,
   AppHeading,
@@ -29,28 +31,23 @@ import {
   useAppSelector,
 } from "store";
 import createStyles from "./contact.styles";
-import { createNotificationService } from "store/slice/notification/notificationService";
-import { wp } from "utils/responsive";
 
 const EXPLORE_PEOPLE_LIMIT: number = 10;
 const FRIEND_SUGG_LIMIT: number = 4;
 
-const ContactScreen: FC<
-  NativeStackScreenProps<NavigatorParamList, "contacts">
-> = ({ navigation }) => {
+const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CONTACTS>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { loading, friendSuggestions, explorePeople } = useAppSelector(
-    (state: RootState) => state.contacts
-  );
+  const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [refreshFriendSuggestion, setRefreshFriendSuggestion] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
 
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
@@ -83,39 +80,30 @@ const ContactScreen: FC<
   };
 
   const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await dispatch(
-        getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT })
-      );
-      await dispatch(
-        getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT })
-      );
-    } catch (err) {
-      console.error("error: ", err);
-    } finally {
-      setRefreshing(false);
-    }
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
+      .unwrap()
+      .catch((err) => console.log("err: ", err));
+
+    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
+      .unwrap()
+      .catch((err) => console.log("err: ", err));
   };
 
   const getFriendsSuggestions = async () => {
     setRefreshing(true);
-    await dispatch(
-      getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT })
-    )
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
       .unwrap()
       .catch((err) => console.log("err: ", err))
       .finally(() => setRefreshing(false));
   };
 
   const getExplorePeople = async () => {
-    setRefreshing(true);
-    await dispatch(
-      getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT })
-    )
+    setRefreshFriendSuggestion(true);
+
+    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
       .unwrap()
       .catch((err) => console.log("err: ", err))
-      .finally(() => setRefreshing(false));
+      .finally(() => setRefreshFriendSuggestion(false));
   };
 
   useEffect(() => {
@@ -132,9 +120,7 @@ const ContactScreen: FC<
         <AppHeading title="People may know" />
         <View style={styles.suggestionsContainer}>
           {refreshing ? (
-            <LoadingIndicator
-              containerStyle={styles.activityIndicatorContainer}
-            />
+            <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
           ) : (
             <FlatList
               horizontal
@@ -146,23 +132,17 @@ const ContactScreen: FC<
                 <View key={item._id}>
                   <UserSuggestionCard
                     item={item}
-                    onViewPress={() =>
-                      navigation.navigate("publicProfile", { item })
-                    }
+                    onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
                     btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
                     onBtnPress={onBtnPress}
                   />
                 </View>
               )}
               ListEmptyComponent={() =>
-                !refreshing &&
-                !loading &&
+                !refreshFriendSuggestion &&
                 friendSuggestions?.docs?.length === 0 && (
                   <View style={styles.emptyText}>
-                    <EmptyListText
-                      text="There are no friends suggestion!"
-                      textStyle={styles.emptyTextPlaceholder}
-                    />
+                    <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
                   </View>
                 )
               }
@@ -173,45 +153,27 @@ const ContactScreen: FC<
         <AppHeading
           title="Explore"
           rightTitle="View All"
-          onRightPress={() => navigation.navigate("searchPeople")}
+          onRightPress={() => navigation.navigate(ScreenEnum.SEARCH_PEOPLE)}
         />
       </>
     );
   };
 
-  const renderFooter = () =>
-    refreshing && (
-      <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
-    );
+  const renderFooter = () => refreshing && <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />;
 
   return (
     <View style={styles.container}>
       <View style={styles.appHeader}>
         {/* @ts-ignore */}
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <MaterialCommunityIcons
-            name="menu"
-            color={theme.colors.iconColor}
-            size={24}
-          />
+          <MaterialCommunityIcons name="menu" color={theme.colors.iconColor} size={24} />
         </TouchableOpacity>
         <Text text="YOOCHAT" preset="logo" style={styles.heading} />
-        <TouchableOpacity
-          onPress={() => setMenuVisible(!menuVisible)}
-          style={styles.iconBlock}
-        >
-          <Ionicons
-            name="ellipsis-vertical-sharp"
-            color={theme.colors.iconColor}
-            size={18}
-          />
+        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)} style={styles.iconBlock}>
+          <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={18} />
         </TouchableOpacity>
 
-        <PopupMenu
-          isVisible={menuVisible}
-          setMenuVisible={setMenuVisible}
-          menuOptions={contactScreenOptions}
-        />
+        <PopupMenu isVisible={menuVisible} setMenuVisible={setMenuVisible} menuOptions={contactScreenOptions} />
       </View>
 
       <View style={styles.exploreContainer}>
@@ -225,21 +187,14 @@ const ContactScreen: FC<
               item={item}
               btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
               onBtnPress={onBtnPress}
-              onViewPress={() => navigation.navigate("publicProfile", { item })}
+              onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
             />
           )}
           ListEmptyComponent={() =>
             explorePeople?.docs?.length === 0 &&
-            !loading && (
-              <EmptyListText
-                text="No People to Explore!"
-                textStyle={styles.emptyTextPlaceholder}
-              />
-            )
+            !refreshing && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
           }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListFooterComponent={renderFooter}
         />
       </View>

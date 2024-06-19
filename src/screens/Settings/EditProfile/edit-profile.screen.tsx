@@ -10,6 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import DatePicker from "react-native-date-picker";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
@@ -30,7 +31,10 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gor
 import personPlaceholder from "assets/images/personplaceholder.png";
 import createStyles from "./edit-profile.styles";
 
-const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, "editprofile">> = ({ navigation, route }) => {
+const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
+  navigation,
+  route,
+}) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.auth);
 

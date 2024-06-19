@@ -123,6 +123,7 @@ const createStyles = (theme) =>
     listContainerStyle: {
       gap: wp(3),
     },
+    listItems: { marginTop: hp(2.5), width: wp(90) },
   });
 
 export default createStyles;

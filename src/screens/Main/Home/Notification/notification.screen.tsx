@@ -4,6 +4,7 @@ import { FlatList, RefreshControl, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useAppDispatch } from "store";
 import { ListWithPagination } from "interfaces";
@@ -15,7 +16,9 @@ import createStyles from "./notification.styles";
 
 const LIMIT: number = 10;
 
-const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notifications">> = ({ navigation }) => {
+const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.NOTIFICATIONS>> = ({
+  navigation,
+}) => {
   const dispatch = useAppDispatch();
 
   const { theme } = useAppTheme();
@@ -42,7 +45,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, "notific
           }));
         }
       })
-      .then(() => navigation.navigate("recieverequests"))
+      .then(() => navigation.navigate(ScreenEnum.RECIEVED_REQUESTS))
       .catch((error) => console.log("error", error));
   };
 
