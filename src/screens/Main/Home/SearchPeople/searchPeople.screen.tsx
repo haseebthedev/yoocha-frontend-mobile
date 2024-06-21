@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -31,10 +31,21 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const styles = createStyles(theme);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [loadMoreItems, setLoadMoreItems] = useState<boolean>(false);
+  const [searchItems, setSearchItems] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
+
+  const getSearchPeople = async (name: string = "", page: number = 1) => {
+    await dispatch(getSearchExploreService({ name, page, limit: LIMIT }))
+      .unwrap()
+      .catch((err) => console.log("error: ", err))
+      .finally(() => setSearchItems(false));
+  };
 
   const onSearchSubmit = async (searchText: string) => {
+    setSearchText(searchText);
+    setSearchItems(true);
     if (searchText) {
       await getSearchPeople(searchText);
     }
@@ -60,25 +71,23 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
       .finally(() => setAlertModalVisible((prev: boolean) => !prev));
   };
 
-  const loadMoreItems = useCallback(async () => {
+  const loadMoreItemsItems = useCallback(async () => {
     if (searchExplorePeople?.hasNextPage && !loading) {
-      setLoadMore(true);
+      setLoadMoreItems(true);
       await dispatch(getSearchExploreService({ page: searchExplorePeople?.page + 1, limit: LIMIT }))
         .unwrap()
         .catch((error) => console.log("Error loading more items:", error))
-        .finally(() => setLoadMore((prev: boolean) => !prev));
+        .finally(() => setLoadMoreItems((prev: boolean) => !prev));
     }
   }, [searchExplorePeople, loading, dispatch]);
 
-  const getSearchPeople = async (name: string = "", page: number = 1) => {
-    await dispatch(getSearchExploreService({ name, page, limit: LIMIT }))
-      .unwrap()
-      .catch((err) => console.log("error: ", err));
+  const renderLoader = () => {
+    return loadMoreItems && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
 
-  const renderLoader = () => {
-    return loadMore && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
-  };
+  // useEffect(() => {
+  //   getSearchPeople();
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -99,10 +108,13 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
             onSearchSubmit={onSearchSubmit}
           />
         </View>
+        {!loading && searchText && searchExplorePeople?.docs?.length === 0 && (
+          <EmptyListText text="No people found!" textStyle={styles.emptyTextPlaceholder} />
+        )}
 
-        {loading && <LoadingIndicator />}
-
-        {searchExplorePeople?.docs && !loading ? (
+        {searchItems ? (
+          <LoadingIndicator />
+        ) : searchExplorePeople?.docs?.length > 0 && searchText ? (
           <FlatList
             data={searchExplorePeople?.docs}
             keyExtractor={(item: UserI, index: number) => item?._id || index.toString()}
@@ -112,21 +124,17 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
               <ContactUserCard
                 item={item}
                 btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-                onBtnPress={onBtnPress}
+                onBtnPress={() => onBtnPress(item._id, item.isFriendReqSent)}
                 onViewPress={() => onViewPress(item)}
               />
             )}
-            onEndReached={loadMoreItems}
+            onEndReached={loadMoreItemsItems}
             ListFooterComponent={renderLoader}
             onEndReachedThreshold={0.5}
-            ListEmptyComponent={() =>
-              searchExplorePeople?.docs?.length === 0 && (
-                <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
-              )
-            }
           />
         ) : (
-          <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
+          !loading &&
+          !searchText && <EmptyListText text="Search People to Connect!" textStyle={styles.emptyTextPlaceholder} />
         )}
       </View>
 

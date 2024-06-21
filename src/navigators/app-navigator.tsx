@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
-import { StatusBar, useColorScheme } from "react-native";
+import { StatusBar } from "react-native";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import { navigationRef, useBackButtonHandler } from "./navigation-utilities";
 import {
   MainScreen,
   UserMessagingScreen,
   BlockedUsersScreen,
-  SettingsScreen,
+  // SettingsScreen,
   EditProfileScreen,
   AppSettingsScreen,
   SignInScreen,
@@ -25,9 +27,9 @@ import {
   RecieveRequestsScreen,
 } from "screens";
 import { colors } from "theme";
-import { UserI, ListRoomItemI, RootState, useAppSelector } from "store";
-import { disconnectSocketIO, initSocketIO } from "socket";
 import { ScreenEnum } from "enums";
+import { disconnectSocketIO, initSocketIO } from "socket";
+import { UserI, ListRoomItemI, RootState, useAppSelector } from "store";
 
 export type NavigatorParamList = {
   main: undefined;
@@ -44,7 +46,7 @@ export type NavigatorParamList = {
   blockedusers: undefined;
   sendrequests: undefined;
   recieverequests: undefined;
-  settings: undefined;
+  // settings: undefined;
   editprofile: undefined;
   appsettings: undefined;
 
@@ -85,7 +87,7 @@ const AppStack = () => {
       <Stack.Screen name={ScreenEnum.BLOCKED_USERS} component={BlockedUsersScreen} />
       <Stack.Screen name={ScreenEnum.SEND_REQUESTS} component={SendRequestsScreen} />
       <Stack.Screen name={ScreenEnum.RECIEVED_REQUESTS} component={RecieveRequestsScreen} />
-      <Stack.Screen name={ScreenEnum.SETTINGS} component={SettingsScreen} />
+      {/* <Stack.Screen name={ScreenEnum.SETTINGS} component={SettingsScreen} /> */}
       <Stack.Screen name={ScreenEnum.EDIT_PROFILE} component={EditProfileScreen} />
       <Stack.Screen name={ScreenEnum.APP_SETTNGS} component={AppSettingsScreen} />
       <Stack.Screen name={ScreenEnum.CONTACT_US} component={ContactUsScreen} />

@@ -156,7 +156,7 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
             <ContactUserCard
               item={item?.initiator?._id === user?._id ? item.invitee : item.initiator}
               onBtnPress={() => unblockUser(item)}
-              // btnTitle="Unblock"
+              btnTitle="Unblock"
             />
           )}
           onEndReached={loadMoreItems}

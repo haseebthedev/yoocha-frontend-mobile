@@ -1,15 +1,16 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
+
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { hp } from "utils/responsive";
 import { isIOS } from "utils/deviceInfo";
-import { CustomHomeDrawer } from "components";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { HomeScreen } from "screens/Main/Home/home.screen";
-import { ContactScreen } from "screens/Main/Contact/contact.screen";
-import { ProfileScreen } from "screens/Main/Profile/profile.screen";
+import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { CustomHomeDrawer } from "components";
+import { ContactScreen, HomeScreen, ProfileScreen } from "screens";
 
 export type AppNavigatorParamList = {
   home: undefined;
@@ -53,16 +54,16 @@ const HomeNavigator = () => {
               tabBarStyle: {
                 height: BOTTOM_TAB_HEIGHT,
                 backgroundColor: theme.colors.bgColor,
-                borderTopColor: theme.colors.borderColor
+                borderTopColor: theme.colors.borderColor,
               },
               tabBarShowLabel: false,
               headerShown: false,
             })}
             initialRouteName="home"
           >
-            <Tab.Screen name="home" component={HomeScreen} />
-            <Tab.Screen name="contacts" component={ContactScreen} />
-            <Tab.Screen name="profile" component={ProfileScreen} />
+            <Tab.Screen name={ScreenEnum.HOME} component={HomeScreen} />
+            <Tab.Screen name={ScreenEnum.CONTACTS} component={ContactScreen} />
+            <Tab.Screen name={ScreenEnum.PROFILE} component={ProfileScreen} />
           </Tab.Navigator>
         )}
       </Drawer.Screen>

@@ -46,8 +46,12 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
 
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [refreshFriendSuggestion, setRefreshFriendSuggestion] = useState<boolean>(false);
+
+  const [loadFriendSuggestion, setLoadFriendSuggestion] = useState<boolean>(false);
+  const [loadExplorePeople, setLoadExplorePeople] = useState<boolean>(false);
+
   const [personId, setPersonId] = useState<string>("");
 
   const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
@@ -80,30 +84,33 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
   };
 
   const onRefresh = async () => {
-    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
-      .unwrap()
-      .catch((err) => console.log("err: ", err));
-
-    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
-      .unwrap()
-      .catch((err) => console.log("err: ", err));
-  };
-
-  const getFriendsSuggestions = async () => {
     setRefreshing(true);
     await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
       .unwrap()
+      .catch((err) => console.log("err: ", err));
+
+    await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
+      .unwrap()
+      .catch((err) => console.log("err: ", err));
+
+    setRefreshing(false);
+  };
+
+  const getFriendsSuggestions = async () => {
+    setLoadFriendSuggestion(true);
+    await dispatch(getFriendsSuggestionService({ page: 1, limit: FRIEND_SUGG_LIMIT }))
+      .unwrap()
       .catch((err) => console.log("err: ", err))
-      .finally(() => setRefreshing(false));
+      .finally(() => setLoadFriendSuggestion(false));
   };
 
   const getExplorePeople = async () => {
-    setRefreshFriendSuggestion(true);
+    setLoadExplorePeople(true);
 
     await dispatch(getExplorePeopleService({ page: 1, limit: EXPLORE_PEOPLE_LIMIT }))
       .unwrap()
       .catch((err) => console.log("err: ", err))
-      .finally(() => setRefreshFriendSuggestion(false));
+      .finally(() => setLoadExplorePeople(false));
   };
 
   useEffect(() => {
@@ -119,7 +126,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
       <>
         <AppHeading title="People may know" />
         <View style={styles.suggestionsContainer}>
-          {refreshing ? (
+          {loadFriendSuggestion ? (
             <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />
           ) : (
             <FlatList
@@ -139,7 +146,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
                 </View>
               )}
               ListEmptyComponent={() =>
-                !refreshFriendSuggestion &&
+                !loadFriendSuggestion &&
                 friendSuggestions?.docs?.length === 0 && (
                   <View style={styles.emptyText}>
                     <EmptyListText text="There are no friends suggestion!" textStyle={styles.emptyTextPlaceholder} />
@@ -159,7 +166,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
     );
   };
 
-  const renderFooter = () => refreshing && <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />;
+  const renderFooter = () =>
+    loadExplorePeople && <LoadingIndicator containerStyle={styles.activityIndicatorContainer} />;
 
   return (
     <View style={styles.container}>
@@ -178,7 +186,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
 
       <View style={styles.exploreContainer}>
         <FlatList
-          data={refreshing ? [] : explorePeople?.docs || []}
+          data={explorePeople?.docs || []}
           keyExtractor={(_, index: number) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ListHeader}
@@ -192,7 +200,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
           )}
           ListEmptyComponent={() =>
             explorePeople?.docs?.length === 0 &&
-            !refreshing && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
+            !loadExplorePeople && <EmptyListText text="No People to Explore!" textStyle={styles.emptyTextPlaceholder} />
           }
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListFooterComponent={renderFooter}

@@ -20,7 +20,7 @@ const createStyles = (theme) =>
     searchBarStyle: { marginBottom: hp(2) },
     searchBar: {
       backgroundColor: theme.colors.bgColor,
-      borderColor: theme.colors.outlinedBtnColor,
+      borderColor: theme.colors.borderColor,
     },
     searchBarText: {
       color: theme.colors.heading,

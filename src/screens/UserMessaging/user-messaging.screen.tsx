@@ -158,7 +158,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={{ width: 24, height: 24, justifyContent: "center", alignItems: "center" }}
+        >
           <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={18} />
         </TouchableOpacity>
 

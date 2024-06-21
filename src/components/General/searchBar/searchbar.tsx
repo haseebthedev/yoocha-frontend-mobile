@@ -24,9 +24,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleSearchSubmit = () => {
     onSearchSubmit(searchText);
-    if (inputRef.current) {
-      inputRef.current.clear();
-    }
+    // if (inputRef.current) {
+    //   inputRef.current.clear();
+    // }
   };
 
   return (
