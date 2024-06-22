@@ -6,15 +6,20 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { SignupI } from "interfaces";
 import { ScreenEnum } from "enums";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { signupValidationSchema } from "utils/validations";
 import { signupService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
-import styles from "./signup.styles";
+import createStyles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_UP>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
@@ -53,7 +58,12 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
 
   return (
     <View style={styles.container}>
-      <Header headerText="Sign Up" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+      <Header
+        headerText="Sign Up"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: theme.colors.heading }}
+      />
 
       <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
         <TextInput

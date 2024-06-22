@@ -28,7 +28,7 @@ import {
   TextInput,
 } from "components";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
-import personPlaceholder from "assets/images/personplaceholder.png";
+import personPlaceholder from "assets/images/person.png";
 import createStyles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
@@ -138,7 +138,9 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
-          <Image source={profileImage} style={styles.profileImage} />
+          <View style={styles.profileImageContainer}>
+            <Image source={profileImage} style={user?.profilePicture ? styles.profileImage : styles.imagePlaceholder} />
+          </View>
           <TouchableOpacity style={styles.changeImageBtn} onPress={handleOpenPress}>
             <Ionicons name="camera" size={20} color={colors.primary} />
           </TouchableOpacity>

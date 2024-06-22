@@ -15,6 +15,18 @@ const createStyles = (theme) =>
       alignItems: "center",
       maxWidth: wp(50),
     },
+    profileImageContainer: {
+      width: wp(14),
+      height: wp(14),
+      borderRadius: wp(7),
+      backgroundColor: theme.colors.personImageBg,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    placeholderImage: {
+      width: wp(6),
+      height: wp(8.3),
+    },
     profileImage: {
       width: wp(14),
       height: wp(14),

@@ -4,18 +4,22 @@ import { Keyboard, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { ScreenEnum } from "enums";
+import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { ForgetPasswordI } from "interfaces/auth";
 import { NavigatorParamList } from "navigators";
 import { forgotPasswordValidation } from "utils/validations";
 import { Header, Text, TextInput, AppButton } from "components";
 import { forgetPasswordService, useAppDispatch } from "store";
-import styles from "./forgetPassword.styles";
+import createStyles from "./forgetPassword.styles";
 
 const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.FORGET_PASSWORD>> = ({
   navigation,
 }) => {
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const validationSchema = forgotPasswordValidation;
   const initialValues: ForgetPasswordI = { email: "" };
@@ -34,15 +38,20 @@ const ForgetPasswordScreen: FC<NativeStackScreenProps<NavigatorParamList, Screen
 
   return (
     <View style={styles.container}>
-      <Header headerText="Forget Password" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+      <Header
+        headerText="Forget Password"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: theme.colors.heading }}
+      />
 
       <View style={styles.form}>
         <View style={styles.centerContent}>
-          <Text text="Recover Your Account" preset="largeHeading" />
+          <Text text="Recover Your Account" preset="largeHeading" style={{ color: theme.colors.heading }} />
           <Text
             text="Enter the email address associated with your account."
             preset="subheading"
-            style={styles.subHeading}
+            style={[styles.subHeading, { color: theme.colors.heading }]}
           />
         </View>
 

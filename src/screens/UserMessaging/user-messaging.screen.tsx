@@ -1,6 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
 import { useAppTheme } from "hooks";
@@ -20,8 +23,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
-import personplaceholder from "assets/images/personplaceholder.png";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 
 const LIMIT: number = 50;
@@ -146,10 +148,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
             </TouchableOpacity>
 
             <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: "row" }} onPress={() => {}}>
-              <Image
-                source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
-                style={styles.profileImage}
-              />
+              <View style={styles.imageContainer}>
+                <Image
+                  source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
+                  style={otherUser?.profilePicture ? styles.profileImage : styles.imagePlaceholder}
+                />
+              </View>
               <View>
                 <Text text={friendName} preset="semiBold" style={styles.name} />
                 <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
@@ -158,7 +162,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ width: 24, height: 24, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={{ width: 24, height: 24, justifyContent: "center", alignItems: "center" }}
+        >
           <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={18} />
         </TouchableOpacity>
 

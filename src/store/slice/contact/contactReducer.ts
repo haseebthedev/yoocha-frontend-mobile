@@ -74,6 +74,7 @@ export const contactSlice = createSlice({
       })
       .addCase(getSearchExploreService.fulfilled, (state, action) => {
         // state.searchExplorePeople = action.payload.result;
+
         const explorePeopleWithReqSent = action.payload.result?.docs.map((friend) => ({
           ...friend,
           isFriendReqSent: false,

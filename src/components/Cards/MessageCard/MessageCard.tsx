@@ -4,7 +4,7 @@ import { Text } from "components";
 import { colors } from "theme";
 import { MessageItemI, RootState, useAppSelector } from "store";
 import { formatTime } from "utils/dateAndTime";
-import userPlaceholder from "assets/images/personplaceholder.png";
+import userPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 import { useAppTheme } from "hooks";
 
@@ -28,10 +28,12 @@ const MessageCard = ({ item }: MessageCardI) => {
       style={[styles.messageContainer, { justifyContent: isSentByUser ? "flex-end" : "flex-start" }]}
     >
       {!isSentByUser && (
-        <Image
-          source={userProfilePic ? { uri: userProfilePic } : userPlaceholder}
-          style={styles.otherParticipantImage}
-        />
+        <View style={!userProfilePic && styles.profileImageContainer}>
+          <Image
+            source={userProfilePic ? { uri: userProfilePic } : userPlaceholder}
+            style={userProfilePic ? styles.otherParticipantImage : styles.placeholderImage}
+          />
+        </View>
       )}
 
       <View style={styles.messageTextContainer}>

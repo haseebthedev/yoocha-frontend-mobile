@@ -11,10 +11,14 @@ import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
 import { signinService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
-import styles from "./signin.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +44,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
 
   return (
     <View style={styles.container}>
-      <Header headerText="Sign In" />
+      <Header headerText="Sign In" titleStyle={{ color: theme.colors.heading }} />
 
       <View style={styles.form}>
         <TextInput

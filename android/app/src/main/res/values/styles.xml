@@ -8,7 +8,7 @@
 
     <!-- BootTheme should inherit from Theme.BootSplash or Theme.BootSplash.EdgeToEdge -->
     <style name="BootTheme" parent="Theme.BootSplash.EdgeToEdge">
-        <item name="android:windowBackground">@drawable/splash_screen</item>
+         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
 </resources>

@@ -23,15 +23,15 @@ export function TextInput(props: TextInputProps) {
   } = props;
 
   const { theme } = useAppTheme();
-  const styles = appStyles(theme)
+  const styles = appStyles(theme);
 
   const style = [styles.inputFieldStyle, styleOverride];
 
   return (
     <>
-      {label && <Text text={label} preset="labelHeading" style={[styles.label, { color: theme.colors.heading }]} />}
+      {label && <Text text={label} preset="labelHeading" style={styles.label} />}
 
-      <>
+      <View>
         {/* @ts-ignore */}
         <ReactNativeTextInput
           value={value}
@@ -53,27 +53,29 @@ export function TextInput(props: TextInputProps) {
           />
         )}
         <ErrorMessage error={error} visible={visible} />
-      </>
+      </View>
     </>
   );
 }
 
-const appStyles = (theme) => StyleSheet.create({
-  inputFieldStyle: {
-    marginVertical: hp(1),
-    borderColor: theme.colors.borderColor,
-    borderWidth: 1,
-    borderRadius: hp(1),
-    paddingHorizontal: wp(4),
-    fontFamily: typography.regular,
-  },
-  label: {
-    marginTop: hp(2),
-  },
-  rightIconStyle: {
-    position: "absolute",
-    top: hp(2.8),
-    right: wp(3),
-    paddingLeft: wp(3),
-  },
-});
+const appStyles = (theme) =>
+  StyleSheet.create({
+    inputFieldStyle: {
+      marginVertical: hp(1),
+      borderColor: theme.colors.borderColor,
+      borderWidth: 1,
+      borderRadius: hp(1),
+      paddingHorizontal: wp(4),
+      fontFamily: typography.regular,
+    },
+    label: {
+      marginTop: hp(2),
+      color: theme.colors.heading,
+    },
+    rightIconStyle: {
+      position: "absolute",
+      top: hp(2.8),
+      right: wp(3),
+      paddingLeft: wp(3),
+    },
+  });

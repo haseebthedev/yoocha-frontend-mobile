@@ -3,7 +3,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { useAppTheme } from "hooks";
 import { UserI } from "store";
-import personPlaceholder from "assets/images/personplaceholder.png";
+import person from "assets/images/person.png";
 import createStyles from "./styles";
 
 interface ContactUserCardI {
@@ -19,12 +19,14 @@ const ContactUserCard = ({ item, onBtnPress, btnTitle, onViewPress }: ContactUse
 
   const username = `${item.firstname} ${item.lastname}`;
   const location = item.country ? item.country : "Unknown";
-  const profilePicture = item.profilePicture ? { uri: item.profilePicture } : personPlaceholder;
+  const profilePicture = item.profilePicture ? { uri: item.profilePicture } : person;
 
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity style={styles.leftContainer} onPress={onViewPress} activeOpacity={0.5}>
-        <Image source={profilePicture} style={styles.profileImage} />
+        <View style={styles.profileImageContainer}>
+          <Image source={profilePicture} style={item.profilePicture ? styles.profileImage : styles.placeholderImage} />
+        </View>
         <View>
           <Text preset="semiBold" text={username} numberOfLines={1} style={styles.username} />
           <Text text={location} numberOfLines={1} style={styles.location} />

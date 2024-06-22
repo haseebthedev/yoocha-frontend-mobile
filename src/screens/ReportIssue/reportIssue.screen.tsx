@@ -9,9 +9,13 @@ import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { AppButton, Header, TextInput } from "components";
 import { reportAnIssueValidationSchema } from "utils/validations";
-import styles from "./reportIssue.styles";
+import { useAppTheme } from "hooks";
+import createStyles from "./reportIssue.styles";
 
 const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.REPORT_ISSUE>> = ({ navigation }) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   const validationSchema = reportAnIssueValidationSchema;
   const initialValues: ReportIssueI = { name: "", email: "", message: "" };
 
@@ -27,7 +31,12 @@ const ReportIssue: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.REPO
 
   return (
     <View style={styles.container}>
-      <Header headerText="Report an Issue" leftIcon="chevron-back" onLeftPress={() => navigation.goBack()} />
+      <Header
+        headerText="Report an Issue"
+        leftIcon="chevron-back"
+        onLeftPress={() => navigation.goBack()}
+        titleStyle={{ color: theme.colors.heading }}
+      />
 
       <View style={styles.form}>
         <TextInput

@@ -12,7 +12,7 @@ import { useAppTheme } from "hooks";
 import { AlertBox, SettingListItem, Text } from "components";
 import { RootState, getMyProfileService, logoutUser, useAppDispatch, useAppSelector } from "store";
 import createStyles from "./profile.styles";
-import personplaceholder from "assets/images/personplaceholder.png";
+import personplaceholder from "assets/images/person.png";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PROFILE>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -53,10 +53,12 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
 
       <View style={styles.mainContainer}>
         <View style={styles.roundedContainer}>
-          <Image
-            source={user?.profilePicture ? { uri: user.profilePicture } : personplaceholder}
-            style={styles.profilePic}
-          />
+          <View style={styles.profileImageContainer}>
+            <Image
+              source={user?.profilePicture ? { uri: user.profilePicture } : personplaceholder}
+              style={user?.profilePicture ? styles.profilePic : styles.imagePlaceholder}
+            />
+          </View>
           <Text text={userName} preset="largeHeading" style={styles.name} />
 
           {/* <View style={styles.location}>
