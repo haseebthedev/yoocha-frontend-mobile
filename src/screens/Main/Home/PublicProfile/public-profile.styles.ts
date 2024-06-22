@@ -41,6 +41,21 @@ const createStyles = (theme) =>
       left: 0,
       right: 0,
     },
+    profileImageContainer: {
+      width: wp(31),
+      height: hp(15.5),
+      borderRadius: hp(10),
+      backgroundColor: theme.colors.personImageBg,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: wp(1),
+      borderColor: colors.white,
+      zIndex: 100,
+    },
+    imagePlaceholder: {
+      width: wp(15),
+      height: hp(10.5),
+    },
     profilePic: {
       width: wp(31),
       height: hp(15.5),

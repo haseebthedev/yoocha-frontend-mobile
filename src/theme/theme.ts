@@ -16,6 +16,7 @@ export const lightTheme = {
 
     chatScreenBgColor: "#F2F2F2",
     unReadBg: "rgba(53, 99, 207, .1)",
+    personImageBg: "#FFFFFF",
     popupMenuBg: "#FFFFFF",
     messageCardBg: "#FFFFFF",
 
@@ -42,6 +43,7 @@ export const darkTheme = {
     chatScreenBgColor: "#1E1E1E",
     unReadBg: "#3A3A3A",
     popupMenuBg: "#282828",
+    personImageBg: "#3a3a3a",
     messageCardBg: "#3A3A3A",
 
     thumbColor: "#ffffff",

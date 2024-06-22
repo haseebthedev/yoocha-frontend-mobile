@@ -4,7 +4,7 @@ import { Text } from "components";
 import { formatDate } from "utils/dateAndTime";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
-import personPlaceholder from "assets/images/personplaceholder.png";
+import personPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 
 interface NotificationCardI {
@@ -26,7 +26,12 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
       activeOpacity={0.5}
     >
       <View style={styles.profileContainer}>
-        <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={profileImage ? { uri: profileImage } : personPlaceholder}
+            style={profileImage ? styles.profileImage : styles.placeholderImage}
+          />
+        </View>
         <View style={styles.textContainer}>
           <View style={styles.nameWithDate}>
             <Text preset="semiBold" text={senderName} numberOfLines={1} style={styles.name} />

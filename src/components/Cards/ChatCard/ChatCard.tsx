@@ -3,7 +3,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "components";
 import { useAppTheme } from "hooks";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personplaceholder.png";
+import personPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 
 interface ChatCardI {
@@ -24,7 +24,12 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
   return (
     <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)} activeOpacity={0.5}>
       <View style={styles.profileContainer}>
-        <Image source={profileImage ? { uri: profileImage } : personPlaceholder} style={styles.profileImage} />
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={profileImage ? { uri: profileImage } : personPlaceholder}
+            style={profileImage ? styles.profileImage : styles.placeholderImage}
+          />
+        </View>
         <View style={styles.textContainer}>
           <Text preset="semiBold" text={fullName} numberOfLines={1} style={styles.name} />
           <Text

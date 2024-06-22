@@ -16,11 +16,23 @@ const createStyles = (theme) =>
       alignItems: "center",
       gap: 10,
     },
+    profileImageContainer: {
+      width: hp(6.2),
+      height: hp(6.2),
+      borderRadius: 24,
+      backgroundColor: theme.colors.personImageBg,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     profileImage: {
       width: hp(6.2),
       height: hp(6.2),
       borderRadius: 24,
-      backgroundColor: colors.grey,
+      // backgroundColor: colors.grey,
+    },
+    placeholderImage: {
+      width: wp(6),
+      height: wp(8.3),
     },
     sideBtn: {
       borderWidth: 1,

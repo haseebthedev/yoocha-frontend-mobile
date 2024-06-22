@@ -12,6 +12,18 @@ const createStyles = (theme) =>
       borderBottomRightRadius: hp(2),
       backgroundColor: theme.colors.drawerBgColor,
     },
+    profileImageContainer: {
+      width: wp(18),
+      height: wp(18),
+      borderRadius: wp(10),
+      backgroundColor: theme.colors.personImageBg,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    placeholderImage: {
+      width: wp(8),
+      height: wp(10.5),
+    },
     profilePic: {
       width: wp(18),
       height: wp(18),

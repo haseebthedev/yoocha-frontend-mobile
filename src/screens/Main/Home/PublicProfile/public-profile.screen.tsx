@@ -10,7 +10,7 @@ import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
 import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
-import personPlaceholder from "assets/images/personplaceholder.png";
+import personPlaceholder from "assets/images/person.png";
 import createStyles from "./public-profile.styles";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PUBLIC_PROFILE>> = ({
@@ -98,10 +98,12 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       <View style={styles.container}>
         <View style={styles.mainContainer}>
           <View style={styles.roundedContainer}>
-            <Image
-              source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
-              style={styles.profilePic}
-            />
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
+                style={item?.profilePicture ? styles.profilePic : styles.imagePlaceholder}
+              />
+            </View>
             <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
 
             <View style={styles.location}>

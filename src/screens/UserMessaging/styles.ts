@@ -23,12 +23,25 @@ const createStyles = (theme) =>
       borderBottomColor: theme.colors.borderColor,
       borderBottomWidth: 1,
     },
+    imageContainer: {
+      width: wp(10),
+      height: wp(10),
+      borderRadius: wp(15),
+      marginLeft: wp(4),
+      marginRight: wp(3),
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.personImageBg,
+    },
+    imagePlaceholder: {
+      width: wp(4.9),
+      height: wp(6),
+      borderRadius: wp(5),
+    },
     profileImage: {
       width: wp(10),
       height: wp(10),
       borderRadius: wp(5),
-      marginLeft: wp(4),
-      marginRight: wp(3),
     },
     listContainer: {
       paddingVertical: hp(1),
