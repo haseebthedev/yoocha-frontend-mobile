@@ -1,8 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, ImageSourcePropType, TextInput, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
@@ -11,7 +12,7 @@ import { NavigatorParamList } from "navigators";
 import { EventEnum, ScreenEnum } from "enums";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
+import { AlertBox, EmptyListText, FilePicker, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -25,6 +26,7 @@ import {
 } from "store";
 import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
+import { hp, wp } from "utils/responsive";
 
 const LIMIT: number = 50;
 
@@ -51,7 +53,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   });
 
   const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
+  const [fileModalVisible, setFileModalVisible] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [picture, setPicture] = useState<string>("");
+
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
     list: [],
@@ -73,6 +78,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const sendMessage = async () => {
     messageInputRef.current?.clear();
     await dispatch(sendMessageService({ roomId: roomId, message: message }));
+  };
+
+  const removeImage = async () => {
+    setPicture("");
   };
 
   const renderLoader = () => {
@@ -211,14 +220,39 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />
         ) : (
           <View style={styles.inputFieldBlock}>
-            <TextInput
-              ref={messageInputRef}
-              value={message}
-              placeholder="Type here..."
-              onChangeText={(text) => setMessage(text)}
-              placeholderTextColor={colors.textDim}
-              style={styles.inputfield}
-            />
+            {picture ? (
+              <View style={styles.inputImage}>
+                <TouchableOpacity
+                  onPress={removeImage}
+                  style={{
+                    position: "absolute",
+                    bottom: hp(3.5),
+                    left: wp(6.8),
+                    zIndex: 100,
+                    backgroundColor: "white",
+                    borderRadius: hp(2),
+                  }}
+                >
+                  <Ionicons name="close-circle-sharp" size={20} color={"red"} />
+                </TouchableOpacity>
+                <Image source={{ uri: picture }} style={styles.image} />
+              </View>
+            ) : (
+              <>
+                <TextInput
+                  ref={messageInputRef}
+                  value={message}
+                  placeholder="Type here..."
+                  onChangeText={(text) => setMessage(text)}
+                  placeholderTextColor={colors.textDim}
+                  style={styles.inputfield}
+                />
+                <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
+                  <Ionicons name="attach" color={theme.colors.iconColor} size={25} />
+                </TouchableOpacity>
+              </>
+            )}
+
             <TouchableOpacity onPress={sendMessage} style={{ paddingVertical: 10, paddingRight: 20 }}>
               <Ionicons name="send" color={colors.primary} size={20} />
             </TouchableOpacity>
@@ -235,6 +269,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
         primaryButtonText="Block"
         secondaryOnClick={() => setBlockModalVisible((prev) => !prev)}
         primaryOnClick={blockUser}
+      />
+
+      <FilePicker
+        open={fileModalVisible}
+        onClose={() => setFileModalVisible((prev) => !prev)}
+        setPicture={setPicture}
       />
     </View>
   );

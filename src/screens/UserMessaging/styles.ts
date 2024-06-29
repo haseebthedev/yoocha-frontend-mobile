@@ -111,8 +111,12 @@ const createStyles = (theme) =>
       borderTopWidth: 1,
       borderTopColor: theme.colors.borderColor,
     },
+    inputImage: {
+      width: wp(82),
+    },
+    image: { width: wp(10), height: hp(5), borderRadius: wp(1) },
     inputfield: {
-      width: wp(80),
+      width: wp(71),
       borderRadius: wp(2),
       paddingVertical: hp(0.7),
       paddingHorizontal: wp(5),

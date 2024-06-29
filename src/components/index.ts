@@ -32,9 +32,10 @@ export * from "./HOCModal/BottomSheet/BottomSheet";
 
 // Modals
 export * from "./Modal/countryPickerModal/countryPickerModal";
-export * from "./Modal/AlertBox/AlertBox";
-export * from "./Modal/ImagePickerModal/ImagePickerModal";
-export * from "./Modal/StatusModal/StatusModal";
+export * from "./Modal/alertBox/alertBox";
+export * from "./Modal/imagePickerModal/imagePickerModal";
+export * from "./Modal/statusModal/statusModal";
+export * from "./Modal/filePicker/filePicker";
 
 // Divider
 export * from "./Divider/divider";

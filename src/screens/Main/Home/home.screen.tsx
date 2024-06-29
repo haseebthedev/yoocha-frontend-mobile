@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View, RefreshControl, Image } from "react-native";
+import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";

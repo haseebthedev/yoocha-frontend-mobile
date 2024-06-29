@@ -16,7 +16,7 @@ export const lightTheme = {
 
     chatScreenBgColor: "#F2F2F2",
     unReadBg: "rgba(53, 99, 207, .1)",
-    personImageBg: "#FFFFFF",
+    personImageBg: "#DBDADA",
     popupMenuBg: "#FFFFFF",
     messageCardBg: "#FFFFFF",
 
