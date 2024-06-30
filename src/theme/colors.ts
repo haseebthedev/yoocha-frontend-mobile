@@ -23,6 +23,12 @@ const colors = {
   transparent: "rgba(0, 0, 0, 0)",
   rgbGrey: "rgba(204, 204, 204, .5)",
   modalBG: "rgba(0,0,0,.3)",
+
+  // File Picker
+  darkPink: "#F548CD",
+  darkPurple: "#B905D9",
+  darkOrange: "#D7610C",
+  darkGreen: "#0B6901",
 };
 
 export { colors };

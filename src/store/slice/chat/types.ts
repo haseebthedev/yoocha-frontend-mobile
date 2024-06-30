@@ -66,6 +66,7 @@ export interface MessageItemI {
   message: string | null;
   link: null | null;
   files: null | null;
+  itemType?: "message" | "document" | "camera" | "gallery" | "audio" | "location";
   createdAt: string;
   updatedAt: string;
 }

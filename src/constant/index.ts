@@ -4,3 +4,5 @@ export * from "./contacts";
 export * from "./profile";
 // export * from "./suggestions";
 export * from "./menu";
+
+export * from "./attachments";
