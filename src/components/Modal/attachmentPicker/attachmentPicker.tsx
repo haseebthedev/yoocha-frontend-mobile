@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Modal, Pressable, GestureResponderEvent, ModalProps, View } from "react-native";
+import {
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  GestureResponderEvent,
+  ModalProps,
+  View,
+  ImageSourcePropType,
+} from "react-native";
 
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components/General/text/text";
 import { useAppTheme } from "hooks";
-import { ImageSourcePropType } from "react-native";
+import { getAttachmentPickerData } from "constant";
 import createStyles from "./styles";
 
 interface PropsI extends ModalProps {
@@ -17,12 +25,10 @@ interface PropsI extends ModalProps {
 
 const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
   const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | string>();
-
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const onBackdropPress = (event: GestureResponderEvent) => {
-    console.log("close");
     if (event.target === event.currentTarget) {
       onClose();
     }
@@ -58,46 +64,27 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
 
   if (!open) return null;
 
+  const attachmentPickerData = getAttachmentPickerData(launchCameraHandler, launchImageLibraryHandler);
+
   return (
     <View style={styles.centeredView}>
       <Modal animationType="fade" transparent={true} visible={open}>
         <Pressable style={styles.centeredView} onPress={onBackdropPress}>
           <View style={styles.modalView}>
             <View style={styles.innerContainer}>
-              <TouchableOpacity style={styles.fileTypeContainer} activeOpacity={0.5}>
-                <View style={[styles.iconContainer, styles.bgDocument]}>
-                  <Ionicons name="document-text" size={25} color="white" />
-                </View>
-                <Text text={"Documents"} preset="inputText" style={styles.title} />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.fileTypeContainer} onPress={launchCameraHandler}>
-                <View style={[styles.iconContainer, styles.bgCamera]}>
-                  <Ionicons name="camera" size={25} color="white" />
-                </View>
-                <Text text={"Camera"} preset="inputText" style={styles.title} />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.fileTypeContainer} onPress={launchImageLibraryHandler}>
-                <View style={[styles.iconContainer, styles.bgGallery]}>
-                  <Ionicons name="images" size={25} color="white" />
-                </View>
-                <Text text={"Gallery"} preset="inputText" style={styles.title} />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.fileTypeContainer}>
-                <View style={[styles.iconContainer, styles.bgAudio]}>
-                  <Ionicons name="headset" size={25} color="white" />
-                </View>
-                <Text text={"Audio"} preset="inputText" style={styles.title} />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.fileTypeContainer}>
-                <View style={[styles.iconContainer, styles.bgLocation]}>
-                  <Ionicons name="location-sharp" size={25} color="white" />
-                </View>
-                <Text text={"Location"} preset="inputText" style={styles.title} />
-              </TouchableOpacity>
+              {attachmentPickerData.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.fileTypeContainer}
+                  onPress={item.onPress}
+                  activeOpacity={0.5}
+                >
+                  <View style={[styles.iconContainer, styles[item.bgStyle]]}>
+                    <Ionicons name={item.icon} size={25} color="white" />
+                  </View>
+                  <Text text={item.title} preset="inputText" style={styles.title} />
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         </Pressable>

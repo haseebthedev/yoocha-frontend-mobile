@@ -15,6 +15,12 @@ const createStyles = (theme) =>
       alignItems: "center",
       paddingVertical: hp(2),
     },
+    menuButton: {
+      width: 24,
+      height: 24,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     headerContainer: {
       flexDirection: "row",
       alignItems: "center",
@@ -22,6 +28,9 @@ const createStyles = (theme) =>
       paddingHorizontal: wp(5),
       borderBottomColor: theme.colors.borderColor,
       borderBottomWidth: 1,
+    },
+    userData: {
+      flexDirection: "row",
     },
     imageContainer: {
       width: wp(10),
@@ -115,6 +124,14 @@ const createStyles = (theme) =>
     inputImage: {
       width: wp(82),
     },
+    removeImageButton: {
+      position: "absolute",
+      bottom: hp(3.5),
+      left: wp(6.8),
+      zIndex: 100,
+      backgroundColor: "white",
+      borderRadius: hp(2),
+    },
     image: {
       width: wp(10),
       height: hp(5),
@@ -126,6 +143,11 @@ const createStyles = (theme) =>
       paddingVertical: hp(0.7),
       // paddingHorizontal: wp(5),
       color: theme.colors.heading,
+    },
+    actionButtons: {
+      flexDirection: "row",
+      gap: wp(3),
+      alignItems: "center",
     },
     paddingVertical: {
       paddingVertical: hp(0.5),

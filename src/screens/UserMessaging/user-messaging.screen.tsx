@@ -156,7 +156,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               <Ionicons name="chevron-back" color={theme.colors.iconColor} size={24} />
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: "row" }} onPress={() => {}}>
+            <TouchableOpacity activeOpacity={0.5} style={styles.userData} onPress={() => {}}>
               <View style={styles.imageContainer}>
                 <Image
                   source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
@@ -171,10 +171,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           </View>
         </View>
 
-        <TouchableOpacity
-          onPress={() => setMenuVisible(true)}
-          style={{ width: 24, height: 24, justifyContent: "center", alignItems: "center" }}
-        >
+        <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.menuButton}>
           <Ionicons name="ellipsis-vertical-sharp" color={theme.colors.iconColor} size={18} />
         </TouchableOpacity>
 
@@ -222,18 +219,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           <View style={styles.inputFieldBlock}>
             {picture ? (
               <View style={styles.inputImage}>
-                <TouchableOpacity
-                  onPress={removeImage}
-                  style={{
-                    position: "absolute",
-                    bottom: hp(3.5),
-                    left: wp(6.8),
-                    zIndex: 100,
-                    backgroundColor: "white",
-                    borderRadius: hp(2),
-                  }}
-                >
-                  <Ionicons name="close-circle-sharp" size={20} color={"red"} />
+                <TouchableOpacity onPress={removeImage} style={styles.removeImageButton}>
+                  <Ionicons name="close-circle-sharp" size={20} color={colors.red} />
                 </TouchableOpacity>
                 <Image source={{ uri: picture }} style={styles.image} />
               </View>
@@ -248,7 +235,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               />
             )}
 
-            <View style={{ flexDirection: "row", gap: wp(3), alignItems: "center" }}>
+            <View style={styles.actionButtons}>
               {!picture && (
                 <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
                   <Ionicons name="attach" color={theme.colors.iconColor} size={25} />
