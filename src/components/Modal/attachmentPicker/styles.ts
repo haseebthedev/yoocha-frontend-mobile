@@ -42,7 +42,7 @@ const createStyles = (theme) =>
     },
     iconContainer: {
       width: wp(16),
-      height: hp(8),
+      height: wp(16),
       alignItems: "center",
       justifyContent: "center",
       borderRadius: wp(50),

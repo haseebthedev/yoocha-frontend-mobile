@@ -12,7 +12,7 @@ import { NavigatorParamList } from "navigators";
 import { EventEnum, ScreenEnum } from "enums";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, FilePicker, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
+import { AlertBox, EmptyListText, AttachmentPicker, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -238,24 +238,27 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
                 <Image source={{ uri: picture }} style={styles.image} />
               </View>
             ) : (
-              <>
-                <TextInput
-                  ref={messageInputRef}
-                  value={message}
-                  placeholder="Type here..."
-                  onChangeText={(text) => setMessage(text)}
-                  placeholderTextColor={colors.textDim}
-                  style={styles.inputfield}
-                />
+              <TextInput
+                ref={messageInputRef}
+                value={message}
+                placeholder="Type here..."
+                onChangeText={(text) => setMessage(text)}
+                placeholderTextColor={colors.textDim}
+                style={styles.inputfield}
+              />
+            )}
+
+            <View style={{ flexDirection: "row", gap: wp(3), alignItems: "center" }}>
+              {!picture && (
                 <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
                   <Ionicons name="attach" color={theme.colors.iconColor} size={25} />
                 </TouchableOpacity>
-              </>
-            )}
+              )}
 
-            <TouchableOpacity onPress={sendMessage} style={{ paddingVertical: 10, paddingRight: 20 }}>
-              <Ionicons name="send" color={colors.primary} size={20} />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={sendMessage}>
+                <Ionicons name="send" color={colors.primary} size={20} />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>
@@ -271,7 +274,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
         primaryOnClick={blockUser}
       />
 
-      <FilePicker
+      <AttachmentPicker
         open={fileModalVisible}
         onClose={() => setFileModalVisible((prev) => !prev)}
         setPicture={setPicture}

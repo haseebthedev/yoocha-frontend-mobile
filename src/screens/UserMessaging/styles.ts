@@ -103,8 +103,9 @@ const createStyles = (theme) =>
       flexDirection: "row",
       alignItems: "center",
       paddingVertical: wp(2),
-      gap: 20,
-      paddingHorizontal: wp(4),
+      // gap: 20,
+      paddingHorizontal: wp(5),
+      justifyContent: "space-between",
       position: "absolute",
       bottom: 0,
       backgroundColor: theme.colors.bgColor,
@@ -114,12 +115,16 @@ const createStyles = (theme) =>
     inputImage: {
       width: wp(82),
     },
-    image: { width: wp(10), height: hp(5), borderRadius: wp(1) },
+    image: {
+      width: wp(10),
+      height: hp(5),
+      borderRadius: wp(1),
+    },
     inputfield: {
-      width: wp(71),
+      width: wp(70),
       borderRadius: wp(2),
       paddingVertical: hp(0.7),
-      paddingHorizontal: wp(5),
+      // paddingHorizontal: wp(5),
       color: theme.colors.heading,
     },
     paddingVertical: {

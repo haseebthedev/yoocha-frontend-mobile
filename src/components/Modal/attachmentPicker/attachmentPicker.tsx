@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { TouchableOpacity, Modal, Pressable, GestureResponderEvent, ModalProps, View } from "react-native";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components/General/text/text";
 import { useAppTheme } from "hooks";
-import createStyles from "./styles";
 import { ImageSourcePropType } from "react-native";
+import createStyles from "./styles";
 
 interface PropsI extends ModalProps {
   open: boolean;
@@ -15,7 +15,7 @@ interface PropsI extends ModalProps {
   setPicture: (uri: any) => void;
 }
 
-const FilePicker = ({ open, onClose, setPicture }: PropsI) => {
+const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
   const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | string>();
 
   const { theme } = useAppTheme();
@@ -106,4 +106,4 @@ const FilePicker = ({ open, onClose, setPicture }: PropsI) => {
   );
 };
 
-export { FilePicker };
+export { AttachmentPicker };

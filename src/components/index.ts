@@ -35,7 +35,7 @@ export * from "./Modal/countryPickerModal/countryPickerModal";
 export * from "./Modal/alertBox/alertBox";
 export * from "./Modal/imagePickerModal/imagePickerModal";
 export * from "./Modal/statusModal/statusModal";
-export * from "./Modal/filePicker/filePicker";
+export * from "./Modal/attachmentPicker/attachmentPicker";
 
 // Divider
 export * from "./Divider/divider";
