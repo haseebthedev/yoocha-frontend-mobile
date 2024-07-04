@@ -8,5 +8,8 @@ export interface AttachmentPickerItem {
 
 export type GetAttachmentPickerData = (
   launchCameraHandler: () => void,
-  launchImageLibraryHandler: () => void
+  launchImageLibraryHandler: () => void,
+  launchDocumentPickerHandler: () => void,
+  launchAudioPickerHandler: () => void,
+  handleOpenLocationModal: () => void
 ) => AttachmentPickerItem[];

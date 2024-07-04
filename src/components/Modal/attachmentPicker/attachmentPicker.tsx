@@ -9,6 +9,7 @@ import {
   ImageSourcePropType,
 } from "react-native";
 
+import DocumentPicker, { DocumentPickerResponse } from "react-native-document-picker";
 import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -16,6 +17,7 @@ import { Text } from "components/General/text/text";
 import { useAppTheme } from "hooks";
 import { getAttachmentPickerData } from "constant";
 import createStyles from "./styles";
+import { LocationModal } from "../locationModal/locationModal";
 
 interface PropsI extends ModalProps {
   open: boolean;
@@ -25,6 +27,11 @@ interface PropsI extends ModalProps {
 
 const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
   const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | string>();
+  const [selectedDocument, setSelectedDocument] = useState<DocumentPickerResponse>();
+  const [selectedAudio, setSelectedAudio] = useState<DocumentPickerResponse>();
+  const [isLocModalVisible, setLocModalVisible] = useState<boolean>(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -32,6 +39,19 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
+  };
+
+  const handleOpenLocationModal = () => {
+    setLocModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setLocModalVisible(false);
+  };
+
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
+    console.log("Selected Location:", location);
   };
 
   const launchCameraHandler = () => {
@@ -62,9 +82,51 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
     }
   };
 
+  const launchDocumentPickerHandler = async () => {
+    try {
+      const result: DocumentPickerResponse[] = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+      onClose();
+      if (result.length > 0) {
+        console.log(result[0]);
+        setSelectedDocument(result[0]);
+      }
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("User canceled the document picker");
+      } else {
+        console.error("Unknown error: ", err);
+      }
+    }
+  };
+
+  const launchAudioPickerHandler = async () => {
+    try {
+      const result: DocumentPickerResponse[] = await DocumentPicker.pick({
+        type: [DocumentPicker.types.audio],
+      });
+      onClose();
+      if (result.length > 0) {
+        console.log("Audio === ", result[0]);
+      }
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log("User canceled the document picker");
+      } else {
+        console.error("Unknown error: ", err);
+      }
+    }
+  };
+
   if (!open) return null;
 
-  const attachmentPickerData = getAttachmentPickerData(launchCameraHandler, launchImageLibraryHandler);
+  const attachmentPickerData = getAttachmentPickerData(
+    launchCameraHandler,
+    launchImageLibraryHandler,
+    launchDocumentPickerHandler,
+    launchAudioPickerHandler
+  );
 
   return (
     <View style={styles.centeredView}>
@@ -89,6 +151,8 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
           </View>
         </Pressable>
       </Modal>
+
+      <LocationModal open={isLocModalVisible} onClose={handleCloseModal} onLocationSelect={handleLocationSelect} />
     </View>
   );
 };

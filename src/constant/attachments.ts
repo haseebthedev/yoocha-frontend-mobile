@@ -1,12 +1,18 @@
 import { GetAttachmentPickerData } from "interfaces";
 
-export const getAttachmentPickerData: GetAttachmentPickerData = (launchCameraHandler, launchImageLibraryHandler) => [
+export const getAttachmentPickerData: GetAttachmentPickerData = (
+  launchCameraHandler,
+  launchImageLibraryHandler,
+  launchDocumentPickerHandler,
+  launchAudioPickerHandler,
+  handleOpenLocationModal
+) => [
   {
     id: "0",
     title: "Document",
     icon: "document-text",
     bgStyle: "bgDocument",
-    onPress: () => console.log("Document Pressed"),
+    onPress: launchDocumentPickerHandler,
   },
   {
     id: "1",
@@ -27,13 +33,13 @@ export const getAttachmentPickerData: GetAttachmentPickerData = (launchCameraHan
     title: "Audio",
     icon: "headset",
     bgStyle: "bgAudio",
-    onPress: () => console.log("Audio Pressed"),
+    onPress: launchAudioPickerHandler,
   },
   {
     id: "4",
     title: "Location",
     icon: "location-sharp",
     bgStyle: "bgLocation",
-    onPress: () => console.log("Location Pressed"),
+    onPress: handleOpenLocationModal,
   },
 ];

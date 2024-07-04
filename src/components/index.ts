@@ -36,6 +36,7 @@ export * from "./Modal/alertBox/alertBox";
 export * from "./Modal/imagePickerModal/imagePickerModal";
 export * from "./Modal/statusModal/statusModal";
 export * from "./Modal/attachmentPicker/attachmentPicker";
+export * from "./Modal/locationModal/locationModal";
 
 // Divider
 export * from "./Divider/divider";
