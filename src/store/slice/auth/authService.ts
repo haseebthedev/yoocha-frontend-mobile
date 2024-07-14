@@ -46,6 +46,7 @@ export const signinService: any = createAsyncThunk(
   "auth/signin",
   async (payload: SigninPayloadI, { rejectWithValue }) => {
     try {
+      console.log("ok");
       const response: AxiosResponse<SigninResponseI> = await axios.post(`${API_URL}/auth/signin`, {
         email: payload.email,
         password: payload.password,

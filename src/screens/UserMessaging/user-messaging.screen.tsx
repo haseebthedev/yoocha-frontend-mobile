@@ -1,9 +1,8 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { FlatList, Image, ImageSourcePropType, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Fontisto from "react-native-vector-icons/Fontisto";
 
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
@@ -26,7 +25,6 @@ import {
 } from "store";
 import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
-import { hp, wp } from "utils/responsive";
 
 const LIMIT: number = 50;
 
@@ -77,7 +75,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   const sendMessage = async () => {
     messageInputRef.current?.clear();
-    await dispatch(sendMessageService({ roomId: roomId, message: message }));
+    await dispatch(sendMessageService({ roomId, message }));
   };
 
   const removeImage = async () => {

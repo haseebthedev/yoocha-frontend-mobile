@@ -4,37 +4,52 @@ import { hp, wp } from "utils/responsive";
 
 const createStyles = (theme) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
     modalContainer: {
-      backgroundColor: "white",
-      borderRadius: 10,
-      padding: 10,
-      alignItems: "center",
-      justifyContent: "center",
+      flex: 1,
+      backgroundColor: theme.colors.bgColor,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      paddingHorizontal: wp(5),
+      paddingVertical: hp(2),
     },
     map: {
-      width: 300,
-      height: 300,
-      borderRadius: 10,
+      flex: 1,
+      backgroundColor: "#F87D7D",
     },
-    button: {
-      backgroundColor: "blue",
-      padding: 10,
-      borderRadius: 5,
-      marginTop: 10,
+    mapOptionsContainer: {
+      flexDirection: "row",
+      paddingHorizontal: wp(5),
+      justifyContent: "space-between",
+      position: "absolute",
+      top: hp(10),
+      width: wp(100),
     },
-    buttonText: {
-      color: "white",
-      fontWeight: "bold",
+    mapOptions: {
+      width: wp(13),
+      height: wp(13),
+      backgroundColor: "#EEEEEEE0",
+      borderRadius: wp(6.5),
+      alignItems: "center",
+      justifyContent: "center",
     },
-    openButton: {
+    liveLocation: {
+      padding: wp(5),
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomColor: colors.bgGrey,
+      borderBottomWidth: 1,
+    },
+    liveLocationIcon: {
       backgroundColor: "green",
-      padding: 10,
-      borderRadius: 5,
+      marginRight: wp(3),
+      height: wp(12),
+      width: wp(12),
+      borderRadius: wp(6),
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 

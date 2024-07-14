@@ -14,7 +14,6 @@ import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
-import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
 import { UpdateUserI, UserUpdateI } from "interfaces/user";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
 import {
@@ -30,6 +29,7 @@ import {
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/person.png";
 import createStyles from "./edit-profile.styles";
+import { uploadImageToCloudinary } from "utils/cloudinary";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
   navigation,

@@ -15,9 +15,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components/General/text/text";
 import { useAppTheme } from "hooks";
+import { LocationModal } from "../locationModal/locationModal";
+import { uploadDocToCloudinary } from "utils/cloudinary";
 import { getAttachmentPickerData } from "constant";
 import createStyles from "./styles";
-import { LocationModal } from "../locationModal/locationModal";
 
 interface PropsI extends ModalProps {
   open: boolean;
@@ -41,13 +42,9 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
     }
   };
 
-  const handleOpenLocationModal = () => {
-    setLocModalVisible(true);
-  };
+  const handleOpenLocationModal = () => setLocModalVisible(true);
 
-  const handleCloseModal = () => {
-    setLocModalVisible(false);
-  };
+  const handleCloseModal = () => setLocModalVisible(false);
 
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
@@ -89,8 +86,9 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
       });
       onClose();
       if (result.length > 0) {
-        console.log(result[0]);
-        setSelectedDocument(result[0]);
+        // console.log(result[0]);
+        // setSelectedDocument(result[0]);
+        await uploadDocToCloudinary(result[0]);
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -125,7 +123,8 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
     launchCameraHandler,
     launchImageLibraryHandler,
     launchDocumentPickerHandler,
-    launchAudioPickerHandler
+    launchAudioPickerHandler,
+    handleOpenLocationModal
   );
 
   return (
