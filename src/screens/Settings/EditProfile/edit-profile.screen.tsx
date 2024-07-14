@@ -77,9 +77,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   };
 
   const submit = async ({ firstname, lastname, email }: UpdateUserI) => {
-    let profilePicture = null;
-
     try {
+      let profilePicture = null;
       setLoading(true);
       if (selectedImage) {
         profilePicture = await uploadImageToCloudinary(selectedImage);

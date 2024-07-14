@@ -1,7 +1,9 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { FlatList, Image, TextInput, TouchableOpacity, View } from "react-native";
+import { FC, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { FlatList, Image, TextInput, TouchableOpacity, View, ImageSourcePropType } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
@@ -9,9 +11,10 @@ import { socket } from "socket/socketIo";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { EventEnum, ScreenEnum } from "enums";
+import { uploadImageToCloudinary } from "utils/cloudinary";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, AttachmentPicker, LoadingIndicator, MessageCard, PopupMenu, Text } from "components";
+import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text, ImagePickerModal } from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -43,6 +46,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const messageInputRef = useRef<TextInput>(null);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
+
   const [otherUser, setOtherUser] = useState<UserI>();
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
@@ -53,7 +60,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
   const [fileModalVisible, setFileModalVisible] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const [picture, setPicture] = useState<string>("");
+
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType | null>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
 
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
@@ -62,6 +71,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     hasNext: false,
     listRefreshing: false,
   });
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
+    []
+  );
 
   const blockUser = async () => {
     await dispatch(blockUserService({ id: otherUser?._id }))
@@ -74,13 +88,18 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   };
 
   const sendMessage = async () => {
-    messageInputRef.current?.clear();
-    await dispatch(sendMessageService({ roomId, message }));
+    if (message) {
+      messageInputRef.current?.clear();
+      await dispatch(sendMessageService({ roomId, message }));
+      setMessage("");
+    }
+
+    if (selectedImage) {
+      await uploadImageToCloudinary(selectedImage);
+    }
   };
 
-  const removeImage = async () => {
-    setPicture("");
-  };
+  const removeImage = async () => setProfileImage(null);
 
   const renderLoader = () => {
     return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
@@ -146,7 +165,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   }, [socket]);
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.appHeader}>
           <View style={styles.flexAlignCenter}>
@@ -215,12 +234,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />
         ) : (
           <View style={styles.inputFieldBlock}>
-            {picture ? (
+            {profileImage ? (
               <View style={styles.inputImage}>
                 <TouchableOpacity onPress={removeImage} style={styles.removeImageButton}>
                   <Ionicons name="close-circle-sharp" size={20} color={colors.red} />
                 </TouchableOpacity>
-                <Image source={{ uri: picture }} style={styles.image} />
+                <Image source={profileImage} style={styles.image} />
               </View>
             ) : (
               <TextInput
@@ -234,13 +253,13 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
             )}
 
             <View style={styles.actionButtons}>
-              {!picture && (
+              {!profileImage && (
                 <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
                   <Ionicons name="attach" color={theme.colors.iconColor} size={25} />
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity onPress={sendMessage}>
+              <TouchableOpacity disabled={message ? false : true} onPress={sendMessage}>
                 <Ionicons name="send" color={colors.primary} size={20} />
               </TouchableOpacity>
             </View>
@@ -259,12 +278,22 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
         primaryOnClick={blockUser}
       />
 
-      <AttachmentPicker
+      <ImagePickerModal
+        isVisible={fileModalVisible}
+        title="Select an Attachment!"
+        setProfileImage={setProfileImage}
+        setSelectedImage={setSelectedImage}
+        bottomSheetRef={bottomSheetRef}
+        snapPoints={snapPoints}
+        renderBackdrop={renderBackdrop}
+      />
+
+      {/* <AttachmentPicker
         open={fileModalVisible}
         onClose={() => setFileModalVisible((prev) => !prev)}
         setPicture={setPicture}
-      />
-    </View>
+      /> */}
+    </GestureHandlerRootView>
   );
 };
 

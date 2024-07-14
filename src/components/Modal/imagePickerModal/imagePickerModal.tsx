@@ -1,11 +1,13 @@
 import React from "react";
 import { ImageSourcePropType, TouchableOpacity, View } from "react-native";
+
+import { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { Text } from "components/General/text/text";
 import { colors } from "theme";
 import { BottomSheetModal } from "components/HOCModal/BottomSheet/BottomSheet";
-import { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
-import { launchImageLibrary, launchCamera, ImagePickerResponse } from "react-native-image-picker";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { launchCameraHandler, launchImageLibraryHandler } from "utils/imagePicker";
 import styles from "./styles";
 
 interface ImagePickerModalI {
@@ -27,36 +29,6 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   snapPoints,
   renderBackdrop,
 }: ImagePickerModalI) => {
-  const launchCameraHandler = () => {
-    let options: any = {
-      storageOptions: {
-        skipBackup: true,
-        path: "images",
-      },
-    };
-    launchCamera(options, (response: ImagePickerResponse) => {
-      if (response?.assets) {
-        const selectedImageUri = response.assets[0].uri;
-        setProfileImage({ uri: selectedImageUri });
-        setSelectedImage(response.assets[0]);
-        bottomSheetRef.current.close();
-      }
-    });
-  };
-
-  const launchImageLibraryHandler = async () => {
-    let result = await launchImageLibrary({
-      mediaType: "photo",
-    });
-
-    if (result?.assets) {
-      const selectedImageUri = result.assets[0].uri;
-      setProfileImage({ uri: selectedImageUri });
-      setSelectedImage(result.assets[0]);
-      bottomSheetRef.current.close();
-    }
-  };
-
   return (
     <BottomSheetModal
       isVisible={isVisible}
@@ -69,12 +41,18 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
 
         <View style={styles.body}>
           <View style={styles.btnParentSection}>
-            <TouchableOpacity onPress={launchCameraHandler} style={styles.btnSection}>
+            <TouchableOpacity
+              onPress={() => launchCameraHandler(setProfileImage, setSelectedImage, bottomSheetRef)}
+              style={styles.btnSection}
+            >
               <Ionicons name="camera" size={35} color={colors.primary} />
               <Text text="Open Camera" preset="subheading" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={launchImageLibraryHandler} style={styles.btnSection}>
+            <TouchableOpacity
+              onPress={() => launchImageLibraryHandler(setProfileImage, setSelectedImage, bottomSheetRef)}
+              style={styles.btnSection}
+            >
               <Ionicons name="image" size={35} color={colors.primary} />
               <Text text="Open Gallery" preset="subheading" />
             </TouchableOpacity>
