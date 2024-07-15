@@ -59,14 +59,17 @@ export interface SendMessageResponseI {
   };
 }
 
+export type ItemType = "message" | "document" | "camera" | "gallery" | "audio" | "location";
+
 export interface MessageItemI {
   _id: string;
   chatRoomId: string;
   sender: UserI;
   message: string | null;
-  link: null | null;
+  link?: null | null;
   files: null | null;
-  itemType?: "message" | "document" | "camera" | "gallery" | "audio" | "location";
+  itemType?: ItemType;
+  status?: string;
   createdAt: string;
   updatedAt: string;
 }

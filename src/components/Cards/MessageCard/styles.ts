@@ -46,6 +46,19 @@ const createStyles = (theme) =>
       fontSize: 10,
       color: theme.colors.subHeading,
     },
+    messageImageContainer: {
+      backgroundColor: colors.primary,
+      padding: hp(0.5),
+      borderRadius: wp(4),
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    messageImage: {
+      width: wp(60),
+      height: wp(70),
+      borderRadius: wp(4),
+      resizeMode: "cover",
+    },
   });
 
 export default createStyles;

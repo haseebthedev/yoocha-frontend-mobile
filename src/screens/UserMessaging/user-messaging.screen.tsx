@@ -28,6 +28,7 @@ import {
 } from "store";
 import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
+import { createNewMessage } from "utils/message";
 
 const LIMIT: number = 50;
 
@@ -89,13 +90,36 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   const sendMessage = async () => {
     if (message) {
+      let newMessage = createNewMessage(user, roomId, message, "message");
+      setState((prev: ListWithPagination<MessageItemI>) => ({
+        ...prev,
+        list: [newMessage, ...prev.list],
+      }));
+
       messageInputRef.current?.clear();
-      await dispatch(sendMessageService({ roomId, message }));
-      setMessage("");
+      await dispatch(sendMessageService({ roomId, message }))
+        .unwrap()
+        .then((response) => setMessage(""))
+        .catch((error) => console.log("Error while sending message: ", error));
     }
 
     if (selectedImage) {
-      await uploadImageToCloudinary(selectedImage);
+      let newMessage = createNewMessage(user, roomId, selectedImage?.uri, "camera");
+
+      setState((prev: ListWithPagination<MessageItemI>) => ({
+        ...prev,
+        list: [newMessage, ...prev.list],
+      }));
+
+      // let imageUri = await uploadImageToCloudinary(selectedImage);
+
+      setSelectedImage(null);
+      setProfileImage(null);
+
+      // await dispatch(sendMessageService({ roomId, message: imageUri }))
+      //   .unwrap()
+      //   .then((response) => setMessage(""))
+      //   .catch((error) => console.log("Error while sending message: ", error));
     }
   };
 
@@ -111,9 +135,15 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
+          const updatedMessages = response.result.docs.map((msg: MessageItemI) => ({
+            ...msg,
+            itemType: msg.itemType || "message",
+          }));
+
           setState((prev: ListWithPagination<MessageItemI>) => ({
             ...prev,
-            list: prev.list.concat(response.result.docs),
+            // list: prev.list.concat(response.result.docs),
+            list: prev.list.concat(updatedMessages),
             page: 1 + prev.page,
             hasNext: response.result.hasNextPage,
             listRefreshing: false,
@@ -155,12 +185,17 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   useEffect(() => {
     if (socket) {
-      socket.on(EventEnum.RECIEVE_MESSAGE, (payload: any) => {
-        setState((prev: any) => ({
-          ...prev,
-          list: [payload._doc, ...prev.list],
-        }));
-      });
+      const handleReceiveMessage = (payload: any) => {
+        setState((prev: ListWithPagination<MessageItemI>) => {
+          const uniqueMessages = prev.list.filter((msg: MessageItemI) => msg._id !== payload._doc._id);
+          return {
+            ...prev,
+            list: uniqueMessages,
+          };
+        });
+      };
+
+      socket.on(EventEnum.RECIEVE_MESSAGE, handleReceiveMessage);
     }
   }, [socket]);
 
@@ -246,7 +281,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
                 ref={messageInputRef}
                 value={message}
                 placeholder="Type here..."
-                onChangeText={(text) => setMessage(text)}
+                onChangeText={setMessage}
                 placeholderTextColor={colors.textDim}
                 style={styles.inputfield}
               />
@@ -259,7 +294,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity disabled={message ? false : true} onPress={sendMessage}>
+              <TouchableOpacity disabled={message || profileImage ? false : true} onPress={sendMessage}>
                 <Ionicons name="send" color={colors.primary} size={20} />
               </TouchableOpacity>
             </View>
