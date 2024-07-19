@@ -48,7 +48,6 @@ const AttachmentPicker = ({ open, onClose, setPicture }: PropsI) => {
 
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
-    console.log("Selected Location:", location);
   };
 
   const launchCameraHandler = () => {

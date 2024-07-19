@@ -10,7 +10,6 @@ export interface Message {
 
 const saveMessageOffline = async (message: Message): Promise<void> => {
   try {
-    console.log("ok");
     let messages: Message[] = await AsyncStorage.getItem("offlineMessages").then((res) => (res ? JSON.parse(res) : []));
     messages.push(message);
     await AsyncStorage.setItem("offlineMessages", JSON.stringify(messages));

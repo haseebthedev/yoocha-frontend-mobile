@@ -44,7 +44,8 @@ export interface ListMessagePayloadI {
 
 export interface SendMessagePayloadI {
   roomId: string;
-  message: string;
+  message?: string;
+  files?: string[];
 }
 
 export interface SendMessageResponseI {
@@ -59,7 +60,7 @@ export interface SendMessageResponseI {
   };
 }
 
-export type ItemType = "message" | "document" | "camera" | "gallery" | "audio" | "location";
+export type ItemType = "message" | "document" | "image" | "audio" | "location";
 
 export interface MessageItemI {
   _id: string;
@@ -67,7 +68,7 @@ export interface MessageItemI {
   sender: UserI;
   message: string | null;
   link?: null | null;
-  files: null | null;
+  files: string[] | null;
   itemType?: ItemType;
   status?: string;
   createdAt: string;

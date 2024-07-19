@@ -53,7 +53,9 @@ const ImageMessage = ({ item, isSentByUser }: TextMessageI) => {
         },
       ]}
     >
-      <Image source={{ uri: item.message ?? undefined }} style={styles.messageImage} />
+      {item?.files?.map((item) => (
+        <Image source={{ uri: item }} style={styles.messageImage} />
+      ))}
     </View>
   );
 };
@@ -86,7 +88,7 @@ const MessageCard = ({ item }: MessageCardI) => {
 
         {item.itemType === "message" ? (
           <TextMessage item={item} isSentByUser={isSentByUser} />
-        ) : item.itemType === "camera" || "gallery" ? (
+        ) : item.itemType === "image" ? (
           <ImageMessage item={item} isSentByUser={isSentByUser} />
         ) : (
           <></>

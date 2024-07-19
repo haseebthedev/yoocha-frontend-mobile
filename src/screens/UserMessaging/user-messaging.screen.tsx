@@ -90,7 +90,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   const sendMessage = async () => {
     if (message) {
-      let newMessage = createNewMessage(user, roomId, message, "message");
+      let newMessage = createNewMessage(user, roomId, message, null, "message");
       setState((prev: ListWithPagination<MessageItemI>) => ({
         ...prev,
         list: [newMessage, ...prev.list],
@@ -104,22 +104,24 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     }
 
     if (selectedImage) {
-      let newMessage = createNewMessage(user, roomId, selectedImage?.uri, "camera");
+      let newMessage = createNewMessage(user, roomId, null, selectedImage?.uri, "image");
 
       setState((prev: ListWithPagination<MessageItemI>) => ({
         ...prev,
         list: [newMessage, ...prev.list],
       }));
 
-      // let imageUri = await uploadImageToCloudinary(selectedImage);
+      let imageUri = await uploadImageToCloudinary(selectedImage);
 
       setSelectedImage(null);
       setProfileImage(null);
 
-      // await dispatch(sendMessageService({ roomId, message: imageUri }))
-      //   .unwrap()
-      //   .then((response) => setMessage(""))
-      //   .catch((error) => console.log("Error while sending message: ", error));
+      await dispatch(sendMessageService({ roomId, files: [imageUri] }))
+        .unwrap()
+        .then((response) => {
+          console.log("response === ", response);
+        })
+        .catch((error) => console.log("Error while sending message: ", error));
     }
   };
 
@@ -135,9 +137,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       .unwrap()
       .then((response: ListMessageResponseI) => {
         if (response?.result?.docs) {
-          const updatedMessages = response.result.docs.map((msg: MessageItemI) => ({
+          const updatedMessages: MessageItemI[] = response.result.docs.map((msg: MessageItemI) => ({
             ...msg,
-            itemType: msg.itemType || "message",
+            itemType: msg.message ? "message" : "image",
           }));
 
           setState((prev: ListWithPagination<MessageItemI>) => ({
@@ -290,12 +292,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
             <View style={styles.actionButtons}>
               {!profileImage && (
                 <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
-                  <Ionicons name="attach" color={theme.colors.iconColor} size={25} />
+                  <Ionicons name="attach" color={theme.colors.iconColor} size={30} />
                 </TouchableOpacity>
               )}
 
               <TouchableOpacity disabled={message || profileImage ? false : true} onPress={sendMessage}>
-                <Ionicons name="send" color={colors.primary} size={20} />
+                <Ionicons name="send" color={colors.primary} size={25} />
               </TouchableOpacity>
             </View>
           </View>

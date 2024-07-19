@@ -1,5 +1,4 @@
 import AxiosInstance from "services/api/api";
-import RNFS from "react-native-fs";
 
 export const uploadImageToCloudinary = async (selectedImage: any): Promise<any> => {
   try {

@@ -82,6 +82,16 @@ const createStyles = (theme) =>
       borderRadius: hp(0.2),
     },
     heading: { textAlign: "center" },
+    btnText: {
+      color: theme.colors.heading,
+    },
+    // sideBtn: {
+    //   borderWidth: 1,
+    //   borderColor: theme.colors.borderColor,
+    //   borderRadius: 8,
+    //   paddingHorizontal: 20,
+    //   paddingVertical: 8,
+    // },
   });
 
 export default createStyles;

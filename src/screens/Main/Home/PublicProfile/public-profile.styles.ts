@@ -49,7 +49,7 @@ const createStyles = (theme) =>
       alignItems: "center",
       justifyContent: "center",
       borderWidth: wp(1),
-      borderColor: colors.white,
+      borderColor: theme.colors.bgColor,
       zIndex: 100,
     },
     imagePlaceholder: {
@@ -61,7 +61,7 @@ const createStyles = (theme) =>
       height: wp(31),
       borderRadius: wp(15.5),
       borderWidth: wp(1),
-      borderColor: colors.white,
+      borderColor: theme.colors.bgColor,
       zIndex: 100,
     },
     name: {

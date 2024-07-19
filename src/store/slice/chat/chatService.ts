@@ -85,6 +85,7 @@ export const sendMessageService: any = createAsyncThunk(
         roomId: payload.roomId,
         payload: {
           message: payload.message,
+          files: payload.files,
         },
       });
       return response.data;

@@ -107,7 +107,7 @@ const createStyles = (theme) =>
       backgroundColor: colors.lightShade,
     },
     inputFieldBlock: {
-      height: hp(7),
+      height: hp(8),
       width: wp(100),
       flexDirection: "row",
       alignItems: "center",

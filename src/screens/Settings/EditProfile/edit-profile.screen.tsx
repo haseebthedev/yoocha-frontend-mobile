@@ -133,6 +133,23 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
         titleStyle={{ color: theme.colors.heading }}
+        customComponentRight={
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={handleSubmit}
+            // style={styles.sideBtn}
+          >
+            <Text text={"Save"} style={styles.btnText} />
+          </TouchableOpacity>
+          // <AppButton
+          //   style={{ width: "auto", padding: 10 }}
+          //   preset="filled"
+          //   text={loading ? "" : "Save"}
+          //   onPress={handleSubmit}
+          //   disabled={loading}
+          //   RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
+          // />
+        }
       />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
@@ -207,13 +224,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
           </TouchableOpacity>
         </View>
 
-        <AppButton
+        {/* <AppButton
           preset="filled"
           text={loading ? "" : "Save Changes"}
           onPress={handleSubmit}
           disabled={loading}
           RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
-        />
+        /> */}
       </ScrollView>
 
       <ImagePickerModal
