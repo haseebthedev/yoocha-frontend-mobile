@@ -7,13 +7,18 @@ import { formatTime } from "utils/dateAndTime";
 import userPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 import { useAppTheme } from "hooks";
+import { ActivityIndicator } from "react-native";
 
 interface MessageCardI {
   item: MessageItemI;
-  onPress?: () => void;
 }
 
 interface TextMessageI {
+  item: MessageItemI;
+  isSentByUser: any;
+}
+
+interface ImageMessageI {
   item: MessageItemI;
   isSentByUser: any;
 }
@@ -38,7 +43,7 @@ const TextMessage = ({ item, isSentByUser }: TextMessageI) => {
   );
 };
 
-const ImageMessage = ({ item, isSentByUser }: TextMessageI) => {
+const ImageMessage = ({ item, isSentByUser }: ImageMessageI) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -53,8 +58,8 @@ const ImageMessage = ({ item, isSentByUser }: TextMessageI) => {
         },
       ]}
     >
-      {item?.files?.map((item) => (
-        <Image source={{ uri: item }} style={styles.messageImage} />
+      {item?.files?.map((item, index) => (
+        <Image source={{ uri: item }} style={styles.messageImage} key={index} />
       ))}
     </View>
   );
@@ -86,9 +91,9 @@ const MessageCard = ({ item }: MessageCardI) => {
       <View style={styles.messageTextContainer}>
         {isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
 
-        {item.itemType === "message" ? (
+        {item.type === "text" ? (
           <TextMessage item={item} isSentByUser={isSentByUser} />
-        ) : item.itemType === "image" ? (
+        ) : item.type === "image" ? (
           <ImageMessage item={item} isSentByUser={isSentByUser} />
         ) : (
           <></>

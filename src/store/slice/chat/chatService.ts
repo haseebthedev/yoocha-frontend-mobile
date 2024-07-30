@@ -86,6 +86,7 @@ export const sendMessageService: any = createAsyncThunk(
         payload: {
           message: payload.message,
           files: payload.files,
+          type: payload.type,
         },
       });
       return response.data;

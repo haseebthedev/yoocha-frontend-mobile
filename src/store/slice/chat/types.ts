@@ -41,26 +41,29 @@ export interface ListMessagePayloadI {
   page?: number;
   limit?: number;
 }
-
+export enum MessageType {
+  TEXT = "text",
+  IMAGE = "image",
+}
 export interface SendMessagePayloadI {
   roomId: string;
   message?: string;
   files?: string[];
+  type: MessageType;
 }
 
 export interface SendMessageResponseI {
   result: {
     _id: string;
     chatRoomId: string;
-    sender: string;
-    message: string;
+    sender: UserI;
+    message: string | null;
+    type: MessageType;
     files: string[] | null;
     createdAt: string;
     updatedAt: string;
   };
 }
-
-export type ItemType = "message" | "document" | "image" | "audio" | "location";
 
 export interface MessageItemI {
   _id: string;
@@ -69,7 +72,7 @@ export interface MessageItemI {
   message: string | null;
   link?: null | null;
   files: string[] | null;
-  itemType?: ItemType;
+  type?: MessageType;
   status?: string;
   createdAt: string;
   updatedAt: string;

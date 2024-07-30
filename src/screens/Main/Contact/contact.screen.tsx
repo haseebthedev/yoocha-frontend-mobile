@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { ScreenEnum } from "enums";
+import { NotificationType, ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
@@ -65,8 +65,8 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
           await dispatch(
             createNotificationService({
               message: `${user.firstname} has sent you friend request.`,
-              recipientId: id,
-              senderId: user._id,
+              type: NotificationType.FRIEND_REQUEST,
+              to: id,
             })
           )
             .unwrap()

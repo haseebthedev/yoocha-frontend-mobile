@@ -6,6 +6,8 @@ export const launchCameraHandler = (
   setSelectedImage: (any) => void,
   bottomSheetRef: any
 ) => {
+  // bottomSheetRef.current.close();
+
   let options: any = {
     storageOptions: {
       skipBackup: true,
@@ -17,7 +19,6 @@ export const launchCameraHandler = (
       const selectedImageUri = response.assets[0].uri;
       setProfileImage({ uri: selectedImageUri });
       setSelectedImage(response.assets[0]);
-      bottomSheetRef.current.close();
     }
   });
 };
@@ -27,6 +28,8 @@ export const launchImageLibraryHandler = async (
   setSelectedImage: (any) => void,
   bottomSheetRef: any
 ) => {
+  // bottomSheetRef.current.close();
+
   let result = await launchImageLibrary({
     mediaType: "photo",
   });
@@ -35,6 +38,5 @@ export const launchImageLibraryHandler = async (
     const selectedImageUri = result.assets[0].uri;
     setProfileImage({ uri: selectedImageUri });
     setSelectedImage(result.assets[0]);
-    bottomSheetRef.current.close();
   }
 };

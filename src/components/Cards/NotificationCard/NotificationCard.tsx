@@ -16,8 +16,8 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const senderName: string = `${item.senderId.firstname} ${item.senderId.lastname}` || "";
-  const profileImage: string | null = item?.senderId.profilePicture;
+  const senderName: string = `${item.from.firstname} ${item.from.lastname}` || "";
+  const profileImage: string | null = item?.from.profilePicture;
 
   return (
     <TouchableOpacity

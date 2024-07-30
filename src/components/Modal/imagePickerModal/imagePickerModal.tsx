@@ -42,7 +42,10 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
         <View style={styles.body}>
           <View style={styles.btnParentSection}>
             <TouchableOpacity
-              onPress={() => launchCameraHandler(setProfileImage, setSelectedImage, bottomSheetRef)}
+              onPress={() => {
+                bottomSheetRef.current.close();
+                launchCameraHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+              }}
               style={styles.btnSection}
             >
               <Ionicons name="camera" size={35} color={colors.primary} />
@@ -50,7 +53,10 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => launchImageLibraryHandler(setProfileImage, setSelectedImage, bottomSheetRef)}
+              onPress={() => {
+                bottomSheetRef.current.close();
+                launchImageLibraryHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+              }}
               style={styles.btnSection}
             >
               <Ionicons name="image" size={35} color={colors.primary} />

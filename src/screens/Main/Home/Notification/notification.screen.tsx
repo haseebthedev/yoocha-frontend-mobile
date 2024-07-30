@@ -4,7 +4,7 @@ import { FlatList, RefreshControl, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { ScreenEnum } from "enums";
+import { NotificationType, ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useAppDispatch } from "store";
 import { ListWithPagination } from "interfaces";
@@ -43,6 +43,21 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
               notification._id === id ? { ...notification, isRead: true } : notification
             ),
           }));
+
+          const notification = response.result;
+          switch (notification.type) {
+            case NotificationType.FRIEND_REQUEST:
+              navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
+              break;
+            case NotificationType.MESSAGE:
+              navigation.navigate(ScreenEnum.HOME);
+              break;
+            case NotificationType.BLOCK:
+              navigation.navigate(ScreenEnum.BLOCKED_USERS);
+              break;
+            default:
+              navigation.navigate(ScreenEnum.NOTIFICATIONS);
+          }
         }
       })
       .then(() => navigation.navigate(ScreenEnum.RECIEVED_REQUESTS))

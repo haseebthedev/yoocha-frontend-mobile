@@ -10,8 +10,6 @@ export const uploadImageToCloudinary = async (selectedImage: any): Promise<any> 
       name: selectedImage.fileName,
     } as unknown as Blob);
 
-    console.log("form data === ", formData);
-
     const uploadResponse = await AxiosInstance.post("/file/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -33,8 +31,6 @@ export const uploadDocToCloudinary = async (selectedDoc: any): Promise<any> => {
       type: selectedDoc.type,
       name: selectedDoc.name,
     } as unknown as Blob);
-
-    console.log("form data === ", formData);
 
     const uploadResponse = await AxiosInstance.post("/file/upload", formData, {
       headers: {

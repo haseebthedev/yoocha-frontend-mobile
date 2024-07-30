@@ -1,3 +1,5 @@
+import { MessageType } from "store";
+
 export interface SendFriendReqPayloadI {
   participants: { user: string; role: string }[];
 }
@@ -15,4 +17,5 @@ export interface SendMessagePayloadI {
   message: string | null;
   link?: string | null;
   files?: string[] | null;
+  type: MessageType;
 }

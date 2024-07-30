@@ -1,17 +1,20 @@
+import { NotificationType } from "enums";
 import { UserI } from "../auth/types";
 import { PaginationListResultI } from "../chat/types";
 
 export interface NotificationPayloadI {
   message: string;
-  recipientId: string;
-  senderId: string;
+  type: NotificationType;
+  to: string;
 }
 
 export interface NotificationResponseI {
   result: {
     message: string;
-    senderId: string;
-    recipientId: string;
+    type: NotificationType;
+    from: string;
+    to: string;
+    status: string;
     isRead: boolean;
     _id: string;
     createdAt: string;
@@ -20,11 +23,13 @@ export interface NotificationResponseI {
 }
 
 export interface NotificationI {
-  _id: string;
   message: string;
-  senderId: UserI;
-  recipientId: UserI;
+  type: NotificationType;
+  from: UserI;
+  to: UserI;
+  status: string;
   isRead: boolean;
+  _id: string;
   createdAt: string;
   updatedAt: string;
 }

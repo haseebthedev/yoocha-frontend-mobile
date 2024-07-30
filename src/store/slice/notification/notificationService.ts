@@ -22,8 +22,8 @@ export const createNotificationService: any = createAsyncThunk(
         `/notification/create-notification`,
         {
           message: payload.message,
-          recipientId: payload.recipientId,
-          senderId: payload.senderId,
+          type: payload.type,
+          to: payload.to,
         }
       );
 
@@ -78,7 +78,7 @@ export const readNotificationService: any = createAsyncThunk(
   "notification/readNotification",
   async (payload: ReadNotificationPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<ListNotificationResponseI> = await AxiosInstance.patch(
+      const response: AxiosResponse<GetNotificationResponseI> = await AxiosInstance.patch(
         `/notification/${payload.id}/read`
       );
 
