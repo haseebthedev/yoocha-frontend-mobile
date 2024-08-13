@@ -75,12 +75,12 @@ const CustomHomeDrawer: React.FC<CustomHomeDrawerProps> = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionBlock} onPress={() => navigation.navigate(ScreenEnum.REPORT_ISSUE)}>
+        {/* <TouchableOpacity style={styles.optionBlock} onPress={() => navigation.navigate(ScreenEnum.REPORT_ISSUE)}>
           <View style={styles.innerLeftBlock}>
             <Ionicons name="alert-circle-outline" size={20} color={theme.colors.iconColor} />
             <Text text="Report an Issue" style={styles.navText} />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.optionBlock} onPress={onLogoutPress}>
           <View style={styles.innerLeftBlock}>

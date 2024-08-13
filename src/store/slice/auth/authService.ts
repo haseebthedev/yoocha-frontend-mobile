@@ -13,6 +13,7 @@ import {
   ChangePasswordPayloadI,
   ChangePasswordResponseI,
   ContactUsResponseI,
+  deleteMyProfileResponseI,
 } from "./types";
 import { API_URL } from "config/config.dev";
 import { saveString } from "utils/storage";
@@ -156,3 +157,14 @@ export const contactUsService: any = createAsyncThunk(
     }
   }
 );
+
+export const deleteMyProfileService: any = createAsyncThunk("auth/deleteMyProfile", async (_, { rejectWithValue }) => {
+  try {
+    const response: AxiosResponse<deleteMyProfileResponseI> = await AxiosInstance.delete(`/user/me`);
+
+    return response.data;
+  } catch (error: any) {
+    showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+    return rejectWithValue(error?.response?.data || "Something went wrong!");
+  }
+});

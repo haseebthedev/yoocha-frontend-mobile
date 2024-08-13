@@ -76,3 +76,4 @@ export interface ChangePasswordResponseI {
 }
 
 export type ContactUsResponseI = ChangePasswordResponseI;
+export type deleteMyProfileResponseI = ChangePasswordResponseI;

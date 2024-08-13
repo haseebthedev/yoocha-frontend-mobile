@@ -6,6 +6,7 @@ export * from "./General/searchBar/searchbar";
 // Output Components
 export * from "./Outputs/header/header";
 export * from "./Outputs/app-header/app-header";
+export * from "./Outputs/imagePreview/imagePreview";
 
 // Cards Components
 export * from "./Cards/HomeUserStatus/HomeUserStatus";

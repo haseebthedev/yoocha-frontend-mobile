@@ -28,7 +28,6 @@ const createStyles = (theme) =>
       width: hp(6.2),
       height: hp(6.2),
       borderRadius: hp(3),
-      // backgroundColor: colors.grey,
     },
     placeholderImage: {
       width: wp(6),

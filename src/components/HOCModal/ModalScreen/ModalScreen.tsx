@@ -5,13 +5,12 @@ import styles from "./styles";
 interface Props {
   children: ReactNode;
   isVisible: boolean;
-  title?: string;
   onPressClose: (value: boolean) => void;
 }
 
-export const ModalHoc = ({ children, isVisible = false, title, onPressClose }: Props) => {
+export const ModalHoc = ({ children, isVisible = false, onPressClose }: Props) => {
   return (
-    <Modal animationType="slide" transparent={true} visible={isVisible} onRequestClose={() => onPressClose(false)}>
+    <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={() => onPressClose(false)}>
       <View style={styles.modalView}>{children}</View>
     </Modal>
   );

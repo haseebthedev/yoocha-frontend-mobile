@@ -1,5 +1,14 @@
 import { FC, useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { FlatList, Image, TextInput, TouchableOpacity, View, ImageSourcePropType } from "react-native";
+import {
+  FlatList,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ImageSourcePropType,
+  Platform,
+  Keyboard,
+} from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -30,6 +39,7 @@ import {
 import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 import { createNewMessage } from "utils/message";
+import { KeyboardAvoidingView } from "react-native";
 
 const LIMIT: number = 50;
 
@@ -79,6 +89,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
     []
   );
+
+  const handleOpenImagePicker = () => {
+    Keyboard.dismiss();
+    setFileModalVisible((prev) => !prev);
+  };
 
   const blockUser = async () => {
     await dispatch(blockUserService({ id: otherUser?._id }))
@@ -298,7 +313,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
             <View style={styles.actionButtons}>
               {!imageMessage && (
-                <TouchableOpacity onPress={() => setFileModalVisible((prev) => !prev)}>
+                <TouchableOpacity onPress={handleOpenImagePicker}>
                   <Ionicons name="attach" color={theme.colors.iconColor} size={30} />
                 </TouchableOpacity>
               )}

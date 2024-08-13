@@ -10,7 +10,14 @@ import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { AlertBox, SettingListItem, Text } from "components";
-import { RootState, getMyProfileService, logoutUser, useAppDispatch, useAppSelector } from "store";
+import {
+  RootState,
+  deleteMyProfileService,
+  getMyProfileService,
+  logoutUser,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import createStyles from "./profile.styles";
 import personplaceholder from "assets/images/person.png";
 
@@ -31,6 +38,13 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const onConfirmLogoutPress = async () => await dispatch(logoutUser());
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
   const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
+
+  const deleteAccountHandler = async () => {
+    await dispatch(deleteMyProfileService())
+      .unwrap()
+      .then(() => navigation.navigate(ScreenEnum.SIGN_IN))
+      .catch((err) => console.log("Error: ", err));
+  };
 
   useEffect(() => {
     dispatch(getMyProfileService());
@@ -129,8 +143,9 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
         title="Delete Account!"
         description="Are you sure you want to delete your account permanently?"
         onClose={onDelModalCancelPress}
-        secondaryButtonText="Cancel"
         primaryButtonText="Delete"
+        primaryOnClick={deleteAccountHandler}
+        secondaryButtonText="Cancel"
         secondaryOnClick={() => setDeleteAccModalVisible((prev) => !prev)}
       />
     </View>

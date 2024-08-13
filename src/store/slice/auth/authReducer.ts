@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   changePasswordService,
   contactUsService,
+  deleteMyProfileService,
   forgetPasswordService,
   getMyProfileService,
   signinService,
@@ -109,6 +110,17 @@ export const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(contactUsService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(deleteMyProfileService.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteMyProfileService.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(deleteMyProfileService.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

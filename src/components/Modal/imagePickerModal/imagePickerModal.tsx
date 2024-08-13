@@ -9,7 +9,6 @@ import { colors } from "theme";
 import { BottomSheetModal } from "components/HOCModal/BottomSheet/BottomSheet";
 import { launchCameraHandler, launchImageLibraryHandler } from "utils/imagePicker";
 import styles from "./styles";
-
 interface ImagePickerModalI {
   isVisible: boolean;
   title?: string;

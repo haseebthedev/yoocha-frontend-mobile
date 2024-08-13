@@ -31,10 +31,12 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     setLoading(true);
     await dispatch(signinService({ email, password }))
       .unwrap()
-      .then((response) => navigation.navigate(ScreenEnum.MAIN))
+      .then((response) => {
+        // resetForm();
+        navigation.navigate(ScreenEnum.MAIN);
+      })
       .catch((error) => console.log(error.message))
       .finally(() => {
-        // resetForm();
         setLoading(false);
       });
   };
