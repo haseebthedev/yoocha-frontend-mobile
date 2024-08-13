@@ -32,7 +32,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     await dispatch(signinService({ email, password }))
       .unwrap()
       .then((response) => {
-        // resetForm();
+        resetForm();
         navigation.navigate(ScreenEnum.MAIN);
       })
       .catch((error) => console.log(error.message))
@@ -52,6 +52,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
         <TextInput
           label="Email"
           placeholder="Enter Email"
+          value={values.email}
           onBlur={() => setFieldTouched("email")}
           onChangeText={handleChange("email")}
           error={errors.email}
@@ -61,6 +62,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           label="Password"
           placeholder="Enter Password"
           isPassword={showPassword}
+          value={values.password}
           rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
           onRightPress={() => setShowPassword((prev) => !prev)}
           onBlur={() => setFieldTouched("password")}

@@ -54,7 +54,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
 
   const [personId, setPersonId] = useState<string>("");
 
-  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
+  const onAddFriendRequestHandler = async (id: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
       setAlertModalVisible((prev: boolean) => !prev);
       setPersonId(id);
@@ -65,8 +65,9 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
           await dispatch(
             createNotificationService({
               message: `${user.firstname} has sent you friend request.`,
-              type: NotificationType.FRIEND_REQUEST,
+              type: NotificationType.FRIEND_REQUEST_RECIEVED,
               to: id,
+              from: user._id,
             })
           )
             .unwrap()
@@ -141,7 +142,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
                     item={item}
                     onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
                     btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
-                    onBtnPress={onBtnPress}
+                    onBtnPress={onAddFriendRequestHandler}
                   />
                 </View>
               )}
@@ -194,7 +195,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
             <ContactUserCard
               item={item}
               btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-              onBtnPress={onBtnPress}
+              onBtnPress={onAddFriendRequestHandler}
               onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
             />
           )}

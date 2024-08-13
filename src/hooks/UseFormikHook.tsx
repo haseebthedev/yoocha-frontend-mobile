@@ -15,6 +15,6 @@ export function useFormikHook(submit: any, validationSchema: any, initialValues:
     errors,
     touched,
     values,
-    resetForm: resetForm,
+    resetForm,
   };
 }

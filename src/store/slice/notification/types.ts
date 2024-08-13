@@ -6,6 +6,7 @@ export interface NotificationPayloadI {
   message: string;
   type: NotificationType;
   to: string;
+  from: string;
 }
 
 export interface NotificationResponseI {

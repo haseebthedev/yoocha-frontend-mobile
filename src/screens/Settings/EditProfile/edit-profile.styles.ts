@@ -25,7 +25,7 @@ const createStyles = (theme) =>
     },
     imagePlaceholder: {
       width: wp(15),
-      height: wp(15),
+      height: wp(20.4),
     },
     imgContainer: {
       marginTop: hp(2.8),
@@ -83,15 +83,12 @@ const createStyles = (theme) =>
     },
     heading: { textAlign: "center" },
     btnText: {
-      color: theme.colors.heading,
+      color: colors.primary,
     },
-    // sideBtn: {
-    //   borderWidth: 1,
-    //   borderColor: theme.colors.borderColor,
-    //   borderRadius: 8,
-    //   paddingHorizontal: 20,
-    //   paddingVertical: 8,
-    // },
+    saveButton: {
+      width: "auto",
+      padding: 10,
+    },
   });
 
 export default createStyles;

@@ -136,19 +136,12 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         customComponentRight={
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={handleSubmit}
-            // style={styles.sideBtn}
+            onPress={() => {
+              handleSubmit();
+            }}
           >
-            <Text text={"Save"} style={styles.btnText} />
+            <Text preset="heading" text={"Save"} style={styles.btnText} />
           </TouchableOpacity>
-          // <AppButton
-          //   style={{ width: "auto", padding: 10 }}
-          //   preset="filled"
-          //   text={loading ? "" : "Save"}
-          //   onPress={handleSubmit}
-          //   disabled={loading}
-          //   RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
-          // />
         }
       />
 

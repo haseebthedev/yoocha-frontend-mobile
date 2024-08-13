@@ -46,21 +46,21 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
 
           const notification = response.result;
           switch (notification.type) {
-            case NotificationType.FRIEND_REQUEST:
+            case NotificationType.FRIEND_REQUEST_RECIEVED:
               navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
+              break;
+            case NotificationType.FRIEND_REQUEST_ACCEPTED:
+              navigation.navigate(ScreenEnum.HOME);
               break;
             case NotificationType.MESSAGE:
               navigation.navigate(ScreenEnum.HOME);
-              break;
-            case NotificationType.BLOCK:
-              navigation.navigate(ScreenEnum.BLOCKED_USERS);
               break;
             default:
               navigation.navigate(ScreenEnum.NOTIFICATIONS);
           }
         }
       })
-      .then(() => navigation.navigate(ScreenEnum.RECIEVED_REQUESTS))
+      .then(() => {})
       .catch((error) => console.log("error", error));
   };
 

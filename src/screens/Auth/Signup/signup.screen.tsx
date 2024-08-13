@@ -41,7 +41,10 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
         })
       )
         .unwrap()
-        .then((response) => navigation.navigate(ScreenEnum.SIGN_IN))
+        .then((response) => {
+          navigation.navigate(ScreenEnum.SIGN_IN);
+          resetForm();
+        })
         .catch((error) => console.log("error: ", error));
     } catch (error) {
       console.error("Error occurred during sign-up:", error);
@@ -50,7 +53,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     }
   };
 
-  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values } = useFormikHook(
+  const { handleChange, handleSubmit, setFieldTouched, errors, touched, values, resetForm } = useFormikHook(
     submit,
     validationSchema,
     initialValues
@@ -73,6 +76,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("firstname")}
           error={errors.firstname}
           visible={touched.firstname}
+          value={values.firstname}
         />
         <TextInput
           label="Last Name"
@@ -81,6 +85,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("lastname")}
           error={errors.lastname}
           visible={touched.lastname}
+          value={values.lastname}
         />
         <TextInput
           label="Email"
@@ -89,6 +94,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("email")}
           error={errors.email}
           visible={touched.email}
+          value={values.email}
         />
 
         <TextInput
@@ -101,6 +107,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("password")}
           error={errors.password}
           visible={touched.password}
+          value={values.password}
         />
 
         <TextInput
@@ -113,6 +120,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("confirmPassword")}
           error={errors.confirmPassword}
           visible={touched.confirmPassword}
+          value={values.confirmPassword}
         />
 
         <AppButton
