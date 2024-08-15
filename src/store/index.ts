@@ -10,3 +10,6 @@ export * from "./slice/chat/types";
 export * from "./slice/contact/contactReducer";
 export * from "./slice/contact/contactService";
 export * from "./slice/contact/types";
+
+export * from "./slice/token/tokenReducer";
+export * from "./slice/token/tokenService";

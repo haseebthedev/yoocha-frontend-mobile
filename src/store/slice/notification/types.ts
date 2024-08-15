@@ -7,6 +7,8 @@ export interface NotificationPayloadI {
   type: NotificationType;
   to: string;
   from: string;
+  sendPushNotification?: boolean;
+  targetToken?: string;
 }
 
 export interface NotificationResponseI {

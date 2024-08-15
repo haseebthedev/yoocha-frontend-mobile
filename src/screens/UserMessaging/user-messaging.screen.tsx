@@ -1,14 +1,5 @@
 import { FC, useEffect, useMemo, useRef, useState, useCallback } from "react";
-import {
-  FlatList,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  View,
-  ImageSourcePropType,
-  Platform,
-  Keyboard,
-} from "react-native";
+import { FlatList, Image, TextInput, TouchableOpacity, View, ImageSourcePropType, Keyboard } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -17,12 +8,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
-import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { EventEnum, ScreenEnum } from "enums";
 import { uploadImageToCloudinary } from "utils/cloudinary";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
+import { useAppState, useAppTheme, useCurrentRouteName } from "hooks";
 import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text, ImagePickerModal } from "components";
 import {
   UserI,
@@ -39,7 +30,6 @@ import {
 import personplaceholder from "assets/images/person.png";
 import createStyles from "./styles";
 import { createNewMessage } from "utils/message";
-import { KeyboardAvoidingView } from "react-native";
 
 const LIMIT: number = 50;
 
@@ -50,6 +40,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const { roomId, friendName, item } = route.params;
 
   const dispatch = useAppDispatch();
+  const appState = useAppState();
+  const currentRouteName = useCurrentRouteName();
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -114,8 +106,10 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     messageInputRef.current?.clear();
 
     try {
-      await dispatch(sendMessageService({ roomId, message, type: MessageType.TEXT })).unwrap();
-      setMessage("");
+      await dispatch(sendMessageService({ roomId, message, type: MessageType.TEXT }))
+        .unwrap()
+        .catch((err) => console.log(err))
+        .finally(() => setMessage(""));
     } catch (error) {
       console.log("Error while sending text message: ", error);
     }

@@ -68,8 +68,11 @@ export const sendFriendRequest: any = createAsyncThunk(
   "contact/sendFriendRequest",
   async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.get(
-        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
+      const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.post(
+        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`,
+        {
+          fcmToken: payload.fcmToken,
+        }
       );
 
       showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });

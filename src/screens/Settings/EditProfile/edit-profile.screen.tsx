@@ -148,7 +148,11 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <View style={styles.profileImageContainer}>
-            <Image source={profileImage} style={user?.profilePicture ? styles.profileImage : styles.imagePlaceholder} />
+            <Image
+              source={profileImage}
+              style={user?.profilePicture ? styles.profileImage : styles.imagePlaceholder}
+              resizeMode="cover"
+            />
           </View>
           <TouchableOpacity style={styles.changeImageBtn} onPress={handleOpenPress}>
             <Ionicons name="camera" size={20} color={colors.primary} />

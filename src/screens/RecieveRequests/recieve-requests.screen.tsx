@@ -7,7 +7,6 @@ import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { createNotificationService } from "store/slice/notification/notificationService";
 import { EventEnumRole, NotificationType, ScreenEnum } from "enums";
 import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
 import {
@@ -66,18 +65,7 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
 
     await dispatch(acceptFriendRequest({ roomId: roomId }))
       .unwrap()
-      .then(async (response) => {
-        await dispatch(
-          createNotificationService({
-            message: `${user.firstname} has accepted your friend request.`,
-            type: NotificationType.FRIEND_REQUEST_ACCEPTED,
-            to: friendId,
-            from: user._id,
-          })
-        )
-          .unwrap()
-          .catch((err) => console.error("error: ", err));
-      });
+      .catch((err) => console.error("error: ", err));
   };
 
   const getUserRequests = async () => {

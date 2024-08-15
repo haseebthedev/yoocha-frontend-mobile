@@ -60,8 +60,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
           }
         }
       })
-      .then(() => {})
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log("error: ", error));
   };
 
   const getNotificationList = async () => {

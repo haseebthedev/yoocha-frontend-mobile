@@ -26,6 +26,9 @@ const createStyles = (theme) =>
     imagePlaceholder: {
       width: wp(15),
       height: wp(20.4),
+      // width: wp(30),
+      // height: wp(30),
+      // borderRadius: hp(15.5),
     },
     imgContainer: {
       marginTop: hp(2.8),

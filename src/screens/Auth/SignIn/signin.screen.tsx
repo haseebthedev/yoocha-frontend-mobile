@@ -1,7 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Keyboard, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import messaging from "@react-native-firebase/messaging";
 
 import { colors } from "theme";
 import { SigninI } from "interfaces";
@@ -9,13 +10,16 @@ import { ScreenEnum } from "enums";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
-import { signinService, useAppDispatch } from "store";
+import { RootState, signinService, useAppDispatch, useAppSelector } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
 import { useAppTheme } from "hooks";
 import createStyles from "./signin.styles";
+import { saveTokenService } from "store/slice/token/tokenService";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -31,7 +35,12 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     setLoading(true);
     await dispatch(signinService({ email, password }))
       .unwrap()
-      .then((response) => {
+      .then(async (response) => {
+        const token = await messaging().getToken();
+        const userId = response.result.user._id;
+        await dispatch(saveTokenService({ token, userId }));
+      })
+      .then(() => {
         resetForm();
         navigation.navigate(ScreenEnum.MAIN);
       })

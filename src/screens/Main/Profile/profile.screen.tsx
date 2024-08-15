@@ -27,7 +27,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { user } = useAppSelector((state: RootState) => state.auth);
+  const { user, loading } = useAppSelector((state: RootState) => state.auth);
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
@@ -118,12 +118,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
               onPress={() => setDeleteAccModalVisible((prev) => !prev)}
             />
           </View>
-
-          {/* <View style={styles.btnContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.EDIT_PROFILE)} style={styles.btn}>
-              <Text text="Edit Profile" style={styles.btnText} />
-            </TouchableOpacity>
-          </View> */}
         </View>
       </View>
       <AlertBox
@@ -147,6 +141,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
         primaryOnClick={deleteAccountHandler}
         secondaryButtonText="Cancel"
         secondaryOnClick={() => setDeleteAccModalVisible((prev) => !prev)}
+        loading={loading}
       />
     </View>
   );
