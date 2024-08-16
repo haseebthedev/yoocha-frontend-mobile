@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+
+import { UserI } from "../auth/types";
 import { InitialStateI } from "./types";
 import {
   getExplorePeopleService,
@@ -7,7 +9,6 @@ import {
   removeFriendRequest,
   sendFriendRequest,
 } from "./contactService";
-import { UserI } from "../auth/types";
 
 const initialUser: UserI = {
   profilePicture: "" || null,

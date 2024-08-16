@@ -1,5 +1,6 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
 import {
   GetFriendsSuggestionResponseI,
   ExplorePeopleResponseI,
@@ -69,10 +70,7 @@ export const sendFriendRequest: any = createAsyncThunk(
   async (payload: sendFriendReqPayloadI, { rejectWithValue }) => {
     try {
       const response: AxiosResponse<sendFriendReqResponseI> = await AxiosInstance.post(
-        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`,
-        {
-          fcmToken: payload.fcmToken,
-        }
+        `/chat/send-friend-req?inviteeId=${payload.inviteeId}`
       );
 
       showFlashMessage({ type: "success", message: `${response.data.result.status || "Request has been sent!"}` });

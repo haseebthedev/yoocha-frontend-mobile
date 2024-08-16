@@ -4,14 +4,14 @@ import { FlatList, RefreshControl, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
-import { NotificationType, ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useAppDispatch } from "store";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
+import { NotificationEnum, ScreenEnum } from "enums";
 import { listNotificationService, readNotificationService } from "store/slice/notification/notificationService";
-import { ListNotificationResponseI, NotificationI, NotificationResponseI } from "store/slice/notification/types";
 import { EmptyListText, Header, LoadingIndicator, NotificationCard } from "components";
+import { ListNotificationResponseI, NotificationI, NotificationResponseI } from "store/slice/notification/types";
 import createStyles from "./notification.styles";
 
 const LIMIT: number = 10;
@@ -33,34 +33,34 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   });
 
   const onNotificationPress = async (id: string) => {
-    await dispatch(readNotificationService({ id }))
-      .unwrap()
-      .then((response: NotificationResponseI) => {
-        if (response?.result) {
-          setState((prev: ListWithPagination<NotificationI>) => ({
-            ...prev,
-            list: prev.list.map((notification) =>
-              notification._id === id ? { ...notification, isRead: true } : notification
-            ),
-          }));
+    try {
+      const response: NotificationResponseI = await dispatch(readNotificationService({ id })).unwrap();
 
-          const notification = response.result;
-          switch (notification.type) {
-            case NotificationType.FRIEND_REQUEST_RECIEVED:
-              navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
-              break;
-            case NotificationType.FRIEND_REQUEST_ACCEPTED:
-              navigation.navigate(ScreenEnum.HOME);
-              break;
-            case NotificationType.MESSAGE:
-              navigation.navigate(ScreenEnum.HOME);
-              break;
-            default:
-              navigation.navigate(ScreenEnum.NOTIFICATIONS);
-          }
+      if (response?.result) {
+        setState((prev: ListWithPagination<NotificationI>) => ({
+          ...prev,
+          list: prev.list.map((notification) =>
+            notification._id === id ? { ...notification, isRead: true } : notification
+          ),
+        }));
+
+        const { type } = response.result;
+
+        switch (type) {
+          case NotificationEnum.FRIEND_REQUEST_RECIEVED:
+            navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
+            break;
+          case NotificationEnum.FRIEND_REQUEST_ACCEPTED:
+          case NotificationEnum.MESSAGE:
+            navigation.navigate(ScreenEnum.HOME);
+            break;
+          default:
+            navigation.navigate(ScreenEnum.NOTIFICATIONS);
         }
-      })
-      .catch((error) => console.log("error: ", error));
+      }
+    } catch (error) {
+      console.error("Error occurred while handling notification:", error);
+    }
   };
 
   const getNotificationList = async () => {

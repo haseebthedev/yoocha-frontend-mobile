@@ -1,13 +1,13 @@
-export interface LoadingI {
+export interface TokenSliceI {
   loading: boolean;
 }
 
 export interface TokenI {
-  token: "absssss";
-  userId: "aaasasasa";
-  _id: "66bdf15879ead741d2e425af";
-  createdAt: "2024-08-15T12:15:20.946Z";
-  updatedAt: "2024-08-15T12:15:20.947Z";
+  token: string;
+  userId: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SaveTokenPayloadI {
@@ -17,14 +17,4 @@ export interface SaveTokenPayloadI {
 
 export interface SaveTokenResponseI {
   result: TokenI;
-}
-
-export interface ListTokenPayloadI {
-  userId: string;
-}
-
-export interface ListTokenResponseI {
-  result: {
-    docs: TokenI[];
-  };
 }

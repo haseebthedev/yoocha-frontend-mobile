@@ -1,20 +1,11 @@
-import { NotificationType } from "enums";
 import { UserI } from "../auth/types";
+import { NotificationEnum } from "enums";
 import { PaginationListResultI } from "../chat/types";
-
-export interface NotificationPayloadI {
-  message: string;
-  type: NotificationType;
-  to: string;
-  from: string;
-  sendPushNotification?: boolean;
-  targetToken?: string;
-}
 
 export interface NotificationResponseI {
   result: {
     message: string;
-    type: NotificationType;
+    type: NotificationEnum;
     from: string;
     to: string;
     status: string;
@@ -27,7 +18,7 @@ export interface NotificationResponseI {
 
 export interface NotificationI {
   message: string;
-  type: NotificationType;
+  type: NotificationEnum;
   from: UserI;
   to: UserI;
   status: string;

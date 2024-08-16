@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from "react";
 import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
@@ -24,7 +24,6 @@ import {
   UserI,
   getExplorePeopleService,
   getFriendsSuggestionService,
-  getTokensService,
   removeFriendRequest,
   sendFriendRequest,
   useAppDispatch,
@@ -43,38 +42,21 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
 
   const { friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
 
+  const [friendId, setFriendId] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const [loadFriendSuggestion, setLoadFriendSuggestion] = useState<boolean>(false);
   const [loadExplorePeople, setLoadExplorePeople] = useState<boolean>(false);
-
-  const [friendId, setFriendId] = useState<string>("");
+  const [loadFriendSuggestion, setLoadFriendSuggestion] = useState<boolean>(false);
 
   const onAddFriendRequestHandler = async (inviteeId: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
       setAlertModalVisible((prev: boolean) => !prev);
       setFriendId(inviteeId);
     } else {
-      let tokens;
-      await dispatch(getTokensService({ userId: inviteeId })) //inviteeId
+      await dispatch(sendFriendRequest({ inviteeId }))
         .unwrap()
-        .then(async (response) => {
-          tokens = response.result.docs;
-          await dispatch(sendFriendRequest({ inviteeId, fcmToken: tokens[0] }))
-            .unwrap()
-            .catch((err) => console.error("error: ", err));
-        })
-        .catch((err) => console.log("Error while getting Tokens"));
-
-      // await createNotification({
-      //   message: `${user.firstname} has sent you a friend request.`,
-      //   type: NotificationType.FRIEND_REQUEST_RECIEVED,
-      //   to: inviteeId,
-      //   from: user._id,
-      // });
+        .catch((err) => console.error("error: ", err));
     }
   };
 

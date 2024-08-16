@@ -1,7 +1,6 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import AxiosInstance from "services/api/api";
 import {
   DeleteNotificationPayloadI,
   DeleteNotificationResponseI,
@@ -11,6 +10,7 @@ import {
   ListNotificationResponseI,
   ReadNotificationPayloadI,
 } from "./types";
+import AxiosInstance from "services/api/api";
 
 export const listNotificationService: any = createAsyncThunk(
   "notification/listNotification",

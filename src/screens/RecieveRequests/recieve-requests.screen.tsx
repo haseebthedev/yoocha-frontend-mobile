@@ -7,8 +7,8 @@ import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { EventEnumRole, NotificationType, ScreenEnum } from "enums";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
+import { EventEnumRole, ScreenEnum } from "enums";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
@@ -33,10 +33,10 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
+  const [friendId, setFriendId] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [state, setState] = useState<ListWithPagination<UserInfo>>({
     list: [],
     page: 1,
@@ -63,9 +63,9 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
       hasNext: prev?.hasNext,
     }));
 
-    await dispatch(acceptFriendRequest({ roomId: roomId }))
+    await dispatch(acceptFriendRequest({ roomId }))
       .unwrap()
-      .catch((err) => console.error("error: ", err));
+      .catch((err) => console.error("Error while accepting friend req: ", err));
   };
 
   const getUserRequests = async () => {

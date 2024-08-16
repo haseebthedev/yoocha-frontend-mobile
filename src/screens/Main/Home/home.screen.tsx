@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
@@ -24,9 +25,9 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [unreadNotification, setUnreadNotification] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [viewStatus, setViewStatus] = useState<boolean>(false);
+  const [unreadNotification, setUnreadNotification] = useState<number>(0);
   const [statusData, setStatusData] = useState<UserStatusI>({
     id: "",
     name: "",

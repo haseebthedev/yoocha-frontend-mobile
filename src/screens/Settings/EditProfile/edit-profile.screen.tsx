@@ -14,6 +14,7 @@ import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
+import { uploadImageToCloudinary } from "utils/cloudinary";
 import { UpdateUserI, UserUpdateI } from "interfaces/user";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
 import {
@@ -29,7 +30,6 @@ import {
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import personPlaceholder from "assets/images/person.png";
 import createStyles from "./edit-profile.styles";
-import { uploadImageToCloudinary } from "utils/cloudinary";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
   navigation,
@@ -44,15 +44,15 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
 
-  const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-  const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
-  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [selectedImage, setSelectedImage] = useState<any>(null);
-  const [dateOfBirth, setDateOfBirth] = useState<Date>();
+  const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
   const [imagePickerVisible, setImagePickerVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
+  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {

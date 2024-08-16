@@ -13,3 +13,4 @@ export * from "./slice/contact/types";
 
 export * from "./slice/token/tokenReducer";
 export * from "./slice/token/tokenService";
+export * from "./slice/token/types";

@@ -33,8 +33,8 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const styles = createStyles(theme);
 
   const [friendId, setFriendId] = useState<string>("");
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<UserInfo>>({
     list: [],
     page: 1,
@@ -83,7 +83,8 @@ const SendRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
           }));
         }
       })
-      .then(() => {
+      .catch((err) => console.log("Error: ", err))
+      .finally(() => {
         setRefreshing(false);
       });
   };

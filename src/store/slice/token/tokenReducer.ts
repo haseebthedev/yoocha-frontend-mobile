@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { LoadingI } from "./types";
-import { getTokensService, saveTokenService } from "./tokenService";
 
-const initialState: LoadingI = {
+import { TokenSliceI } from "./types";
+import { saveTokenService } from "./tokenService";
+
+const initialState: TokenSliceI = {
   loading: false,
 };
 
@@ -20,16 +21,6 @@ export const tokenSlice = createSlice({
         state.loading = false;
       })
       .addCase(saveTokenService.rejected, (state, action) => {
-        state.loading = false;
-      })
-
-      .addCase(getTokensService.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getTokensService.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(getTokensService.rejected, (state, action) => {
         state.loading = false;
       });
   },

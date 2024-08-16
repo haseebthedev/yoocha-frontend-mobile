@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+
+import { AuthI } from "./types";
 import {
   changePasswordService,
   contactUsService,
@@ -9,7 +11,6 @@ import {
   signupService,
   updateUserService,
 } from "./authService";
-import { AuthI } from "./types";
 
 const initialState: AuthI = {
   loading: false,

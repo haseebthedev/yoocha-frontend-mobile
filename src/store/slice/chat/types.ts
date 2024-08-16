@@ -41,6 +41,7 @@ export interface ListMessagePayloadI {
   page?: number;
   limit?: number;
 }
+
 export enum MessageType {
   TEXT = "text",
   IMAGE = "image",

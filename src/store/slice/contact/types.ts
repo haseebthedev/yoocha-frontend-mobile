@@ -1,6 +1,5 @@
 import { UserI } from "../auth/types";
 import { PaginationListResultI, ResponseWithStatus } from "../chat/types";
-import { TokenI } from "../token/types";
 
 export interface InitialStateI {
   loading: boolean;
@@ -23,7 +22,6 @@ export type ExplorePeopleResponseI = PaginationListResultI<UserI>;
 
 export interface sendFriendReqPayloadI {
   inviteeId: string;
-  fcmToken: TokenI;
 }
 
 export type sendFriendReqResponseI = ResponseWithStatus;

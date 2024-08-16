@@ -3,8 +3,8 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
@@ -35,8 +35,11 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
   const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
+
   const onConfirmLogoutPress = async () => await dispatch(logoutUser());
+
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
+
   const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
 
   const deleteAccountHandler = async () => {
@@ -74,15 +77,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
             />
           </View>
           <Text text={userName} preset="largeHeading" style={styles.name} />
-
-          {/* <View style={styles.location}>
-            {user?.country && (
-              <>
-                <Ionicons name="location-sharp" size={18} color={theme.colors.iconColor} />
-                <Text text={user?.country} preset="light" style={styles.locationText} />
-              </>
-            )}
-          </View> */}
 
           <View style={styles.listItems}>
             <SettingListItem

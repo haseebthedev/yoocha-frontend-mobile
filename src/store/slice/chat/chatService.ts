@@ -42,7 +42,7 @@ export const acceptFriendRequest: any = createAsyncThunk(
   "chat/acceptFriendRequest",
   async (payload: AcceptFriendReqPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<AcceptFriendReqResponseI> = await AxiosInstance.get(
+      const response: AxiosResponse<AcceptFriendReqResponseI> = await AxiosInstance.post(
         `/chat/accept-friend-req?roomId=${payload.roomId}`
       );
 

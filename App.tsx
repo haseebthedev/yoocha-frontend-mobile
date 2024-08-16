@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { Alert, StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -10,6 +10,7 @@ import messaging from "@react-native-firebase/messaging";
 
 import { AppNavigator } from "./src/navigators";
 import { persistor, store } from "./src/store/store";
+import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -32,8 +33,17 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    configurePushNotifications();
+  }, []);
+
+  useEffect(() => {
+    createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+      console.log("remoteMessage === ", remoteMessage);
+      showLocalNotification(remoteMessage, "friend-request-channel");
     });
 
     return unsubscribe;
