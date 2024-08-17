@@ -33,17 +33,17 @@ export const showLocalNotification = (remoteMessage, channelId: string) => {
   });
 };
 
-// export const createChannel = (channelId: string, channelName: string, channelDescription: string) => {
-//   PushNotification.createChannel(
-//     {
-//       channelId,
-//       channelName,
-//       channelDescription,
-//       playSound: true,
-//       soundName: "default",
-//       importance: 4,
-//       vibrate: true,
-//     },
-//     (created) => console.log(`createChannel returned '${created}'`)
-//   );
-// };
+export const createChannel = (channelId: string, channelName: string, channelDescription: string) => {
+  PushNotification.createChannel(
+    {
+      channelId,
+      channelName,
+      channelDescription,
+      playSound: true,
+      soundName: "default",
+      importance: 4,
+      vibrate: true,
+    },
+    (created) => console.log(`createChannel returned '${created}'`)
+  );
+};

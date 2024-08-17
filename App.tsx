@@ -8,9 +8,10 @@ import BootSplash from "react-native-bootsplash";
 import FlashMessage from "react-native-flash-message";
 import messaging from "@react-native-firebase/messaging";
 
-import { AppNavigator } from "./src/navigators";
+import { AppNavigator, navigationRef } from "./src/navigators";
 import { persistor, store } from "./src/store/store";
-import { configurePushNotifications, showLocalNotification } from "./src/utils/pushNotification";
+import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
+import { ScreenEnum } from "./src/enums";
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -26,6 +27,8 @@ const App = () => {
 
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log("Message handled in the background!", remoteMessage);
+
+    showLocalNotification(remoteMessage, "friend-request-channel");
   });
 
   useEffect(() => {
@@ -36,15 +39,31 @@ const App = () => {
     configurePushNotifications();
   }, []);
 
-  // useEffect(() => {
-  //   createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
-  // }, []);
+  useEffect(() => {
+    createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
+  }, []);
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("remoteMessage === ", remoteMessage);
       showLocalNotification(remoteMessage, "friend-request-channel");
     });
+
+    // Handle messages when the app is opened from a background state
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log("Notification caused app to open from background state:", remoteMessage.notification);
+      // Navigate to the screen related to the notification
+    });
+
+    // Handle messages when the app is opened from a quit state
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("Notification caused app to open from quit state:", remoteMessage.notification);
+          // navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
+        }
+      });
 
     return unsubscribe;
   }, []);
