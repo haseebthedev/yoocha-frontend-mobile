@@ -8,10 +8,13 @@ import BootSplash from "react-native-bootsplash";
 import FlashMessage from "react-native-flash-message";
 import messaging from "@react-native-firebase/messaging";
 
-import { AppNavigator, navigationRef } from "./src/navigators";
+import { AppNavigator, NavigatorParamList } from "./src/navigators";
 import { persistor, store } from "./src/store/store";
 import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
 import { ScreenEnum } from "./src/enums";
+import { createNavigationContainerRef } from "@react-navigation/native";
+
+export const navigationRef = createNavigationContainerRef<NavigatorParamList>();
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -27,7 +30,6 @@ const App = () => {
 
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log("Message handled in the background!", remoteMessage);
-
     showLocalNotification(remoteMessage, "friend-request-channel");
   });
 
@@ -52,6 +54,7 @@ const App = () => {
     // Handle messages when the app is opened from a background state
     messaging().onNotificationOpenedApp((remoteMessage) => {
       console.log("Notification caused app to open from background state:", remoteMessage.notification);
+      navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
       // Navigate to the screen related to the notification
     });
 
@@ -61,7 +64,7 @@ const App = () => {
       .then((remoteMessage) => {
         if (remoteMessage) {
           console.log("Notification caused app to open from quit state:", remoteMessage.notification);
-          // navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
+          navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
         }
       });
 
