@@ -53,19 +53,21 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
   };
 
   const confirmAcceptRequest = async () => {
-    const filteredUsers = state.list.filter((user) => user?.initiator._id != friendId);
-    setAlertModalVisible((prev) => !prev);
+    try {
+      const updatedList = state.list.filter((user) => user?.initiator._id != friendId);
+      setAlertModalVisible((prev) => !prev);
 
-    setState((prev: ListWithPagination<UserInfo>) => ({
-      ...prev,
-      list: filteredUsers,
-      page: 1 + prev?.page,
-      hasNext: prev?.hasNext,
-    }));
+      setState((prev: ListWithPagination<UserInfo>) => ({
+        ...prev,
+        list: updatedList,
+        page: 1 + prev?.page,
+        hasNext: prev?.hasNext,
+      }));
 
-    await dispatch(acceptFriendRequest({ roomId }))
-      .unwrap()
-      .catch((err) => console.error("Error while accepting friend req: ", err));
+      await dispatch(acceptFriendRequest({ roomId })).unwrap();
+    } catch (err) {
+      console.error("Error while accepting friend request: ", err);
+    }
   };
 
   const getUserRequests = async () => {

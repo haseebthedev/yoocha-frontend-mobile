@@ -13,7 +13,7 @@ import { EventEnum, ScreenEnum } from "enums";
 import { uploadImageToCloudinary } from "utils/cloudinary";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { useAppState, useAppTheme, useCurrentRouteName } from "hooks";
+import { useAppTheme } from "hooks";
 import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text, ImagePickerModal } from "components";
 import {
   UserI,
@@ -37,20 +37,16 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   navigation,
   route,
 }) => {
-  const { roomId, friendName, item } = route.params;
-
   const dispatch = useAppDispatch();
-  const appState = useAppState();
-  const currentRouteName = useCurrentRouteName();
+  const { roomId, item } = route.params;
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const flatListRef = useRef<FlatList>(null);
-  const messageInputRef = useRef<TextInput>(null);
-
   const { user } = useAppSelector((state: RootState) => state.auth);
 
+  const flatListRef = useRef<FlatList>(null);
+  const messageInputRef = useRef<TextInput>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
 
@@ -61,13 +57,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     title: "",
   });
 
-  const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
-  const [fileModalVisible, setFileModalVisible] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
+  const [fileModalVisible, setFileModalVisible] = useState<boolean>(false);
+  const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
 
   const [imageMessage, setImageMessage] = useState<ImageSourcePropType | null>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
-  const [imageLoading, setImageLoading] = useState<boolean>(false);
 
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
@@ -117,7 +112,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   const handleImageMessage = async () => {
     setImageMessage(null);
-    setImageLoading(true);
     const newMessage = createNewMessage(user, roomId, null, selectedImage?.uri, MessageType.IMAGE);
     setState((prev: ListWithPagination<MessageItemI>) => ({
       ...prev,
@@ -129,7 +123,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       if (imageUri) {
         await dispatch(sendMessageService({ roomId, files: [imageUri], type: MessageType.IMAGE })).unwrap();
         setSelectedImage(null);
-        setImageLoading((prev: boolean) => !prev);
       }
     } catch (error) {
       console.log("Error while sending image message: ", error);
@@ -234,7 +227,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
                 />
               </View>
               <View>
-                <Text text={friendName} preset="semiBold" style={styles.name} />
+                <Text text={`${otherUser?.firstname} ${otherUser?.lastname}`} preset="semiBold" style={styles.name} />
                 <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
               </View>
             </TouchableOpacity>

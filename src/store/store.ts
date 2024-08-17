@@ -8,7 +8,7 @@ import chatReducer from "./slice/chat/chatReducer";
 import contactReducer from "./slice/contact/contactReducer";
 import appConfigReducer from "./slice/appConfig/appConfigReducer";
 import notificationReducer from "./slice/notification/notificationReducer";
-import tokenReducer from "./slice/token/tokenReducer";
+import tokenReducer from "./slice/fcmTtoken/fcmTokenReducer";
 
 const persistConfig: PersistConfig<any> = {
   key: "root",

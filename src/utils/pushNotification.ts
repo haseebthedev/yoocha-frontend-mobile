@@ -26,22 +26,24 @@ export const showLocalNotification = (remoteMessage, channelId: string) => {
     color: color,
     smallIcon: "app_logo",
     largeIcon: imageUrl ? imageUrl : "app_logo",
-    bigPictureUrl: imageUrl ? imageUrl : null,
+    bigPictureUrl: imageUrl
+      ? imageUrl
+      : "https://res.cloudinary.com/dbsd56hgh/image/upload/v1723895665/yoocha/wryjux3xjvjeopaysg6s.jpg",
     priority: "high",
   });
 };
 
-export const createChannel = (channelId: string, channelName: string, channelDescription: string) => {
-  PushNotification.createChannel(
-    {
-      channelId,
-      channelName,
-      channelDescription,
-      playSound: true,
-      soundName: "default",
-      importance: 4,
-      vibrate: true,
-    },
-    (created) => console.log(`createChannel returned '${created}'`)
-  );
-};
+// export const createChannel = (channelId: string, channelName: string, channelDescription: string) => {
+//   PushNotification.createChannel(
+//     {
+//       channelId,
+//       channelName,
+//       channelDescription,
+//       playSound: true,
+//       soundName: "default",
+//       importance: 4,
+//       vibrate: true,
+//     },
+//     (created) => console.log(`createChannel returned '${created}'`)
+//   );
+// };

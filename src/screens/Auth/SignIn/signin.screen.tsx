@@ -2,18 +2,16 @@ import { FC, useState } from "react";
 import { Keyboard, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import messaging from "@react-native-firebase/messaging";
 
 import { colors } from "theme";
 import { SigninI } from "interfaces";
 import { ScreenEnum } from "enums";
-import { useFormikHook } from "hooks/UseFormikHook";
-import { saveTokenService } from "store/slice/token/tokenService";
+import { getDeviceToken } from "utils/deviceInfo";
 import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
-import { RootState, signinService, useAppDispatch, useAppSelector } from "store";
+import { useAppTheme, useFormikHook } from "hooks";
+import { saveFcmTokenService, signinService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
-import { useAppTheme } from "hooks";
 import createStyles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
@@ -34,9 +32,9 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     await dispatch(signinService({ email, password }))
       .unwrap()
       .then(async (response) => {
-        const token = await messaging().getToken();
+        const fcmToken = await getDeviceToken();
         const userId = response.result.user._id;
-        await dispatch(saveTokenService({ token, userId }));
+        await dispatch(saveFcmTokenService({ token: fcmToken, userId }));
       })
       .then(() => {
         resetForm();

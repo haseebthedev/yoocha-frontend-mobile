@@ -11,6 +11,6 @@ export * from "./slice/contact/contactReducer";
 export * from "./slice/contact/contactService";
 export * from "./slice/contact/types";
 
-export * from "./slice/token/tokenReducer";
-export * from "./slice/token/tokenService";
-export * from "./slice/token/types";
+export * from "./slice/fcmTtoken/fcmTokenReducer";
+export * from "./slice/fcmTtoken/fcmTokenService";
+export * from "./slice/fcmTtoken/types";

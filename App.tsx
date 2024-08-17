@@ -10,7 +10,7 @@ import messaging from "@react-native-firebase/messaging";
 
 import { AppNavigator } from "./src/navigators";
 import { persistor, store } from "./src/store/store";
-import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
+import { configurePushNotifications, showLocalNotification } from "./src/utils/pushNotification";
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -36,9 +36,9 @@ const App = () => {
     configurePushNotifications();
   }, []);
 
-  useEffect(() => {
-    createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
-  }, []);
+  // useEffect(() => {
+  //   createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
+  // }, []);
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

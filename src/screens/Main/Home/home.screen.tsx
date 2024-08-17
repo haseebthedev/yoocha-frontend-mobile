@@ -168,10 +168,9 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
             renderItem={({ item }: { item: ListRoomItemI }) => (
               <ChatCard
                 item={item}
-                onPress={(fullName: string) =>
+                onPress={() =>
                   navigation.navigate(ScreenEnum.USER_MESSAGING, {
                     roomId: item._id,
-                    friendName: fullName,
                     item: item,
                   })
                 }

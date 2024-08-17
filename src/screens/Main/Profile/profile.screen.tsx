@@ -9,12 +9,14 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
+import { getDeviceToken } from "utils/deviceInfo";
 import { AlertBox, SettingListItem, Text } from "components";
 import {
   RootState,
   deleteMyProfileService,
   getMyProfileService,
   logoutUser,
+  removeFcmTokenService,
   useAppDispatch,
   useAppSelector,
 } from "store";
@@ -28,15 +30,22 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const styles = createStyles(theme);
 
   const { user, loading } = useAppSelector((state: RootState) => state.auth);
+  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
 
-  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
-
   const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
 
-  const onConfirmLogoutPress = async () => await dispatch(logoutUser());
+  const onConfirmLogoutPress = async () => {
+    try {
+      const fcmToken = await getDeviceToken();
+      await dispatch(logoutUser());
+      await dispatch(removeFcmTokenService({ userId: user._id, token: fcmToken })).unwrap();
+    } catch (err) {
+      console.log("Error: ", err);
+    }
+  };
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 

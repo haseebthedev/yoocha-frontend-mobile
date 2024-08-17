@@ -32,31 +32,37 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
     listRefreshing: false,
   });
 
+  const navigateToScreenByNotificationType = (notificationType: NotificationEnum) => {
+    switch (notificationType) {
+      case NotificationEnum.FRIEND_REQUEST_RECIEVED:
+        navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
+        break;
+      case NotificationEnum.FRIEND_REQUEST_ACCEPTED:
+      case NotificationEnum.MESSAGE:
+        navigation.navigate(ScreenEnum.HOME);
+        break;
+      default:
+        navigation.navigate(ScreenEnum.NOTIFICATIONS);
+    }
+  };
+
   const onNotificationPress = async (id: string) => {
     try {
       const response: NotificationResponseI = await dispatch(readNotificationService({ id })).unwrap();
 
       if (response?.result) {
+        const { type: notificationType } = response.result;
+
+        if (notificationType) {
+          navigateToScreenByNotificationType(notificationType);
+        }
+
         setState((prev: ListWithPagination<NotificationI>) => ({
           ...prev,
           list: prev.list.map((notification) =>
             notification._id === id ? { ...notification, isRead: true } : notification
           ),
         }));
-
-        const { type } = response.result;
-
-        switch (type) {
-          case NotificationEnum.FRIEND_REQUEST_RECIEVED:
-            navigation.navigate(ScreenEnum.RECIEVED_REQUESTS);
-            break;
-          case NotificationEnum.FRIEND_REQUEST_ACCEPTED:
-          case NotificationEnum.MESSAGE:
-            navigation.navigate(ScreenEnum.HOME);
-            break;
-          default:
-            navigation.navigate(ScreenEnum.NOTIFICATIONS);
-        }
       }
     } catch (error) {
       console.error("Error occurred while handling notification:", error);
@@ -98,22 +104,25 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
 
     setRefreshing(true);
 
-    await dispatch(listNotificationService({ page: 1, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListNotificationResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev: ListWithPagination<NotificationI>) => ({
-            ...prev,
-            list: response?.result?.docs,
-            page: 2,
-            hasNext: response?.result?.hasNextPage,
-            listRefreshing: false,
-          }));
-        }
-      })
-      .finally(() => {
-        setRefreshing(false);
-      });
+    try {
+      const response: ListNotificationResponseI = await dispatch(
+        listNotificationService({ page: 1, limit: LIMIT })
+      ).unwrap();
+
+      if (response?.result?.docs) {
+        setState((prevState: ListWithPagination<NotificationI>) => ({
+          ...prevState,
+          list: response.result.docs,
+          page: 2,
+          hasNext: response.result.hasNextPage,
+          isListRefreshing: false,
+        }));
+      }
+    } catch (err) {
+      console.log("Err: ", err);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const renderLoader = () => {

@@ -39,7 +39,6 @@ export type NavigatorParamList = {
 
   usermessaging: {
     roomId: string;
-    friendName: string;
     item: ListRoomItemI;
   };
 
