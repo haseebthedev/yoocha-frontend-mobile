@@ -1,12 +1,13 @@
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View, ImageSourcePropType } from "react-native";
 
 import { Text } from "components";
 import { formatDate } from "utils/dateAndTime";
+import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
 import personPlaceholder from "assets/images/person.png";
+
 import createStyles from "./styles";
-import { capitalize } from "utils/formatString";
 
 interface NotificationCardI {
   item: NotificationI;
@@ -14,11 +15,15 @@ interface NotificationCardI {
 }
 
 const NotificationCard = ({ item, onPress }: NotificationCardI) => {
+  const { from: senderInfo } = item;
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const senderName: string = `${capitalize(item.from.firstname)} ${capitalize(item.from.lastname)}` || "";
-  const profileImage: string | null = item?.from.profilePicture;
+  const senderName: string = `${capitalize(senderInfo.firstname || "")} ${capitalize(senderInfo.lastname || "")}`;
+
+  const profileImage: ImageSourcePropType = senderInfo.profilePicture
+    ? { uri: senderInfo.profilePicture }
+    : personPlaceholder;
 
   return (
     <TouchableOpacity
@@ -28,10 +33,7 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
     >
       <View style={styles.profileContainer}>
         <View style={styles.profileImageContainer}>
-          <Image
-            source={profileImage ? { uri: profileImage } : personPlaceholder}
-            style={profileImage ? styles.profileImage : styles.placeholderImage}
-          />
+          <Image source={profileImage} style={profileImage ? styles.profileImage : styles.placeholderImage} />
         </View>
         <View style={styles.textContainer}>
           <View style={styles.nameWithDate}>

@@ -1,11 +1,12 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { Image, ImageSourcePropType, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
+import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
@@ -29,8 +30,11 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const styles = createStyles(theme);
 
   const [personId, setPersonId] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
   const [publicProfile, setPublicProfile] = useState<UserI>();
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
+
+  const personName = `${capitalize(item.firstname || "")} ${capitalize(item.lastname || "")}`;
 
   const onBtnPress = useCallback(
     async (id: string, isFriendReqSent: boolean = false) => {
@@ -61,7 +65,6 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   useEffect(() => {
     const findUserInList = (list?: { docs: Array<UserI> }) => list?.docs?.find((user) => user._id === item._id);
-
     const user =
       findUserInList(explorePeople) || findUserInList(friendSuggestions) || findUserInList(searchExplorePeople);
 
@@ -69,6 +72,14 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       setPublicProfile(user);
     }
   }, [explorePeople, searchExplorePeople, friendSuggestions, item._id]);
+
+  useEffect(() => {
+    if (item.profilePicture) {
+      setProfileImage({ uri: item.profilePicture });
+    } else {
+      setProfileImage(personPlaceholder);
+    }
+  }, [item]);
 
   return (
     <View style={styles.publicProfileContainer}>
@@ -86,12 +97,9 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
         <View style={styles.mainContainer}>
           <View style={styles.roundedContainer}>
             <View style={styles.profileImageContainer}>
-              <Image
-                source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
-                style={item?.profilePicture ? styles.profilePic : styles.imagePlaceholder}
-              />
+              <Image source={profileImage} style={item?.profilePicture ? styles.profilePic : styles.imagePlaceholder} />
             </View>
-            <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
+            <Text text={personName} preset="largeHeading" style={styles.name} />
 
             <View style={styles.location}>
               {item?.country && (

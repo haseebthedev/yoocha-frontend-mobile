@@ -1,12 +1,13 @@
 import { FC, useEffect, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View, ImageSourcePropType } from "react-native";
 
-import { NavigatorParamList } from "navigators";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { NavigatorParamList } from "navigators";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
+import { capitalize } from "utils/formatString";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { getDeviceToken } from "utils/deviceInfo";
@@ -20,8 +21,9 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "store";
+import personPlaceholder from "assets/images/person.png";
+
 import createStyles from "./profile.styles";
-import personplaceholder from "assets/images/person.png";
 
 const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PROFILE>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -30,7 +32,8 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const styles = createStyles(theme);
 
   const { user, loading } = useAppSelector((state: RootState) => state.auth);
-  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
+  const userName: string = `${capitalize(user?.firstname || "Guest")} ${capitalize(user?.lastname || "")}`;
+  const profileImage: ImageSourcePropType = user?.profilePicture ? { uri: user?.profilePicture } : personPlaceholder;
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
@@ -52,10 +55,15 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
 
   const deleteAccountHandler = async () => {
-    await dispatch(deleteMyProfileService())
-      .unwrap()
-      .then(() => navigation.navigate(ScreenEnum.SIGN_IN))
-      .catch((err) => console.log("Error: ", err));
+    try {
+      const response = await dispatch(deleteMyProfileService()).unwrap();
+
+      if (response) {
+        navigation.navigate(ScreenEnum.SIGN_IN);
+      }
+    } catch (err) {
+      console.log("Error while deleting profile: ", err);
+    }
   };
 
   useEffect(() => {
@@ -80,10 +88,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
       <View style={styles.mainContainer}>
         <View style={styles.roundedContainer}>
           <View style={styles.profileImageContainer}>
-            <Image
-              source={user?.profilePicture ? { uri: user.profilePicture } : personplaceholder}
-              style={user?.profilePicture ? styles.profilePic : styles.imagePlaceholder}
-            />
+            <Image source={profileImage} style={user?.profilePicture ? styles.profilePic : styles.imagePlaceholder} />
           </View>
           <Text text={userName} preset="largeHeading" style={styles.name} />
 
