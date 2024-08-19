@@ -60,16 +60,13 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   }, [dispatch, personId]);
 
   useEffect(() => {
-    const filteredExplorePeople = explorePeople?.docs?.find((user) => user._id === item._id);
-    const filteredFriendSuggestions = friendSuggestions?.docs?.find((user) => user._id === item._id);
-    const filteredSearchExplorePeople = searchExplorePeople?.docs?.find((user) => user._id === item._id);
+    const findUserInList = (list?: { docs: Array<UserI> }) => list?.docs?.find((user) => user._id === item._id);
 
-    if (filteredExplorePeople) {
-      setPublicProfile(filteredExplorePeople);
-    } else if (filteredFriendSuggestions) {
-      setPublicProfile(filteredFriendSuggestions);
-    } else if (filteredSearchExplorePeople) {
-      setPublicProfile({ ...filteredSearchExplorePeople });
+    const user =
+      findUserInList(explorePeople) || findUserInList(friendSuggestions) || findUserInList(searchExplorePeople);
+
+    if (user) {
+      setPublicProfile(user);
     }
   }, [explorePeople, searchExplorePeople, friendSuggestions, item._id]);
 
