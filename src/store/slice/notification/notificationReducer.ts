@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import {
-  createNotificationService,
   deleteNotificationService,
   getNotificationService,
   listNotificationService,
@@ -19,16 +19,6 @@ export const notificationSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(createNotificationService.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(createNotificationService.fulfilled, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(createNotificationService.rejected, (state, action) => {
-        state.loading = false;
-      })
-
       .addCase(listNotificationService.pending, (state) => {
         state.loading = true;
       })

@@ -7,9 +7,8 @@ import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
-import { createNotificationService } from "store/slice/notification/notificationService";
 import { EventEnumRole, ScreenEnum } from "enums";
-import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator, Text } from "components";
+import { AlertBox, AppHeading, ContactUserCard, EmptyListText, Header, LoadingIndicator } from "components";
 import {
   BlockedUserInfo,
   ListUserRequestsResponseI,
@@ -34,10 +33,10 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [friendId, setFriendId] = useState<string>("");
   const [roomId, setRoomId] = useState<string>("");
+  const [friendId, setFriendId] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [state, setState] = useState<ListWithPagination<UserInfo>>({
     list: [],
     page: 1,
@@ -54,29 +53,21 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
   };
 
   const confirmAcceptRequest = async () => {
-    const filteredUsers = state.list.filter((user) => user?.initiator._id != friendId);
-    setAlertModalVisible((prev) => !prev);
+    try {
+      const updatedList = state.list.filter((user) => user?.initiator._id != friendId);
+      setAlertModalVisible((prev) => !prev);
 
-    setState((prev: ListWithPagination<UserInfo>) => ({
-      ...prev,
-      list: filteredUsers,
-      page: 1 + prev?.page,
-      hasNext: prev?.hasNext,
-    }));
+      setState((prev: ListWithPagination<UserInfo>) => ({
+        ...prev,
+        list: updatedList,
+        page: 1 + prev?.page,
+        hasNext: prev?.hasNext,
+      }));
 
-    await dispatch(acceptFriendRequest({ roomId: roomId }))
-      .unwrap()
-      .then(async (response) => {
-        await dispatch(
-          createNotificationService({
-            message: `${user.firstname} has accepted your friend request.`,
-            recipientId: friendId,
-            senderId: user._id,
-          })
-        )
-          .unwrap()
-          .catch((err) => console.error("error: ", err));
-      });
+      await dispatch(acceptFriendRequest({ roomId })).unwrap();
+    } catch (err) {
+      console.error("Error while accepting friend request: ", err);
+    }
   };
 
   const getUserRequests = async () => {

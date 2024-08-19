@@ -3,14 +3,23 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
+import { getDeviceToken } from "utils/deviceInfo";
 import { AlertBox, SettingListItem, Text } from "components";
-import { RootState, getMyProfileService, logoutUser, useAppDispatch, useAppSelector } from "store";
+import {
+  RootState,
+  deleteMyProfileService,
+  getMyProfileService,
+  logoutUser,
+  removeFcmTokenService,
+  useAppDispatch,
+  useAppSelector,
+} from "store";
 import createStyles from "./profile.styles";
 import personplaceholder from "assets/images/person.png";
 
@@ -20,17 +29,34 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { user } = useAppSelector((state: RootState) => state.auth);
+  const { user, loading } = useAppSelector((state: RootState) => state.auth);
+  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
 
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [deleteAccModalVisible, setDeleteAccModalVisible] = useState<boolean>(false);
 
-  const userName: string = `${user?.firstname} ${user?.lastname}` ?? `Guest`;
-
   const onLogoutPress = () => setAlertModalVisible((prev) => !prev);
-  const onConfirmLogoutPress = async () => await dispatch(logoutUser());
+
+  const onConfirmLogoutPress = async () => {
+    try {
+      const fcmToken = await getDeviceToken();
+      await dispatch(logoutUser());
+      await dispatch(removeFcmTokenService({ userId: user._id, token: fcmToken })).unwrap();
+    } catch (err) {
+      console.log("Error: ", err);
+    }
+  };
+
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
+
   const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
+
+  const deleteAccountHandler = async () => {
+    await dispatch(deleteMyProfileService())
+      .unwrap()
+      .then(() => navigation.navigate(ScreenEnum.SIGN_IN))
+      .catch((err) => console.log("Error: ", err));
+  };
 
   useEffect(() => {
     dispatch(getMyProfileService());
@@ -60,15 +86,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
             />
           </View>
           <Text text={userName} preset="largeHeading" style={styles.name} />
-
-          {/* <View style={styles.location}>
-            {user?.country && (
-              <>
-                <Ionicons name="location-sharp" size={18} color={theme.colors.iconColor} />
-                <Text text={user?.country} preset="light" style={styles.locationText} />
-              </>
-            )}
-          </View> */}
 
           <View style={styles.listItems}>
             <SettingListItem
@@ -104,12 +121,6 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
               onPress={() => setDeleteAccModalVisible((prev) => !prev)}
             />
           </View>
-
-          {/* <View style={styles.btnContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.EDIT_PROFILE)} style={styles.btn}>
-              <Text text="Edit Profile" style={styles.btnText} />
-            </TouchableOpacity>
-          </View> */}
         </View>
       </View>
       <AlertBox
@@ -129,9 +140,11 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
         title="Delete Account!"
         description="Are you sure you want to delete your account permanently?"
         onClose={onDelModalCancelPress}
-        secondaryButtonText="Cancel"
         primaryButtonText="Delete"
+        primaryOnClick={deleteAccountHandler}
+        secondaryButtonText="Cancel"
         secondaryOnClick={() => setDeleteAccModalVisible((prev) => !prev)}
+        loading={loading}
       />
     </View>
   );

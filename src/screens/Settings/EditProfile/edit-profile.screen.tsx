@@ -1,34 +1,25 @@
 import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View, Keyboard } from "react-native";
 
 import { NavigatorParamList } from "navigators";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TranslationLanguageCodeMap } from "react-native-country-picker-modal";
 import { editAccountValidationSchema } from "utils/validations";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DatePicker from "react-native-date-picker";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
-import { useAppTheme } from "hooks";
-import { useFormikHook } from "hooks/UseFormikHook";
 import { formatDateToDMY } from "utils/dateAndTime";
-import { uploadImageToCloudinary } from "../../../cloudinary/uploadImage";
-import { UpdateUserI, UserUpdateI } from "interfaces/user";
+import { uploadImageToCloudinary } from "utils/cloudinary";
+import { UpdateUserI, UserUpdateI } from "interfaces";
+import { useAppTheme, useFormikHook } from "hooks";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import {
-  AlertBox,
-  AppButton,
-  CountryPickerModal,
-  Header,
-  ImagePickerModal,
-  LoadingIndicator,
-  Text,
-  TextInput,
-} from "components";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { AlertBox, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
 import personPlaceholder from "assets/images/person.png";
+
 import createStyles from "./edit-profile.styles";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
@@ -42,17 +33,17 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   const styles = createStyles(theme);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
 
-  const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
-  const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
-  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
-  const [selectedImage, setSelectedImage] = useState<any>(null);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
+  const [profileImage, setProfileImage] = useState<ImageSourcePropType>(personPlaceholder);
+  const [selectedImage, setSelectedImage] = useState<ImageSourcePropType>();
+  const [selectedCountry, setSelectedCountry] = useState<TranslationLanguageCodeMap | string>("");
   const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
   const [imagePickerVisible, setImagePickerVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [countryModalVisible, setCountryModalVisible] = useState<boolean>(false);
+  const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
 
   const validationSchema = editAccountValidationSchema;
   const initialValues: UpdateUserI = {
@@ -62,6 +53,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   };
 
   const handleOpenPress = () => {
+    Keyboard.dismiss();
     setImagePickerVisible(true);
     bottomSheetRef.current?.snapToIndex(0);
   };
@@ -77,10 +69,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   };
 
   const submit = async ({ firstname, lastname, email }: UpdateUserI) => {
-    let profilePicture = null;
-
     try {
-      setLoading(true);
+      let profilePicture = null;
       if (selectedImage) {
         profilePicture = await uploadImageToCloudinary(selectedImage);
       }
@@ -91,13 +81,11 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         dataToBeUpdate.profilePicture = profilePicture;
       }
 
-      await dispatch(updateUserService(dataToBeUpdate))
-        .unwrap()
-        .then(() => setLoading(false));
+      await dispatch(updateUserService(dataToBeUpdate)).unwrap();
 
       setSuccessModalVisible((prev) => !prev);
     } catch (error) {
-      console.error("Submission Error:", error);
+      console.error("Error while updating profile: ", error);
     }
   };
 
@@ -134,12 +122,26 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         leftIcon="chevron-back"
         onLeftPress={() => navigation.goBack()}
         titleStyle={{ color: theme.colors.heading }}
+        customComponentRight={
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => {
+              handleSubmit();
+            }}
+          >
+            <Text preset="heading" text={"Save"} style={styles.btnText} />
+          </TouchableOpacity>
+        }
       />
 
       <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.imgContainer}>
           <View style={styles.profileImageContainer}>
-            <Image source={profileImage} style={user?.profilePicture ? styles.profileImage : styles.imagePlaceholder} />
+            <Image
+              source={profileImage}
+              style={user?.profilePicture || selectedImage ? styles.profileImage : styles.imagePlaceholder}
+              resizeMode="cover"
+            />
           </View>
           <TouchableOpacity style={styles.changeImageBtn} onPress={handleOpenPress}>
             <Ionicons name="camera" size={20} color={colors.primary} />
@@ -207,14 +209,6 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
             />
           </TouchableOpacity>
         </View>
-
-        <AppButton
-          preset="filled"
-          text={loading ? "" : "Save Changes"}
-          onPress={handleSubmit}
-          disabled={loading}
-          RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
-        />
       </ScrollView>
 
       <ImagePickerModal

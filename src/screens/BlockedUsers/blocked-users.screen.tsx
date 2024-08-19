@@ -33,9 +33,9 @@ const BlockedUsersScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState(false);
   const [unblockUserId, setUnblockUserId] = useState<string>("");
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [itemIdToBeUnblocked, setItemIdToBeUnblocked] = useState<string>("");
   const [state, setState] = useState<ListWithPagination<BlockedUserInfo>>({
     list: [],

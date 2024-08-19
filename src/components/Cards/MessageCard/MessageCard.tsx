@@ -1,26 +1,33 @@
 import { Image, View } from "react-native";
-import { hp } from "utils/responsive";
-import { Text } from "components";
-import { colors } from "theme";
-import { MessageItemI, RootState, useAppSelector } from "store";
+
+import { useState } from "react";
 import { formatTime } from "utils/dateAndTime";
+import { useAppTheme } from "hooks";
+import { TextMessage } from "./TextMessageCard";
+import { ImageMessage } from "./ImageMessageCard";
+import { ImagePreview, Text } from "components";
+import { MessageItemI, RootState, useAppSelector } from "store";
 import userPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
-import { useAppTheme } from "hooks";
 
 interface MessageCardI {
   item: MessageItemI;
-  onPress?: () => void;
 }
 
 const MessageCard = ({ item }: MessageCardI) => {
-  const { theme, darkMode } = useAppTheme();
+  const [viewImagePreview, setViewImagePreview] = useState<boolean>(false);
+
+  const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const isSentByUser = user?._id === item.sender._id;
   const userProfilePic = isSentByUser ? user?.profilePicture : item.sender?.profilePicture;
+
+  const onViewImagePress = () => {
+    setViewImagePreview((prev) => !prev);
+  };
 
   return (
     <View
@@ -38,21 +45,16 @@ const MessageCard = ({ item }: MessageCardI) => {
 
       <View style={styles.messageTextContainer}>
         {isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
-        <Text
-          text={item?.message}
-          style={[
-            styles.messageText,
-            {
-              backgroundColor: isSentByUser ? colors.primaryLight : theme.colors.messageCardBg,
-              color: isSentByUser ? colors.white : theme.colors.heading,
-              borderBottomRightRadius: !isSentByUser ? hp(2.5) : hp(0.4),
-              borderBottomLeftRadius: isSentByUser ? hp(2.5) : hp(0.4),
-            },
-          ]}
-        />
+
+        {item.type === "text" && <TextMessage item={item} isSentByUser={isSentByUser} />}
+        {item.type === "image" && (
+          <ImageMessage item={item} isSentByUser={isSentByUser} onViewImagePress={onViewImagePress} />
+        )}
 
         {!isSentByUser && <Text text={formatTime(new Date(item.createdAt))} style={styles.recieveTime} />}
       </View>
+
+      <ImagePreview visible={viewImagePreview} item={item} onPressClose={() => setViewImagePreview(false)} />
     </View>
   );
 };

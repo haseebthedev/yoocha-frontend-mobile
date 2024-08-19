@@ -6,6 +6,7 @@ export * from "./General/searchBar/searchbar";
 // Output Components
 export * from "./Outputs/header/header";
 export * from "./Outputs/app-header/app-header";
+export * from "./Outputs/imagePreview/imagePreview";
 
 // Cards Components
 export * from "./Cards/HomeUserStatus/HomeUserStatus";
@@ -32,9 +33,11 @@ export * from "./HOCModal/BottomSheet/BottomSheet";
 
 // Modals
 export * from "./Modal/countryPickerModal/countryPickerModal";
-export * from "./Modal/AlertBox/AlertBox";
-export * from "./Modal/ImagePickerModal/ImagePickerModal";
-export * from "./Modal/StatusModal/StatusModal";
+export * from "./Modal/alertBox/alertBox";
+export * from "./Modal/imagePickerModal/imagePickerModal";
+export * from "./Modal/statusModal/statusModal";
+export * from "./Modal/attachmentPicker/attachmentPicker";
+export * from "./Modal/locationModal/locationModal";
 
 // Divider
 export * from "./Divider/divider";

@@ -30,11 +30,11 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-  const [loadMoreItems, setLoadMoreItems] = useState<boolean>(false);
-  const [searchItems, setSearchItems] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
+  const [searchItems, setSearchItems] = useState<boolean>(false);
+  const [loadMoreItems, setLoadMoreItems] = useState<boolean>(false);
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
   const getSearchPeople = async (name: string = "", page: number = 1) => {
     await dispatch(getSearchExploreService({ name, page, limit: LIMIT }))
@@ -44,9 +44,10 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   };
 
   const onSearchSubmit = async (searchText: string) => {
-    setSearchText(searchText);
     setSearchItems(true);
-    if (searchText) {
+    setSearchText(searchText);
+
+    if (searchText.trim()) {
       await getSearchPeople(searchText);
     }
   };
@@ -84,10 +85,6 @@ const SearchPeopleScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const renderLoader = () => {
     return loadMoreItems && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
   };
-
-  // useEffect(() => {
-  //   getSearchPeople();
-  // }, []);
 
   return (
     <View style={styles.container}>

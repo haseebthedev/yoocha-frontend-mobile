@@ -16,6 +16,7 @@ import createStyles from "./contactUs.styles";
 
 const ContactUsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CONTACT_US>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 

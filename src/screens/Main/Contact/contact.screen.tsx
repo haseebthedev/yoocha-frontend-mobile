@@ -2,14 +2,13 @@ import { FC, useEffect, useState } from "react";
 import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { contactScreenOptions } from "constant";
-import { createNotificationService } from "store/slice/notification/notificationService";
 import {
   AlertBox,
   AppHeading,
@@ -41,43 +40,28 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { user } = useAppSelector((state: RootState) => state.auth);
-  const { loading, friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
+  const { friendSuggestions, explorePeople } = useAppSelector((state: RootState) => state.contacts);
 
+  const [friendId, setFriendId] = useState<string>("");
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
-
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const [loadFriendSuggestion, setLoadFriendSuggestion] = useState<boolean>(false);
   const [loadExplorePeople, setLoadExplorePeople] = useState<boolean>(false);
+  const [loadFriendSuggestion, setLoadFriendSuggestion] = useState<boolean>(false);
 
-  const [personId, setPersonId] = useState<string>("");
-
-  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
+  const onAddFriendRequestHandler = async (inviteeId: string, isFriendReqSent: boolean = false) => {
     if (isFriendReqSent) {
       setAlertModalVisible((prev: boolean) => !prev);
-      setPersonId(id);
+      setFriendId(inviteeId);
     } else {
-      await dispatch(sendFriendRequest({ inviteeId: id }))
+      await dispatch(sendFriendRequest({ inviteeId }))
         .unwrap()
-        .then(async (response) => {
-          await dispatch(
-            createNotificationService({
-              message: `${user.firstname} has sent you friend request.`,
-              recipientId: id,
-              senderId: user._id,
-            })
-          )
-            .unwrap()
-            .catch((err) => console.error("error: ", err));
-        })
         .catch((err) => console.error("error: ", err));
     }
   };
 
   const cancelFriendRequest = async () => {
-    await dispatch(removeFriendRequest({ inviteeId: personId }))
+    await dispatch(removeFriendRequest({ inviteeId: friendId }))
       .unwrap()
       .catch((err) => console.error("error: ", err))
       .finally(() => setAlertModalVisible((prev: boolean) => !prev));
@@ -141,7 +125,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
                     item={item}
                     onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
                     btnTitle={item?.isFriendReqSent ? "Pending" : "Add Friend"}
-                    onBtnPress={onBtnPress}
+                    onBtnPress={onAddFriendRequestHandler}
                   />
                 </View>
               )}
@@ -194,7 +178,7 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
             <ContactUserCard
               item={item}
               btnTitle={item?.isFriendReqSent ? "Pending" : "Add"}
-              onBtnPress={onBtnPress}
+              onBtnPress={onAddFriendRequestHandler}
               onViewPress={() => navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item })}
             />
           )}

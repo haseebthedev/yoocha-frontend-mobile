@@ -20,7 +20,6 @@ const AppSettingsScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
   const dispatch = useAppDispatch();
 
   const { theme, darkMode } = useAppTheme();
-
   const styles = createStyles(theme);
 
   const [pushNotifications, setPushNotifications] = useState<boolean>(false);

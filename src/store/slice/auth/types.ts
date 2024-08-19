@@ -13,6 +13,13 @@ export interface UserI {
   isFriendReqSent?: boolean;
 }
 
+export interface AuthI {
+  loading: boolean;
+  user: UserI | null;
+  token: UserI | null;
+  error: string | null;
+}
+
 export interface SignupPayloadI {
   firstname: string;
   lastname: string;
@@ -22,13 +29,6 @@ export interface SignupPayloadI {
 
 export interface SignupResponseI {
   result: UserI;
-}
-
-export interface AuthI {
-  loading: boolean;
-  user: UserI | null;
-  token: UserI | null;
-  error: string | null;
 }
 
 export type SigninPayloadI = Pick<SignupPayloadI, "email" | "password">;
@@ -59,20 +59,12 @@ export interface UpdateUserPayloadI {
 export interface UpdateUserResponseI {
   result: UserI;
 }
-
-export interface getMyProfileResponseI {
-  result: UserI;
-}
-
 export interface ChangePasswordPayloadI {
   oldPassword: string;
   newPassword: string;
 }
 
-export interface ChangePasswordResponseI {
-  result: {
-    result: string;
-  };
-}
-
+export type ChangePasswordResponseI = ForgetPasswordResponseI;
 export type ContactUsResponseI = ChangePasswordResponseI;
+export type deleteMyProfileResponseI = ChangePasswordResponseI;
+export type getMyProfileResponseI = UpdateUserResponseI;

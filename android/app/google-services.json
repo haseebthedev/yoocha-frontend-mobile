@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "66667546567",
+    "project_id": "pushnotification-daaf4",
+    "storage_bucket": "pushnotification-daaf4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66667546567:android:539aca4b9da88e4d80fbe2",
+        "android_client_info": {
+          "package_name": "com.pushnotification"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-gzH7D07xHkE5DpTAXQ-Be9iHw64vk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66667546567:android:0ce633e55fc0221f80fbe2",
+        "android_client_info": {
+          "package_name": "com.yoocha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-gzH7D07xHkE5DpTAXQ-Be9iHw64vk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

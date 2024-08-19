@@ -8,7 +8,7 @@ import createStyles from "./styles";
 
 interface ChatCardI {
   item: ListRoomItemI;
-  onPress: (friendName: string) => void;
+  onPress: () => void;
 }
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
@@ -22,7 +22,7 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
   const profileImage = friend?.profilePicture;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPress(fullName)} activeOpacity={0.5}>
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.5}>
       <View style={styles.profileContainer}>
         <View style={styles.profileImageContainer}>
           <Image

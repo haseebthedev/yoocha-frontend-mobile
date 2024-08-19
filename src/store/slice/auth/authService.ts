@@ -1,5 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosResponse } from "axios";
+
+import { API_URL } from "config/config.dev";
+import { ContactUsI } from "interfaces";
+import { saveString } from "utils/storage";
+import { showFlashMessage } from "utils/flashMessage";
 import {
   SignupResponseI,
   SignupPayloadI,
@@ -13,12 +18,9 @@ import {
   ChangePasswordPayloadI,
   ChangePasswordResponseI,
   ContactUsResponseI,
+  deleteMyProfileResponseI,
 } from "./types";
-import { API_URL } from "config/config.dev";
-import { saveString } from "utils/storage";
-import { showFlashMessage } from "utils/flashMessage";
 import AxiosInstance from "services/api/api";
-import { ContactUsI } from "interfaces";
 
 export const signupService: any = createAsyncThunk(
   "auth/signup",
@@ -46,6 +48,7 @@ export const signinService: any = createAsyncThunk(
   "auth/signin",
   async (payload: SigninPayloadI, { rejectWithValue }) => {
     try {
+      console.log("ok");
       const response: AxiosResponse<SigninResponseI> = await axios.post(`${API_URL}/auth/signin`, {
         email: payload.email,
         password: payload.password,
@@ -96,8 +99,6 @@ export const updateUserService: any = createAsyncThunk(
         country: payload.country,
       });
 
-      // showFlashMessage({ type: "success", message: "User Successfully Updated!" });
-
       return response.data;
     } catch (error: any) {
       showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
@@ -109,8 +110,6 @@ export const updateUserService: any = createAsyncThunk(
 export const getMyProfileService: any = createAsyncThunk("auth/getMyProfile", async (_, { rejectWithValue }) => {
   try {
     const response: AxiosResponse<getMyProfileResponseI> = await AxiosInstance.get(`/user/me`);
-
-    // showFlashMessage({ type: "success", message: "User Successfully Updated!" });
     return response.data;
   } catch (error: any) {
     showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
@@ -155,3 +154,14 @@ export const contactUsService: any = createAsyncThunk(
     }
   }
 );
+
+export const deleteMyProfileService: any = createAsyncThunk("auth/deleteMyProfile", async (_, { rejectWithValue }) => {
+  try {
+    const response: AxiosResponse<deleteMyProfileResponseI> = await AxiosInstance.delete(`/user/me`);
+
+    return response.data;
+  } catch (error: any) {
+    showFlashMessage({ type: "danger", message: `${error?.response?.data?.message || "Something went wrong!"}` });
+    return rejectWithValue(error?.response?.data || "Something went wrong!");
+  }
+});

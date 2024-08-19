@@ -1,11 +1,12 @@
 import React from "react";
 import { Modal, View, Pressable, GestureResponderEvent, ModalProps } from "react-native";
-import { Text } from "components";
-import { AppButton } from "components";
-import { colors } from "theme";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
-import createStyles from "./styles";
+
+import { colors } from "theme";
 import { useAppTheme } from "hooks";
+import { LoadingIndicator, Text, AppButton } from "components";
+import createStyles from "./styles";
 
 interface PropsI extends ModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface PropsI extends ModalProps {
   secondaryOnClick?: () => void;
   primaryOnClick?: () => void;
   checkIcon?: boolean;
+  loading?: boolean;
 }
 
 const AlertBox = ({
@@ -32,6 +34,7 @@ const AlertBox = ({
   secondaryOnClick,
   primaryOnClick,
   checkIcon,
+  loading = false,
 }: PropsI) => {
   if (!open) return null;
 
@@ -73,9 +76,11 @@ const AlertBox = ({
                 <View style={styles.btn}>
                   <AppButton
                     preset="filled"
-                    text={primaryButtonText}
+                    text={loading ? "" : primaryButtonText}
                     onPress={primaryOnClick}
+                    disabled={loading}
                     style={type === "error" && { backgroundColor: colors.red }}
+                    RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
                   />
                 </View>
               )}

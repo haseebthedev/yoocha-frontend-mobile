@@ -36,20 +36,15 @@ export type NavigatorParamList = {
   home: undefined;
   contacts: undefined;
   profile: undefined;
-
   usermessaging: {
     roomId: string;
-    friendName: string;
     item: ListRoomItemI;
   };
-
   blockedusers: undefined;
   sendrequests: undefined;
   recieverequests: undefined;
-  // settings: undefined;
   editprofile: undefined;
   appsettings: undefined;
-
   signin: undefined;
   signup: undefined;
   otpVerification: undefined;
@@ -78,7 +73,6 @@ const AppStack = () => {
     >
       <Stack.Screen name={ScreenEnum.SIGN_IN} component={SignInScreen} />
       <Stack.Screen name={ScreenEnum.SIGN_UP} component={SignUpScreen} />
-
       <Stack.Screen name={ScreenEnum.MAIN} component={MainScreen} />
       <Stack.Screen name={ScreenEnum.NOTIFICATIONS} component={NotificationScreen} />
       <Stack.Screen name={ScreenEnum.SEARCH_PEOPLE} component={SearchPeopleScreen} />
@@ -87,7 +81,6 @@ const AppStack = () => {
       <Stack.Screen name={ScreenEnum.BLOCKED_USERS} component={BlockedUsersScreen} />
       <Stack.Screen name={ScreenEnum.SEND_REQUESTS} component={SendRequestsScreen} />
       <Stack.Screen name={ScreenEnum.RECIEVED_REQUESTS} component={RecieveRequestsScreen} />
-      {/* <Stack.Screen name={ScreenEnum.SETTINGS} component={SettingsScreen} /> */}
       <Stack.Screen name={ScreenEnum.EDIT_PROFILE} component={EditProfileScreen} />
       <Stack.Screen name={ScreenEnum.APP_SETTNGS} component={AppSettingsScreen} />
       <Stack.Screen name={ScreenEnum.CONTACT_US} component={ContactUsScreen} />

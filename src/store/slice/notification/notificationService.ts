@@ -1,7 +1,6 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import AxiosInstance from "services/api/api";
 import {
   DeleteNotificationPayloadI,
   DeleteNotificationResponseI,
@@ -9,32 +8,9 @@ import {
   GetNotificationResponseI,
   ListNotificationPayloadI,
   ListNotificationResponseI,
-  NotificationPayloadI,
-  NotificationResponseI,
   ReadNotificationPayloadI,
 } from "./types";
-
-export const createNotificationService: any = createAsyncThunk(
-  "notification/createNotification",
-  async (payload: NotificationPayloadI, { rejectWithValue }) => {
-    try {
-      const response: AxiosResponse<NotificationResponseI> = await AxiosInstance.post(
-        `/notification/create-notification`,
-        {
-          message: payload.message,
-          recipientId: payload.recipientId,
-          senderId: payload.senderId,
-        }
-      );
-
-      return response.data;
-    } catch (error: any) {
-      console.log("error: ", error);
-
-      return rejectWithValue(error?.response?.data || "Something went wrong!");
-    }
-  }
-);
+import AxiosInstance from "services/api/api";
 
 export const listNotificationService: any = createAsyncThunk(
   "notification/listNotification",
@@ -78,7 +54,7 @@ export const readNotificationService: any = createAsyncThunk(
   "notification/readNotification",
   async (payload: ReadNotificationPayloadI, { rejectWithValue }) => {
     try {
-      const response: AxiosResponse<ListNotificationResponseI> = await AxiosInstance.patch(
+      const response: AxiosResponse<GetNotificationResponseI> = await AxiosInstance.patch(
         `/notification/${payload.id}/read`
       );
 

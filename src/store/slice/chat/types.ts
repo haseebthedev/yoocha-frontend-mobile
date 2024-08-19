@@ -42,17 +42,24 @@ export interface ListMessagePayloadI {
   limit?: number;
 }
 
+export enum MessageType {
+  TEXT = "text",
+  IMAGE = "image",
+}
 export interface SendMessagePayloadI {
   roomId: string;
-  message: string;
+  message?: string;
+  files?: string[];
+  type: MessageType;
 }
 
 export interface SendMessageResponseI {
   result: {
     _id: string;
     chatRoomId: string;
-    sender: string;
-    message: string;
+    sender: UserI;
+    message: string | null;
+    type: MessageType;
     files: string[] | null;
     createdAt: string;
     updatedAt: string;
@@ -64,8 +71,10 @@ export interface MessageItemI {
   chatRoomId: string;
   sender: UserI;
   message: string | null;
-  link: null | null;
-  files: null | null;
+  link?: null | null;
+  files: string[] | null;
+  type?: MessageType;
+  status?: string;
   createdAt: string;
   updatedAt: string;
 }

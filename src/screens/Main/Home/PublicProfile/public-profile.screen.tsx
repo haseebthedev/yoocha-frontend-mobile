@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -11,12 +11,15 @@ import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
 import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
 import personPlaceholder from "assets/images/person.png";
+
 import createStyles from "./public-profile.styles";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PUBLIC_PROFILE>> = ({
   navigation,
   route,
 }) => {
+  const { item }: { item: UserI } = route.params;
+
   const dispatch = useAppDispatch();
   const { loading, searchExplorePeople, friendSuggestions, explorePeople } = useAppSelector(
     (state: RootState) => state.contacts
@@ -25,49 +28,36 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { item }: { item: UserI } = route.params;
-  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
   const [personId, setPersonId] = useState<string>("");
   const [publicProfile, setPublicProfile] = useState<UserI>();
+  const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
-  // const [viewStatus, setViewStatus] = useState<boolean>(false);
-  // const [activeTab, setActiveTab] = useState<string>("Photos");
-  // const [statusData, setStatusData] = useState<UserStatusI>({
-  //   id: "",
-  //   name: "",
-  //   profilePic: "",
-  //   date: "",
-  //   statusImage: "",
-  // });
+  const onBtnPress = useCallback(
+    async (id: string, isFriendReqSent: boolean = false) => {
+      if (isFriendReqSent) {
+        setAlertModalVisible((prev: boolean) => !prev);
+        setPersonId(id);
+        return;
+      }
 
-  // const onViewPress = (selectedItem) => {
-  //   setStatusData({
-  //     id: selectedItem.id,
-  //     statusImage: selectedItem.media,
-  //     name: "My Post",
-  //     date: selectedItem.date,
-  //     profilePic: selectedItem.profilePic,
-  //   });
-  //   setViewStatus((prev) => !prev);
-  // };
+      try {
+        await dispatch(sendFriendRequest({ inviteeId: id })).unwrap();
+      } catch (err) {
+        console.error("Error sending friend request:", err);
+      }
+    },
+    [dispatch]
+  );
 
-  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
-    if (isFriendReqSent) {
+  const cancelFriendRequest = useCallback(async () => {
+    try {
+      await dispatch(removeFriendRequest({ inviteeId: personId })).unwrap();
+    } catch (err) {
+      console.error("Error cancelling friend request:", err);
+    } finally {
       setAlertModalVisible((prev: boolean) => !prev);
-      setPersonId(id);
-    } else {
-      await dispatch(sendFriendRequest({ inviteeId: id }))
-        .unwrap()
-        .catch((err) => console.error("error: ", err));
     }
-  };
-
-  const cancelFriendRequest = async () => {
-    await dispatch(removeFriendRequest({ inviteeId: personId }))
-      .unwrap()
-      .catch((err) => console.error("error: ", err))
-      .finally(() => setAlertModalVisible((prev: boolean) => !prev));
-  };
+  }, [dispatch, personId]);
 
   useEffect(() => {
     const filteredExplorePeople = explorePeople?.docs?.find((user) => user._id === item._id);
@@ -115,21 +105,6 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               )}
             </View>
 
-            {/* <View style={styles.infoContainer}>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Posts" style={styles.infoText} />
-                </View>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Friends" style={styles.infoText} />
-                </View>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Likes" style={styles.infoText} />
-                </View>
-              </View> */}
-
             <View style={styles.addFriendBtnContainer}>
               <AddFriendButton
                 title={publicProfile?.isFriendReqSent ? "Pending" : "Add Friend"}
@@ -137,97 +112,8 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               />
             </View>
           </View>
-
-          {/* <View>
-                <View style={styles.tabNav}>
-                  <TouchableOpacity onPress={() => setActiveTab("Photos")}>
-                    <Text
-                      text="Photos"
-                      style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setActiveTab("Likes")}>
-                    <Text
-                      text="Likes"
-                      style={[styles.tabNavText, activeTab === "Likes" && { color: colors.primary }]}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.divider} />
-              </View> */}
         </View>
       </View>
-
-      {/* <FlatList
-        data={MY_PROFILE_DATA.myPosts}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.containerStyle}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={() => (
-          <View style={styles.container}>
-            <View style={styles.mainContainer}>
-              <View style={styles.roundedContainer}>
-                <Image
-                  source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
-                  style={styles.profilePic}
-                />
-                <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
-
-                <View style={styles.location}>
-                  <Ionicons name="location-sharp" size={18} color={colors.textDark} />
-                  <Text text={item.country ? item?.country : `Unknown`} preset="light" />
-                </View>
-
-                {/* <View style={styles.infoContainer}>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Posts" style={styles.infoText} />
-                </View>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Friends" style={styles.infoText} />
-                </View>
-                <View style={styles.infoHeading}>
-                  <Text text={String(0)} style={styles.info} />
-                  <Text text="Likes" style={styles.infoText} />
-                </View>
-              </View> 
-
-                <View style={styles.addFriendBtnContainer}>
-                  <AddFriendButton title={isRequestSent ? "Pending" : "Add Friend"} onPress={onAddFriendBtnPress} />
-                </View>
-              </View>
-
-              {/* <View>
-                <View style={styles.tabNav}>
-                  <TouchableOpacity onPress={() => setActiveTab("Photos")}>
-                    <Text
-                      text="Photos"
-                      style={[styles.tabNavText, activeTab === "Photos" && { color: colors.primary }]}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setActiveTab("Likes")}>
-                    <Text
-                      text="Likes"
-                      style={[styles.tabNavText, activeTab === "Likes" && { color: colors.primary }]}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.divider} />
-              </View> 
-            </View>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          // <TouchableOpacity onPress={() => onViewPress(item)} style={styles.imagesGrid}>
-          //   <Image source={{ uri: item.media }} style={styles.postImage} />
-          // </TouchableOpacity>
-          <View style={styles.postContainer}></View>
-        )}
-        numColumns={3}
-      /> */}
-
-      {/* <StatusModal isVisible={viewStatus} selectedItem={statusData} onPressClose={() => setViewStatus(false)} /> */}
 
       <AlertBox
         open={alertModalVisible}

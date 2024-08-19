@@ -15,8 +15,8 @@ const createStyles = (theme) =>
     },
     profileImageContainer: {
       width: wp(31),
-      height: hp(15.5),
-      borderRadius: hp(10),
+      height: wp(31),
+      borderRadius: hp(15.5),
       backgroundColor: theme.colors.personImageBg,
       alignItems: "center",
       justifyContent: "center",
@@ -25,7 +25,10 @@ const createStyles = (theme) =>
     },
     imagePlaceholder: {
       width: wp(15),
-      height: hp(10.5),
+      height: wp(20.4),
+      // width: wp(30),
+      // height: wp(30),
+      // borderRadius: hp(15.5),
     },
     imgContainer: {
       marginTop: hp(2.8),
@@ -33,8 +36,8 @@ const createStyles = (theme) =>
     },
     profileImage: {
       width: wp(31),
-      height: hp(15.5),
-      borderRadius: hp(10),
+      height: wp(31),
+      borderRadius: hp(15.5),
       borderWidth: 1,
       borderColor: colors.primary,
     },
@@ -43,12 +46,12 @@ const createStyles = (theme) =>
       bottom: 0,
       right: 0,
       backgroundColor: colors.white,
-      width: 35,
-      height: 35,
+      width: wp(9),
+      height: wp(9),
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 20,
+      borderRadius: wp(5),
       elevation: 2,
     },
     infoContainer: {
@@ -82,6 +85,13 @@ const createStyles = (theme) =>
       borderRadius: hp(0.2),
     },
     heading: { textAlign: "center" },
+    btnText: {
+      color: colors.primary,
+    },
+    saveButton: {
+      width: "auto",
+      padding: 10,
+    },
   });
 
 export default createStyles;

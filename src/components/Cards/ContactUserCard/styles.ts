@@ -19,7 +19,7 @@ const createStyles = (theme) =>
     profileImageContainer: {
       width: hp(6.2),
       height: hp(6.2),
-      borderRadius: 24,
+      borderRadius: hp(3),
       backgroundColor: theme.colors.personImageBg,
       alignItems: "center",
       justifyContent: "center",
@@ -27,8 +27,7 @@ const createStyles = (theme) =>
     profileImage: {
       width: hp(6.2),
       height: hp(6.2),
-      borderRadius: 24,
-      // backgroundColor: colors.grey,
+      borderRadius: hp(3),
     },
     placeholderImage: {
       width: wp(6),

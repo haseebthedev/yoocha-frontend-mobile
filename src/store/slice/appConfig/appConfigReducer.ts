@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { AppConfigI } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { AppConfigI } from "./types";
 
 const initialState: AppConfigI = {
   darkMode: false,

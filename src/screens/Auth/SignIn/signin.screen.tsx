@@ -6,12 +6,12 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { SigninI } from "interfaces";
 import { ScreenEnum } from "enums";
-import { useFormikHook } from "hooks/UseFormikHook";
+import { getDeviceToken } from "utils/deviceInfo";
 import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
-import { signinService, useAppDispatch } from "store";
+import { useAppTheme, useFormikHook } from "hooks";
+import { saveFcmTokenService, signinService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
-import { useAppTheme } from "hooks";
 import createStyles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
@@ -31,10 +31,17 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
     setLoading(true);
     await dispatch(signinService({ email, password }))
       .unwrap()
-      .then((response) => navigation.navigate(ScreenEnum.MAIN))
+      .then(async (response) => {
+        const fcmToken = await getDeviceToken();
+        const userId = response.result.user._id;
+        await dispatch(saveFcmTokenService({ token: fcmToken, userId }));
+      })
+      .then(() => {
+        resetForm();
+        navigation.navigate(ScreenEnum.MAIN);
+      })
       .catch((error) => console.log(error.message))
       .finally(() => {
-        // resetForm();
         setLoading(false);
       });
   };
@@ -50,6 +57,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
         <TextInput
           label="Email"
           placeholder="Enter Email"
+          value={values.email}
           onBlur={() => setFieldTouched("email")}
           onChangeText={handleChange("email")}
           error={errors.email}
@@ -59,6 +67,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           label="Password"
           placeholder="Enter Password"
           isPassword={showPassword}
+          value={values.password}
           rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
           onRightPress={() => setShowPassword((prev) => !prev)}
           onBlur={() => setFieldTouched("password")}

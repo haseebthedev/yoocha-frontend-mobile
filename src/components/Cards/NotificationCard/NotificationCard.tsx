@@ -6,6 +6,7 @@ import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
 import personPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
+import { capitalize } from "utils/formatString";
 
 interface NotificationCardI {
   item: NotificationI;
@@ -16,8 +17,8 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const senderName: string = `${item.senderId.firstname} ${item.senderId.lastname}` || "";
-  const profileImage: string | null = item?.senderId.profilePicture;
+  const senderName: string = `${capitalize(item.from.firstname)} ${capitalize(item.from.lastname)}` || "";
+  const profileImage: string | null = item?.from.profilePicture;
 
   return (
     <TouchableOpacity
