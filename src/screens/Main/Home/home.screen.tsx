@@ -1,19 +1,25 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, RefreshControl } from "react-native";
 
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
-import { NotificationI } from "store/slice/notification/types";
 import { NavigatorParamList } from "navigators";
-import { listNotificationService } from "store/slice/notification/notificationService";
-import { ListWithPagination, UserStatusI } from "interfaces";
-import { Text, ChatCard, StatusModal, Divider, EmptyListText, LoadingIndicator } from "components";
-import { useAppDispatch, getListRoomsService, ListRoomResponseI, ListRoomItemI, PaginationListResultI } from "store";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { ListWithPagination } from "interfaces";
+import { Text, ChatCard, Divider, EmptyListText, LoadingIndicator } from "components";
+import {
+  ListRoomItemI,
+  NotificationI,
+  useAppDispatch,
+  ListRoomResponseI,
+  getListRoomsService,
+  listNotificationService,
+  ListNotificationResponseI,
+} from "store";
 
 import createStyles from "./home.styles";
 
@@ -26,16 +32,7 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
   const styles = createStyles(theme);
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [viewStatus, setViewStatus] = useState<boolean>(false);
-  const [unreadNotification, setUnreadNotification] = useState<number>(0);
-  const [statusData, setStatusData] = useState<UserStatusI>({
-    id: "",
-    name: "",
-    profilePic: "",
-    date: "",
-    statusImage: "",
-  });
-
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState<number>(0);
   const [state, setState] = useState<ListWithPagination<ListRoomItemI>>({
     list: [],
     page: 1,
@@ -62,62 +59,73 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
     }
   }, [state.listRefreshing, state.hasNext]);
 
+  const onRefresh = useCallback(
+    async (page: number = 1) => {
+      setRefreshing(true);
+      setState((prev) => ({
+        ...prev,
+        page: 1,
+        hasNext: false,
+      }));
+
+      try {
+        const response: ListRoomResponseI = await dispatch(getListRoomsService({ page, limit: LIMIT })).unwrap();
+        if (response?.result?.docs) {
+          setState((prev) => ({
+            ...prev,
+            list: response.result.docs,
+            page: 2,
+            hasNext: response.result.hasNextPage,
+            listRefreshing: false,
+          }));
+        }
+      } catch (err) {
+        console.log("Error while getting chatroom's list: ", err);
+      } finally {
+        setRefreshing(false);
+      }
+    },
+    [dispatch]
+  );
+
+  const getNotificationList = useCallback(async () => {
+    try {
+      const response: ListNotificationResponseI = await dispatch(listNotificationService()).unwrap();
+      const filteredItems = response?.result?.docs.filter((item: NotificationI) => !item.isRead);
+      setUnreadNotificationCount(filteredItems.length);
+    } catch (error) {
+      console.log("Error while fetching notifications: ", error);
+    }
+  }, [dispatch]);
+
   const getChatRooms = useCallback(async () => {
     setState((prev) => ({
       ...prev,
       listRefreshing: true,
     }));
-    await dispatch(getListRoomsService({ page: state.page, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListRoomResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev) => ({
-            ...prev,
-            list: prev.list.concat(response?.result?.docs),
-            page: prev.page + 1,
-            hasNext: response?.result?.hasNextPage,
-            listRefreshing: false,
-          }));
-        }
-      });
+
+    try {
+      const response: ListRoomResponseI = await dispatch(
+        getListRoomsService({ page: state.page, limit: LIMIT })
+      ).unwrap();
+
+      if (response?.result?.docs) {
+        setState((prev) => ({
+          ...prev,
+          list: prev.list.concat(response?.result?.docs),
+          page: prev.page + 1,
+          hasNext: response?.result?.hasNextPage,
+          listRefreshing: false,
+        }));
+      }
+    } catch (err) {
+      console.log("Error while getting chatroom's list: ", err);
+    }
   }, [state.page, dispatch]);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    setState((prev) => ({
-      ...prev,
-      page: 1,
-      hasNext: false,
-    }));
-
-    await dispatch(getListRoomsService({ page: 1, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListRoomResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev) => ({
-            ...prev,
-            list: response?.result?.docs,
-            page: 2,
-            hasNext: response?.result?.hasNextPage,
-            listRefreshing: false,
-          }));
-        }
-      })
-      .finally(() => setRefreshing(false));
-  }, [dispatch]);
-
-  const getNotificationList = async () => {
-    await dispatch(listNotificationService())
-      .unwrap()
-      .then((response: PaginationListResultI<NotificationI>) => {
-        const filteredItems = response?.result?.docs.filter((item: NotificationI) => item.isRead != true);
-        setUnreadNotification(filteredItems.length);
-      })
-      .catch((error) => console.log("error: ", error));
-  };
 
   useEffect(() => {
     getChatRooms();
+
     return () => {
       setState({ ...state, list: [], page: 1, hasNext: false });
     };
@@ -138,28 +146,15 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
         <TouchableOpacity onPress={() => navigation.navigate(ScreenEnum.NOTIFICATIONS)}>
           <Ionicons name="notifications-outline" color={theme.colors.iconColor} size={24} />
 
-          {unreadNotification > 0 && (
+          {unreadNotificationCount > 0 && (
             <View style={styles.unreadMessageContainer}>
-              <Text text={unreadNotification.toString()} style={styles.unreadMessageText} />
+              <Text text={unreadNotificationCount.toString()} style={styles.unreadMessageText} />
             </View>
           )}
         </TouchableOpacity>
       </View>
 
       <View style={styles.mainContainer}>
-        {/* <View style={styles.sidebarContainer}>
-          <FlatList
-            data={HOME_STATUS_DATA}
-            keyExtractor={(item: HOME_STATUS_DATA_I) => item.id}
-            showsVerticalScrollIndicator={false}
-            style={styles.sidebarList}
-            contentContainerStyle={styles.sidebarListContentContainer}
-            renderItem={({ item }: { item: HOME_STATUS_DATA_I }) => (
-              <HomeUserStatus key={item.id} item={item} onViewPress={() => onViewPress(item)} onAddPress={() => {}} />
-            )}
-          />
-        </View> */}
-
         <View style={styles.mainBodyContainer}>
           <FlatList
             data={state.list}
@@ -187,12 +182,6 @@ const HomeScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.HOME>
           />
         </View>
       </View>
-      <StatusModal
-        isVisible={viewStatus}
-        selectedItem={statusData}
-        title="Sara Khan"
-        onPressClose={() => setViewStatus(false)}
-      />
     </View>
   );
 };

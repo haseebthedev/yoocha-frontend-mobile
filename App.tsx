@@ -4,15 +4,15 @@ import { StatusBar } from "react-native";
 
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { createNavigationContainerRef } from "@react-navigation/native";
 import BootSplash from "react-native-bootsplash";
 import FlashMessage from "react-native-flash-message";
 import messaging from "@react-native-firebase/messaging";
 
-import { AppNavigator, NavigatorParamList } from "./src/navigators";
-import { persistor, store } from "./src/store/store";
-import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
 import { ScreenEnum } from "./src/enums";
-import { createNavigationContainerRef } from "@react-navigation/native";
+import { persistor, store } from "./src/store/store";
+import { AppNavigator, NavigatorParamList } from "./src/navigators";
+import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
 
 export const navigationRef = createNavigationContainerRef<NavigatorParamList>();
 

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -10,13 +10,16 @@ import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
 import { RootState, UserI, removeFriendRequest, sendFriendRequest, useAppDispatch, useAppSelector } from "store";
-import createStyles from "./public-profile.styles";
 import personPlaceholder from "assets/images/person.png";
+
+import createStyles from "./public-profile.styles";
 
 const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PUBLIC_PROFILE>> = ({
   navigation,
   route,
 }) => {
+  const { item }: { item: UserI } = route.params;
+
   const dispatch = useAppDispatch();
   const { loading, searchExplorePeople, friendSuggestions, explorePeople } = useAppSelector(
     (state: RootState) => state.contacts
@@ -25,29 +28,36 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { item }: { item: UserI } = route.params;
-
   const [personId, setPersonId] = useState<string>("");
   const [publicProfile, setPublicProfile] = useState<UserI>();
   const [alertModalVisible, setAlertModalVisible] = useState<boolean>(false);
 
-  const onBtnPress = async (id: string, isFriendReqSent: boolean = false) => {
-    if (isFriendReqSent) {
-      setAlertModalVisible((prev: boolean) => !prev);
-      setPersonId(id);
-    } else {
-      await dispatch(sendFriendRequest({ inviteeId: id }))
-        .unwrap()
-        .catch((err) => console.error("error: ", err));
-    }
-  };
+  const onBtnPress = useCallback(
+    async (id: string, isFriendReqSent: boolean = false) => {
+      if (isFriendReqSent) {
+        setAlertModalVisible((prev: boolean) => !prev);
+        setPersonId(id);
+        return;
+      }
 
-  const cancelFriendRequest = async () => {
-    await dispatch(removeFriendRequest({ inviteeId: personId }))
-      .unwrap()
-      .catch((err) => console.error("error: ", err))
-      .finally(() => setAlertModalVisible((prev: boolean) => !prev));
-  };
+      try {
+        await dispatch(sendFriendRequest({ inviteeId: id })).unwrap();
+      } catch (err) {
+        console.error("Error sending friend request:", err);
+      }
+    },
+    [dispatch]
+  );
+
+  const cancelFriendRequest = useCallback(async () => {
+    try {
+      await dispatch(removeFriendRequest({ inviteeId: personId })).unwrap();
+    } catch (err) {
+      console.error("Error cancelling friend request:", err);
+    } finally {
+      setAlertModalVisible((prev: boolean) => !prev);
+    }
+  }, [dispatch, personId]);
 
   useEffect(() => {
     const filteredExplorePeople = explorePeople?.docs?.find((user) => user._id === item._id);

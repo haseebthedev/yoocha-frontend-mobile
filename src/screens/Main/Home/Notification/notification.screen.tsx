@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -6,12 +6,17 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { colors } from "theme";
 import { useAppTheme } from "hooks";
 import { useAppDispatch } from "store";
-import { ListWithPagination } from "interfaces";
 import { NavigatorParamList } from "navigators";
+import { NotificationListResponseI } from "interfaces";
 import { NotificationEnum, ScreenEnum } from "enums";
-import { listNotificationService, readNotificationService } from "store/slice/notification/notificationService";
+import {
+  NotificationResponseI,
+  readNotificationService,
+  listNotificationService,
+  ListNotificationResponseI,
+} from "store";
 import { EmptyListText, Header, LoadingIndicator, NotificationCard } from "components";
-import { ListNotificationResponseI, NotificationI, NotificationResponseI } from "store/slice/notification/types";
+
 import createStyles from "./notification.styles";
 
 const LIMIT: number = 10;
@@ -25,7 +30,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   const styles = createStyles(theme);
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [state, setState] = useState<ListWithPagination<NotificationI>>({
+  const [state, setState] = useState<NotificationListResponseI>({
     list: [],
     page: 1,
     hasNext: false,
@@ -57,7 +62,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
           navigateToScreenByNotificationType(notificationType);
         }
 
-        setState((prev: ListWithPagination<NotificationI>) => ({
+        setState((prev: NotificationListResponseI) => ({
           ...prev,
           list: prev.list.map((notification) =>
             notification._id === id ? { ...notification, isRead: true } : notification
@@ -69,38 +74,39 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
     }
   };
 
-  const getNotificationList = async () => {
-    setState((prev: ListWithPagination<NotificationI>) => ({
+  const getNotificationList = useCallback(async () => {
+    setState((prev: NotificationListResponseI) => ({
       ...prev,
       listRefreshing: true,
     }));
 
-    await dispatch(listNotificationService({ page: state.page, limit: LIMIT }))
-      .unwrap()
-      .then((response: ListNotificationResponseI) => {
-        if (response?.result?.docs) {
-          setState((prev: ListWithPagination<NotificationI>) => ({
-            ...prev,
-            list: prev.list.concat(response.result.docs),
-            page: 1 + prev.page,
-            hasNext: response.result.hasNextPage,
-            listRefreshing: false,
-          }));
-        }
-      })
-      .catch((error) => console.log("error: ", error));
-  };
+    try {
+      const response: ListNotificationResponseI = await dispatch(
+        listNotificationService({ page: state.page, limit: LIMIT })
+      ).unwrap();
 
-  const loadMoreItems = () => {
+      if (response?.result?.docs) {
+        setState((prev: NotificationListResponseI) => ({
+          ...prev,
+          list: [...prev.list, ...response.result.docs],
+          page: prev.page + 1,
+          hasNext: response.result.hasNextPage,
+          listRefreshing: false,
+        }));
+      }
+    } catch (error) {
+      console.log("Error while fetching notifications: ", error);
+    }
+  }, [dispatch, state.page]);
+
+  const loadMoreItems = useCallback(() => {
     if (!state.listRefreshing && state.hasNext) {
       getNotificationList();
     }
-  };
+  }, [state.listRefreshing, state.hasNext, getNotificationList]);
 
-  const onRefresh = async () => {
-    if (state.listRefreshing || refreshing) {
-      return;
-    }
+  const onRefresh = useCallback(async () => {
+    if (state.listRefreshing || refreshing) return;
 
     setRefreshing(true);
 
@@ -110,20 +116,20 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
       ).unwrap();
 
       if (response?.result?.docs) {
-        setState((prevState: ListWithPagination<NotificationI>) => ({
+        setState((prevState: NotificationListResponseI) => ({
           ...prevState,
           list: response.result.docs,
           page: 2,
           hasNext: response.result.hasNextPage,
-          isListRefreshing: false,
+          listRefreshing: false,
         }));
       }
     } catch (err) {
-      console.log("Err: ", err);
+      console.log("Error while refreshing notifications: ", err);
     } finally {
       setRefreshing(false);
     }
-  };
+  }, [dispatch, refreshing, state.listRefreshing]);
 
   const renderLoader = () => {
     return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
