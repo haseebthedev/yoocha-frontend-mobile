@@ -43,7 +43,7 @@ const ImagePreview: React.FC<ImagePreviewI> = ({ visible = false, item, onPressC
           </View>
         </View>
       </View>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} resizeMode="contain" />}
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} resizeMode="cover" />}
     </ModalHoc>
   );
 };

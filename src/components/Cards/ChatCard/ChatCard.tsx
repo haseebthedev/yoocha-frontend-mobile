@@ -1,6 +1,7 @@
 import { Image, TouchableOpacity, View } from "react-native";
 
 import { Text } from "components";
+import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
 import { ListRoomItemI, RootState, useAppSelector } from "store";
 import personPlaceholder from "assets/images/person.png";
@@ -18,7 +19,9 @@ const ChatCard = ({ item, onPress }: ChatCardI) => {
   const styles = createStyles(theme);
 
   const friend = item.initiator._id === user?._id ? item.invitee : item.initiator;
-  const fullName: string = friend ? `${friend.firstname} ${friend.lastname}` : "Friend Name Here...";
+  const fullName: string = friend
+    ? `${capitalize(friend.firstname || "Guest")} ${capitalize(friend.lastname || "")}`
+    : "Friend Name Here...";
   const profileImage = friend?.profilePicture;
 
   return (

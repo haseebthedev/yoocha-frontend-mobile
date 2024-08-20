@@ -2,11 +2,11 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 import { Text } from "components";
 import { formatDate } from "utils/dateAndTime";
+import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
 import { NotificationI } from "store/slice/notification/types";
 import personPlaceholder from "assets/images/person.png";
 import createStyles from "./styles";
-import { capitalize } from "utils/formatString";
 
 interface NotificationCardI {
   item: NotificationI;

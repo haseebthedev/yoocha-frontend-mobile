@@ -4,17 +4,20 @@ import { StatusBar } from "react-native";
 
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { createNavigationContainerRef } from "@react-navigation/native";
+import messaging from "@react-native-firebase/messaging";
 import BootSplash from "react-native-bootsplash";
 import FlashMessage from "react-native-flash-message";
-import messaging from "@react-native-firebase/messaging";
 
 import { ScreenEnum } from "./src/enums";
 import { persistor, store } from "./src/store/store";
-import { AppNavigator, NavigatorParamList } from "./src/navigators";
-import { configurePushNotifications, createChannel, showLocalNotification } from "./src/utils/pushNotification";
-
-export const navigationRef = createNavigationContainerRef<NavigatorParamList>();
+import { AppNavigator, navigationRef } from "./src/navigators";
+import {
+  createChannel,
+  showLocalNotification,
+  showOnboardingNotification,
+  configurePushNotifications,
+} from "./src/utils/pushNotification";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -28,10 +31,66 @@ const App = () => {
     }
   };
 
+  const checkFirstLaunch = async () => {
+    try {
+      const hasLaunched = await AsyncStorage.getItem("hasLaunchedApp");
+
+      if (hasLaunched === null) {
+        await AsyncStorage.setItem("hasLaunchedApp", "true");
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error checking first launch: ", error);
+      return false;
+    }
+  };
+
+  // Initialize channels and handle notifications on first launch
+  const initializeApp = async () => {
+    try {
+      const isFirstLaunch = await checkFirstLaunch();
+
+      if (isFirstLaunch) {
+        createChannel("onboarding-channel", "Onboarding Channel", "Notifications for onboarding");
+        showOnboardingNotification("onboarding-channel");
+      }
+
+      createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
+    } catch (error) {
+      console.error("Failed to initialize the app: ", error);
+    }
+  };
+
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log("Message handled in the background!", remoteMessage);
     showLocalNotification(remoteMessage, "friend-request-channel");
   });
+
+  // Subscribe to message events
+  const setupMessagingHandlers = () => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log("Received message: ", remoteMessage);
+      showLocalNotification(remoteMessage, "friend-request-channel");
+    });
+
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log("Notification opened from background state: ", remoteMessage.notification);
+      navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("Notification opened from quit state: ", remoteMessage.notification);
+          navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
+        }
+      });
+
+    return unsubscribe;
+  };
 
   useEffect(() => {
     requestUserPermission();
@@ -42,33 +101,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
+    initializeApp();
   }, []);
 
   useEffect(() => {
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("remoteMessage === ", remoteMessage);
-      showLocalNotification(remoteMessage, "friend-request-channel");
-    });
+    const unsubscribe = setupMessagingHandlers();
 
-    // Handle messages when the app is opened from a background state
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("Notification caused app to open from background state:", remoteMessage.notification);
-      navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
-      // Navigate to the screen related to the notification
-    });
-
-    // Handle messages when the app is opened from a quit state
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          console.log("Notification caused app to open from quit state:", remoteMessage.notification);
-          navigationRef.current?.navigate(ScreenEnum.NOTIFICATIONS);
-        }
-      });
-
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Hiding splash screen
