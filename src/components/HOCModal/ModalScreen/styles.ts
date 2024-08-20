@@ -12,6 +12,10 @@ const styles = StyleSheet.create({
     height: hp(100),
     backgroundColor: colors.black,
     paddingTop: isIOS ? hp(6.5) : hp(3),
+    position: "absolute",
+    top: 0,
+    right: 0,
+    left: 0,
   },
 });
 

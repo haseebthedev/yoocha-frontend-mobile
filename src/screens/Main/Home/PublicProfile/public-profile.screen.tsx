@@ -1,11 +1,12 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { Image, View, ImageSourcePropType } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
 import { ScreenEnum } from "enums";
+import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
 import { NavigatorParamList } from "navigators";
 import { AddFriendButton, AlertBox, Header, Text } from "components";
@@ -21,12 +22,15 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const { item }: { item: UserI } = route.params;
 
   const dispatch = useAppDispatch();
-  const { loading, searchExplorePeople, friendSuggestions, explorePeople } = useAppSelector(
+  const { searchExplorePeople, friendSuggestions, explorePeople } = useAppSelector(
     (state: RootState) => state.contacts
   );
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+
+  const username: string = `${capitalize(item.firstname) || "Guest"} ${capitalize(item.lastname) || ""}`;
+  const profileImage: ImageSourcePropType = item.profilePicture ? { uri: item.profilePicture } : personPlaceholder;
 
   const [personId, setPersonId] = useState<string>("");
   const [publicProfile, setPublicProfile] = useState<UserI>();
@@ -60,16 +64,12 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   }, [dispatch, personId]);
 
   useEffect(() => {
-    const filteredExplorePeople = explorePeople?.docs?.find((user) => user._id === item._id);
-    const filteredFriendSuggestions = friendSuggestions?.docs?.find((user) => user._id === item._id);
-    const filteredSearchExplorePeople = searchExplorePeople?.docs?.find((user) => user._id === item._id);
+    const findUserInList = (list?: { docs: Array<UserI> }) => list?.docs?.find((user) => user._id === item._id);
+    const user =
+      findUserInList(explorePeople) || findUserInList(friendSuggestions) || findUserInList(searchExplorePeople);
 
-    if (filteredExplorePeople) {
-      setPublicProfile(filteredExplorePeople);
-    } else if (filteredFriendSuggestions) {
-      setPublicProfile(filteredFriendSuggestions);
-    } else if (filteredSearchExplorePeople) {
-      setPublicProfile({ ...filteredSearchExplorePeople });
+    if (user) {
+      setPublicProfile(user);
     }
   }, [explorePeople, searchExplorePeople, friendSuggestions, item._id]);
 
@@ -89,12 +89,9 @@ const PublicProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
         <View style={styles.mainContainer}>
           <View style={styles.roundedContainer}>
             <View style={styles.profileImageContainer}>
-              <Image
-                source={item?.profilePicture ? { uri: item?.profilePicture } : personPlaceholder}
-                style={item?.profilePicture ? styles.profilePic : styles.imagePlaceholder}
-              />
+              <Image source={profileImage} style={item?.profilePicture ? styles.profilePic : styles.imagePlaceholder} />
             </View>
-            <Text text={`${item.firstname} ${item.lastname}`} preset="largeHeading" style={styles.name} />
+            <Text text={username} preset="largeHeading" style={styles.name} />
 
             <View style={styles.location}>
               {item?.country && (
