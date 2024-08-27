@@ -31,12 +31,13 @@ const createStyles = (theme) =>
     },
     userData: {
       flexDirection: "row",
+      alignItems: "center",
     },
     imageContainer: {
       width: wp(10),
       height: wp(10),
-      borderRadius: wp(15),
-      marginLeft: wp(4),
+      borderRadius: wp(5),
+      marginLeft: wp(2),
       marginRight: wp(3),
       alignItems: "center",
       justifyContent: "center",
@@ -112,7 +113,6 @@ const createStyles = (theme) =>
       flexDirection: "row",
       alignItems: "center",
       paddingVertical: wp(2),
-      // gap: 20,
       paddingHorizontal: wp(5),
       justifyContent: "space-between",
       position: "absolute",
@@ -122,7 +122,8 @@ const createStyles = (theme) =>
       borderTopColor: theme.colors.borderColor,
     },
     inputImage: {
-      width: wp(82),
+      // width: wp(78),
+      // backgroundColor: "red",
     },
     removeImageButton: {
       position: "absolute",
@@ -141,13 +142,7 @@ const createStyles = (theme) =>
       width: wp(70),
       borderRadius: wp(2),
       paddingVertical: hp(0.7),
-      // paddingHorizontal: wp(5),
       color: theme.colors.heading,
-    },
-    actionButtons: {
-      flexDirection: "row",
-      gap: wp(3),
-      alignItems: "center",
     },
     paddingVertical: {
       paddingVertical: hp(0.5),
@@ -162,6 +157,14 @@ const createStyles = (theme) =>
     },
     emptyTextPlaceholder: {
       color: theme.colors.subHeading,
+    },
+    actionButtons: {
+      flexDirection: "row",
+      gap: wp(1),
+      alignItems: "center",
+    },
+    actionButton: {
+      padding: wp(1),
     },
   });
 

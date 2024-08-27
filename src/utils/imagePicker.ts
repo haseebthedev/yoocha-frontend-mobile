@@ -6,7 +6,7 @@ export const launchCameraHandler = (
   setSelectedImage: (any) => void,
   bottomSheetRef: any
 ) => {
-  // bottomSheetRef.current.close();
+  // bottomSheetRef.current.dismiss();
 
   let options: any = {
     storageOptions: {
@@ -28,7 +28,7 @@ export const launchImageLibraryHandler = async (
   setSelectedImage: (any) => void,
   bottomSheetRef: any
 ) => {
-  // bottomSheetRef.current.close();
+  // bottomSheetRef.current.dismiss();
 
   let result = await launchImageLibrary({
     mediaType: "photo",

@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "cover",
   },
+  imagePlaceholder: {
+    width: "80%",
+    height: "80%",
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginTop: hp(2),
+  },
   gradientBlock: {
     position: "absolute",
     top: 0,

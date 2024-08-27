@@ -1,10 +1,11 @@
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, ImageSourcePropType, TouchableOpacity, View } from "react-native";
 
 import { Text } from "components";
 import { capitalize } from "utils/formatString";
 import { useAppTheme } from "hooks";
-import { ListRoomItemI, RootState, useAppSelector } from "store";
+import { ListRoomItemI, RootState, useAppSelector, UserI } from "store";
 import personPlaceholder from "assets/images/person.png";
+
 import createStyles from "./styles";
 
 interface ChatCardI {
@@ -13,30 +14,32 @@ interface ChatCardI {
 }
 
 const ChatCard = ({ item, onPress }: ChatCardI) => {
+  const { lastMessage, initiator, invitee } = item;
   const { user } = useAppSelector((state: RootState) => state.auth);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const friend = item.initiator._id === user?._id ? item.invitee : item.initiator;
+  const friend: UserI = initiator._id === user?._id ? invitee : initiator;
+
   const fullName: string = friend
     ? `${capitalize(friend.firstname || "Guest")} ${capitalize(friend.lastname || "")}`
-    : "Friend Name Here...";
-  const profileImage = friend?.profilePicture;
+    : "User";
+
+  const profileImage: ImageSourcePropType = friend?.profilePicture
+    ? { uri: friend?.profilePicture }
+    : personPlaceholder;
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.5}>
       <View style={styles.profileContainer}>
         <View style={styles.profileImageContainer}>
-          <Image
-            source={profileImage ? { uri: profileImage } : personPlaceholder}
-            style={profileImage ? styles.profileImage : styles.placeholderImage}
-          />
+          <Image source={profileImage} style={friend?.profilePicture ? styles.profileImage : styles.placeholderImage} />
         </View>
         <View style={styles.textContainer}>
           <Text preset="semiBold" text={fullName} numberOfLines={1} style={styles.name} />
           <Text
-            text={item?.lastMessage ? item.lastMessage : "Start a conversation!"}
+            text={lastMessage ? lastMessage : "Start a conversation!"}
             numberOfLines={1}
             style={styles.lastMessageText}
           />

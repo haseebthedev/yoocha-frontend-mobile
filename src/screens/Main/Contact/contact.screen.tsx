@@ -54,9 +54,11 @@ const ContactScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.CO
       setAlertModalVisible((prev: boolean) => !prev);
       setFriendId(inviteeId);
     } else {
-      await dispatch(sendFriendRequest({ inviteeId }))
-        .unwrap()
-        .catch((err) => console.error("error: ", err));
+      try {
+        await dispatch(sendFriendRequest({ inviteeId })).unwrap();
+      } catch (err) {
+        console.error("error: ", err);
+      }
     }
   };
 

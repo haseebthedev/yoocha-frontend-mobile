@@ -13,14 +13,14 @@ const createStyles = (theme) =>
       paddingTop: hp(1),
     },
     notiListContainer: {
-      paddingBottom: hp(2.7),
+      paddingBottom: hp(1),
     },
     notificationDivider: {
       height: 1,
       width: wp(100),
     },
     loaderStyle: {
-      marginVertical: 16,
+      marginVertical: hp(1),
       alignItems: "center",
     },
     emptyTextPlaceholder: {

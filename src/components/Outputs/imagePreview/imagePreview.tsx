@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, TouchableOpacity } from "react-native";
+import { View, Image, TouchableOpacity, StatusBar } from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -30,20 +30,20 @@ const ImagePreview: React.FC<ImagePreviewI> = ({ visible = false, item, onPressC
 
   return (
     <ModalHoc isVisible={visible} onPressClose={onPressClose}>
-      <View style={styles.imagePreviewHeader}>
-        <View style={styles.topHeaderContainer}>
-          <TouchableOpacity onPress={onPressClose} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color={colors.white} />
-          </TouchableOpacity>
-          <View style={styles.userInfo}>
-            <View>
-              <Text text={senderName} preset="semiBold" style={styles.userName} numberOfLines={1} />
-              <Text text={creationDate} preset="subheading" style={styles.dateAndTime} />
-            </View>
+      <StatusBar backgroundColor={colors.black} barStyle={"light-content"} />
+
+      <View style={styles.topHeaderContainer}>
+        <TouchableOpacity onPress={onPressClose} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={24} color={colors.white} />
+        </TouchableOpacity>
+        <View style={styles.userInfo}>
+          <View>
+            <Text text={senderName} preset="semiBold" style={styles.userName} numberOfLines={1} />
+            <Text text={creationDate} preset="default" style={styles.dateAndTime} />
           </View>
         </View>
       </View>
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} resizeMode="cover" />}
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} resizeMode="contain" />}
     </ModalHoc>
   );
 };

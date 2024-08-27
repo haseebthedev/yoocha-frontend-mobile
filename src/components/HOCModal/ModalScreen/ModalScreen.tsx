@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { View, Modal, StatusBar } from "react-native";
+import { View, Modal } from "react-native";
 import styles from "./styles";
 
 interface Props {

@@ -21,6 +21,7 @@ const colors = {
   green: "green",
 
   transparent: "rgba(0, 0, 0, 0)",
+  transparent100: "rgba(0, 0, 0, 0.1)",
   rgbGrey: "rgba(204, 204, 204, .5)",
   modalBG: "rgba(0,0,0,.3)",
 

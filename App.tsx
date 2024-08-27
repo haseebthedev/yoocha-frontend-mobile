@@ -11,13 +11,7 @@ import FlashMessage from "react-native-flash-message";
 import { ScreenEnum } from "./src/enums";
 import { persistor, store } from "./src/store/store";
 import { AppNavigator, navigationRef } from "./src/navigators";
-import {
-  createChannel,
-  showLocalNotification,
-  showOnboardingNotification,
-  configurePushNotifications,
-} from "./src/utils/pushNotification";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createChannel, showLocalNotification, configurePushNotifications } from "./src/utils/pushNotification";
 
 const App = () => {
   const requestUserPermission = async () => {
@@ -31,44 +25,11 @@ const App = () => {
     }
   };
 
-  const checkFirstLaunch = async () => {
-    try {
-      const hasLaunched = await AsyncStorage.getItem("hasLaunchedApp");
-
-      if (hasLaunched === null) {
-        await AsyncStorage.setItem("hasLaunchedApp", "true");
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      console.error("Error checking first launch: ", error);
-      return false;
-    }
-  };
-
-  // Initialize channels and handle notifications on first launch
-  const initializeApp = async () => {
-    try {
-      const isFirstLaunch = await checkFirstLaunch();
-
-      if (isFirstLaunch) {
-        createChannel("onboarding-channel", "Onboarding Channel", "Notifications for onboarding");
-        showOnboardingNotification("onboarding-channel");
-      }
-
-      createChannel("friend-request-channel", "Friend Request Channel", "Notifications for friend requests");
-    } catch (error) {
-      console.error("Failed to initialize the app: ", error);
-    }
-  };
-
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log("Message handled in the background!", remoteMessage);
     showLocalNotification(remoteMessage, "friend-request-channel");
   });
 
-  // Subscribe to message events
   const setupMessagingHandlers = () => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("Received message: ", remoteMessage);
@@ -94,14 +55,8 @@ const App = () => {
 
   useEffect(() => {
     requestUserPermission();
-  }, []);
-
-  useEffect(() => {
     configurePushNotifications();
-  }, []);
-
-  useEffect(() => {
-    initializeApp();
+    createChannel("yoocha-channel", "Yoocha Channel", "Notifications for yoocha app.");
   }, []);
 
   useEffect(() => {

@@ -17,17 +17,18 @@ import { uploadImageToCloudinary } from "utils/cloudinary";
 import { UpdateUserI, UserUpdateI } from "interfaces";
 import { useAppTheme, useFormikHook } from "hooks";
 import { RootState, updateUserService, useAppDispatch, useAppSelector } from "store";
-import { AlertBox, CountryPickerModal, Header, ImagePickerModal, Text, TextInput } from "components";
+import { AlertBox, CountryPickerModal, Header, ImagePickerModal, LoadingIndicator, Text, TextInput } from "components";
 import personPlaceholder from "assets/images/person.png";
 
 import createStyles from "./edit-profile.styles";
+import { hp, wp } from "utils/responsive";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
   navigation,
   route,
 }) => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state: RootState) => state.auth);
+  const { user, loading } = useAppSelector((state: RootState) => state.auth);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -124,12 +125,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         titleStyle={{ color: theme.colors.heading }}
         customComponentRight={
           <TouchableOpacity
+            style={styles.saveButton}
             activeOpacity={0.5}
             onPress={() => {
               handleSubmit();
             }}
           >
-            <Text preset="heading" text={"Save"} style={styles.btnText} />
+            {loading ? <LoadingIndicator /> : <Text preset="heading" text={"Save"} style={styles.btnText} />}
           </TouchableOpacity>
         }
       />
@@ -246,6 +248,8 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
           setDateModalVisible((prev) => !prev);
         }}
         onCancel={() => setDateModalVisible((prev) => !prev)}
+        minimumDate={new Date(1990, 0, 1)}
+        maximumDate={new Date(2010, 11, 31)}
       />
     </GestureHandlerRootView>
   );

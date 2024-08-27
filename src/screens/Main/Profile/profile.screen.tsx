@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
-import { ScreenEnum } from "enums";
+import { AccountStatus, ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { getDeviceToken } from "utils/deviceInfo";
 import { AlertBox, SettingListItem, Text } from "components";
@@ -17,6 +17,7 @@ import {
   getMyProfileService,
   logoutUser,
   removeFcmTokenService,
+  updateUserService,
   useAppDispatch,
   useAppSelector,
 } from "store";
@@ -54,7 +55,10 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
   const deleteAccountHandler = async () => {
     await dispatch(deleteMyProfileService())
       .unwrap()
-      .then(() => navigation.navigate(ScreenEnum.SIGN_IN))
+      .then(async () => {
+        navigation.navigate(ScreenEnum.SIGN_IN);
+        await dispatch(updateUserService({ accountStatus: AccountStatus.DELETED })).unwrap();
+      })
       .catch((err) => console.log("Error: ", err));
   };
 

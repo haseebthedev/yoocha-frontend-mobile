@@ -8,12 +8,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { colors } from "theme";
 import { socket } from "socket/socketIo";
+import { useAppTheme } from "hooks";
+import { createNewMessage } from "utils/message";
 import { NavigatorParamList } from "navigators";
 import { EventEnum, ScreenEnum } from "enums";
 import { uploadImageToCloudinary } from "utils/cloudinary";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { useAppTheme } from "hooks";
 import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text, ImagePickerModal } from "components";
 import {
   UserI,
@@ -28,8 +29,8 @@ import {
   MessageType,
 } from "store";
 import personplaceholder from "assets/images/person.png";
+
 import createStyles from "./styles";
-import { createNewMessage } from "utils/message";
 
 const LIMIT: number = 50;
 
@@ -58,13 +59,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   });
 
   const [message, setMessage] = useState<string>("");
-  const [fileModalVisible, setFileModalVisible] = useState<boolean>(false);
-  const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
-
+  const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [imageMessage, setImageMessage] = useState<ImageSourcePropType | null>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
-
-  const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
+  const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
+  const [attachmentPickerVisible, setAttachmentPickerVisible] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
     list: [],
     page: 1,
@@ -73,13 +72,20 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   });
 
   const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => <BottomSheetBackdrop appearsOnIndex={0} disappearsOnIndex={-1} {...props} />,
-    []
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        {...props}
+        onPress={() => setAttachmentPickerVisible((prev) => !prev)}
+      />
+    ),
+    [setAttachmentPickerVisible]
   );
 
   const handleOpenImagePicker = () => {
     Keyboard.dismiss();
-    setFileModalVisible((prev) => !prev);
+    setAttachmentPickerVisible((prev) => !prev);
   };
 
   const blockUser = async () => {
@@ -92,37 +98,38 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       .catch((error) => console.log("error: ", error));
   };
 
-  const handleTextMessage = async () => {
-    const newMessage = createNewMessage(user, roomId, message, null, MessageType.TEXT);
+  const updateMessageList = (newMessage: MessageItemI) => {
     setState((prev: ListWithPagination<MessageItemI>) => ({
       ...prev,
       list: [newMessage, ...prev.list],
     }));
+  };
+
+  const handleTextMessage = async () => {
+    const newMessage = createNewMessage(user, roomId, message, null, MessageType.TEXT);
+    updateMessageList(newMessage);
     messageInputRef.current?.clear();
 
     try {
-      await dispatch(sendMessageService({ roomId, message, type: MessageType.TEXT }))
-        .unwrap()
-        .catch((err) => console.log(err))
-        .finally(() => setMessage(""));
+      await dispatch(sendMessageService({ roomId, message, type: MessageType.TEXT })).unwrap();
     } catch (error) {
       console.log("Error while sending text message: ", error);
+    } finally {
+      setMessage("");
+      messageInputRef.current?.clear();
     }
   };
 
   const handleImageMessage = async () => {
-    setImageMessage(null);
-    const newMessage = createNewMessage(user, roomId, null, selectedImage?.uri, MessageType.IMAGE);
-    setState((prev: ListWithPagination<MessageItemI>) => ({
-      ...prev,
-      list: [newMessage, ...prev.list],
-    }));
+    if (!selectedImage) return;
+
+    const newMessage = createNewMessage(user, roomId, null, selectedImage.uri, MessageType.IMAGE);
+    updateMessageList(newMessage);
 
     try {
       const imageUri = await uploadImageToCloudinary(selectedImage);
       if (imageUri) {
         await dispatch(sendMessageService({ roomId, files: [imageUri], type: MessageType.IMAGE })).unwrap();
-        setSelectedImage(null);
       }
     } catch (error) {
       console.log("Error while sending image message: ", error);
@@ -136,10 +143,15 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
     if (selectedImage) {
       await handleImageMessage();
+      setImageMessage(null);
+      setSelectedImage(null);
     }
   };
 
-  const removeImage = async () => setImageMessage(null);
+  const removeImage = async () => {
+    setImageMessage(null);
+    setSelectedImage(null);
+  };
 
   const renderLoader = () => {
     return state.listRefreshing && <LoadingIndicator color={colors.primary} containerStyle={styles.loaderStyle} />;
@@ -228,7 +240,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               </View>
               <View>
                 <Text text={`${otherUser?.firstname} ${otherUser?.lastname}`} preset="semiBold" style={styles.name} />
-                <Text text={`Last seen: 4:20pm`} style={styles.lastSeenText} />
               </View>
             </TouchableOpacity>
           </View>
@@ -265,10 +276,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               !state.listRefreshing &&
               state.list.length === 0 && (
                 <View style={{ transform: [{ scaleY: -1 }] }}>
-                  <EmptyListText
-                    text="There are no messages yet. Start a conversation!"
-                    textStyle={styles.emptyTextPlaceholder}
-                  />
+                  <EmptyListText text="There are no messages yet." textStyle={styles.emptyTextPlaceholder} />
+                  <EmptyListText text="Start a conversation!" textStyle={styles.emptyTextPlaceholder} />
                 </View>
               )
             }
@@ -300,12 +309,16 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
             <View style={styles.actionButtons}>
               {!imageMessage && (
-                <TouchableOpacity onPress={handleOpenImagePicker}>
+                <TouchableOpacity onPress={handleOpenImagePicker} style={styles.actionButton}>
                   <Ionicons name="attach" color={theme.colors.iconColor} size={30} />
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity disabled={message || imageMessage ? false : true} onPress={sendMessage}>
+              <TouchableOpacity
+                disabled={message || imageMessage ? false : true}
+                onPress={sendMessage}
+                style={styles.actionButton}
+              >
                 <Ionicons name="send" color={colors.primary} size={25} />
               </TouchableOpacity>
             </View>
@@ -325,13 +338,14 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
       />
 
       <ImagePickerModal
-        isVisible={fileModalVisible}
+        isVisible={attachmentPickerVisible}
         title="Select an Attachment!"
         setProfileImage={setImageMessage}
         setSelectedImage={setSelectedImage}
         bottomSheetRef={bottomSheetRef}
         snapPoints={snapPoints}
         renderBackdrop={renderBackdrop}
+        setAttachmentPickerVisible={setAttachmentPickerVisible}
       />
     </GestureHandlerRootView>
   );

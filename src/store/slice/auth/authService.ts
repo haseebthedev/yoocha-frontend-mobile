@@ -48,10 +48,10 @@ export const signinService: any = createAsyncThunk(
   "auth/signin",
   async (payload: SigninPayloadI, { rejectWithValue }) => {
     try {
-      console.log("ok");
       const response: AxiosResponse<SigninResponseI> = await axios.post(`${API_URL}/auth/signin`, {
         email: payload.email,
         password: payload.password,
+        fcmToken: payload.fcmToken,
       });
 
       if (response?.data?.result?.token) {
@@ -97,6 +97,8 @@ export const updateUserService: any = createAsyncThunk(
         lastname: payload.lastname,
         dateOfBirth: payload.dateOfBirth,
         country: payload.country,
+        accountStatus: payload.accountStatus,
+        isFirstSignIn: payload.isFirstSignIn,
       });
 
       return response.data;
@@ -140,11 +142,14 @@ export const contactUsService: any = createAsyncThunk(
   "auth/contactUsService",
   async (payload: ContactUsI, { rejectWithValue }) => {
     try {
+      console.log("ok");
       const response: AxiosResponse<ContactUsResponseI> = await AxiosInstance.post(`/user/contact-us`, {
         name: payload.name,
         email: payload.email,
         message: payload.message,
       });
+
+      console.log("res: ", response.data.result);
 
       return response.data;
     } catch (error: any) {
@@ -157,7 +162,7 @@ export const contactUsService: any = createAsyncThunk(
 
 export const deleteMyProfileService: any = createAsyncThunk("auth/deleteMyProfile", async (_, { rejectWithValue }) => {
   try {
-    const response: AxiosResponse<deleteMyProfileResponseI> = await AxiosInstance.delete(`/user/me`);
+    const response: AxiosResponse<deleteMyProfileResponseI> = await AxiosInstance.patch(`/user/delete-account`);
 
     return response.data;
   } catch (error: any) {

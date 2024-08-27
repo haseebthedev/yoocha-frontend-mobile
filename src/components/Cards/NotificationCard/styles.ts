@@ -42,7 +42,7 @@ const createStyles = (theme) =>
     notificationText: {
       width: wp(60),
       marginTop: hp(-0.4),
-      color: theme.colors.heading,
+      color: theme.colors.subHeading,
     },
     nameWithDate: {
       flexDirection: "row",
@@ -55,7 +55,7 @@ const createStyles = (theme) =>
     },
     time: {
       fontSize: hp(1.5),
-      color: theme.colors.heading,
+      color: theme.colors.subHeading,
     },
   });
 

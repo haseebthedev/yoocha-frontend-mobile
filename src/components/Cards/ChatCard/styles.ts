@@ -45,10 +45,9 @@ const createStyles = (theme) =>
       flexDirection: "column",
       alignItems: "flex-end",
     },
-
     infoText: {
+      fontSize: hp(1.5),
       color: theme.colors.subHeading,
-      fontSize: hp(1.2),
     },
     unreadMessageContainer: {
       backgroundColor: colors.primary,

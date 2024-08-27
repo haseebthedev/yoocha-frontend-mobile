@@ -13,6 +13,7 @@ interface ImagePickerModalI {
   isVisible: boolean;
   title?: string;
   setProfileImage: (uri: ImageSourcePropType) => void;
+  setAttachmentPickerVisible: (visible: boolean) => void;
   setSelectedImage: (any) => void;
   bottomSheetRef: any;
   snapPoints: string[];
@@ -27,6 +28,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   bottomSheetRef,
   snapPoints,
   renderBackdrop,
+  setAttachmentPickerVisible,
 }: ImagePickerModalI) => {
   return (
     <BottomSheetModal
@@ -42,8 +44,8 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
           <View style={styles.btnParentSection}>
             <TouchableOpacity
               onPress={() => {
-                bottomSheetRef.current.close();
                 launchCameraHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+                setAttachmentPickerVisible(false);
               }}
               style={styles.btnSection}
             >
@@ -53,8 +55,8 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
 
             <TouchableOpacity
               onPress={() => {
-                bottomSheetRef.current.close();
                 launchImageLibraryHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+                setAttachmentPickerVisible(false);
               }}
               style={styles.btnSection}
             >

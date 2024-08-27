@@ -17,21 +17,21 @@ const createStyles = (theme) =>
       gap: 10,
     },
     profileImageContainer: {
-      width: hp(6.2),
-      height: hp(6.2),
-      borderRadius: hp(3),
+      width: wp(14),
+      height: wp(14),
+      borderRadius: wp(7),
       backgroundColor: theme.colors.personImageBg,
       alignItems: "center",
       justifyContent: "center",
     },
-    profileImage: {
-      width: hp(6.2),
-      height: hp(6.2),
-      borderRadius: hp(3),
-    },
     placeholderImage: {
       width: wp(6),
       height: wp(8.3),
+    },
+    profileImage: {
+      width: wp(14),
+      height: wp(14),
+      borderRadius: wp(7),
     },
     sideBtn: {
       borderWidth: 1,
