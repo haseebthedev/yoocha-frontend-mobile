@@ -56,44 +56,12 @@ const createStyles = (theme) =>
     listContainer: {
       paddingVertical: hp(1),
     },
-    messageContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 10,
-    },
-    messageTextContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-    },
-    otherParticipantImage: {
-      width: wp(10),
-      height: wp(10),
-      borderRadius: wp(5),
-      marginTop: 10,
-      marginRight: 10,
-    },
-    messageText: {
-      maxWidth: wp(65),
-      padding: 10,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      // elevation: 1,
-    },
-    recieveTime: {
-      fontSize: 10,
-      color: colors.textDim,
-    },
     flexAlignCenter: {
       flexDirection: "row",
       alignItems: "center",
     },
     name: {
       color: theme.colors.heading,
-    },
-    lastSeenText: {
-      fontSize: hp(1.3),
-      color: theme.colors.subHeading,
     },
     bodyContainer: {
       flex: 1,
@@ -162,9 +130,6 @@ const createStyles = (theme) =>
       flexDirection: "row",
       gap: wp(1),
       alignItems: "center",
-    },
-    actionButton: {
-      padding: wp(1),
     },
   });
 

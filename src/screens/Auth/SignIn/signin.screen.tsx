@@ -2,7 +2,6 @@ import { FC, useState } from "react";
 import { Keyboard, TouchableOpacity, View } from "react-native";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import messaging from "@react-native-firebase/messaging";
 
 import { colors } from "theme";
 import { SigninI } from "interfaces";
@@ -12,14 +11,7 @@ import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
 import { useAppTheme, useFormikHook } from "hooks";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
-import {
-  saveFcmTokenService,
-  signinService,
-  useAppDispatch,
-  useAppSelector,
-  RootState,
-  updateUserService,
-} from "store";
+import { signinService, useAppDispatch, useAppSelector, RootState } from "store";
 import createStyles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {

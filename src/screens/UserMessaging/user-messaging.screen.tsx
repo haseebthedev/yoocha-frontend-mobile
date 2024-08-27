@@ -15,7 +15,16 @@ import { EventEnum, ScreenEnum } from "enums";
 import { uploadImageToCloudinary } from "utils/cloudinary";
 import { userMessageScreenOptions } from "constant";
 import { ListWithPagination, MenuOptionI } from "interfaces";
-import { AlertBox, EmptyListText, LoadingIndicator, MessageCard, PopupMenu, Text, ImagePickerModal } from "components";
+import {
+  AlertBox,
+  EmptyListText,
+  LoadingIndicator,
+  MessageCard,
+  PopupMenu,
+  Text,
+  ImagePickerModal,
+  ActionButton,
+} from "components";
 import {
   UserI,
   ListMessageResponseI,
@@ -31,6 +40,7 @@ import {
 import personplaceholder from "assets/images/person.png";
 
 import createStyles from "./styles";
+import { capitalize } from "utils/formatString";
 
 const LIMIT: number = 50;
 
@@ -70,6 +80,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     hasNext: false,
     listRefreshing: false,
   });
+
+  const friendName: string = `${capitalize(otherUser?.firstname || "Guest")} ${capitalize(otherUser?.lastname || "")}`;
+
+  const friendProfileImage: ImageSourcePropType = otherUser?.profilePicture
+    ? { uri: otherUser?.profilePicture }
+    : personplaceholder;
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -126,13 +142,18 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
     const newMessage = createNewMessage(user, roomId, null, selectedImage.uri, MessageType.IMAGE);
     updateMessageList(newMessage);
 
+    setImageMessage(null);
+
     try {
       const imageUri = await uploadImageToCloudinary(selectedImage);
       if (imageUri) {
         await dispatch(sendMessageService({ roomId, files: [imageUri], type: MessageType.IMAGE })).unwrap();
+        setSelectedImage(null);
       }
     } catch (error) {
       console.log("Error while sending image message: ", error);
+    } finally {
+      setSelectedImage(null);
     }
   };
 
@@ -143,8 +164,6 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
     if (selectedImage) {
       await handleImageMessage();
-      setImageMessage(null);
-      setSelectedImage(null);
     }
   };
 
@@ -234,12 +253,12 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
             <TouchableOpacity activeOpacity={0.5} style={styles.userData} onPress={() => {}}>
               <View style={styles.imageContainer}>
                 <Image
-                  source={otherUser?.profilePicture ? { uri: otherUser?.profilePicture } : personplaceholder}
+                  source={friendProfileImage}
                   style={otherUser?.profilePicture ? styles.profileImage : styles.imagePlaceholder}
                 />
               </View>
               <View>
-                <Text text={`${otherUser?.firstname} ${otherUser?.lastname}`} preset="semiBold" style={styles.name} />
+                <Text text={friendName} preset="semiBold" style={styles.name} />
               </View>
             </TouchableOpacity>
           </View>
@@ -285,9 +304,9 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
           />
         </View>
 
-        {isUserBlock ? (
-          <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />
-        ) : (
+        {isUserBlock && <EmptyListText text="User has been blocked!" textStyle={styles.emptyTextPlaceholder} />}
+
+        {!isUserBlock && (
           <View style={styles.inputFieldBlock}>
             {imageMessage ? (
               <View style={styles.inputImage}>
@@ -309,18 +328,16 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
             <View style={styles.actionButtons}>
               {!imageMessage && (
-                <TouchableOpacity onPress={handleOpenImagePicker} style={styles.actionButton}>
-                  <Ionicons name="attach" color={theme.colors.iconColor} size={30} />
-                </TouchableOpacity>
+                <ActionButton icon="attach" onPress={handleOpenImagePicker} color={theme.colors.iconColor} size={30} />
               )}
 
-              <TouchableOpacity
-                disabled={message || imageMessage ? false : true}
+              <ActionButton
+                icon="send"
                 onPress={sendMessage}
-                style={styles.actionButton}
-              >
-                <Ionicons name="send" color={colors.primary} size={25} />
-              </TouchableOpacity>
+                color={colors.primary}
+                size={25}
+                disabled={message || imageMessage ? false : true}
+              />
             </View>
           </View>
         )}
