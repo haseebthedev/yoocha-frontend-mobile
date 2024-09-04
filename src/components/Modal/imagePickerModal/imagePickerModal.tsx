@@ -1,7 +1,8 @@
 import React from "react";
 import { ImageSourcePropType, TouchableOpacity, View } from "react-native";
 
-import { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { Asset } from "react-native-image-picker";
+import BottomSheet, { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { Text } from "components/General/text/text";
@@ -14,8 +15,8 @@ interface ImagePickerModalI {
   title?: string;
   setProfileImage: (uri: ImageSourcePropType) => void;
   setAttachmentPickerVisible: (visible: boolean) => void;
-  setSelectedImage: (any) => void;
-  bottomSheetRef: any;
+  setSelectedImage: (image: Asset) => void;
+  bottomSheetRef: React.RefObject<BottomSheet>;
   snapPoints: string[];
   renderBackdrop: React.FC<BottomSheetBackdropProps>;
 }
@@ -44,7 +45,10 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
           <View style={styles.btnParentSection}>
             <TouchableOpacity
               onPress={() => {
-                launchCameraHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+                launchCameraHandler(setProfileImage, setSelectedImage);
+                if (bottomSheetRef.current) {
+                  bottomSheetRef.current.close();
+                }
                 setAttachmentPickerVisible(false);
               }}
               style={styles.btnSection}
@@ -55,7 +59,10 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
 
             <TouchableOpacity
               onPress={() => {
-                launchImageLibraryHandler(setProfileImage, setSelectedImage, bottomSheetRef);
+                launchImageLibraryHandler(setProfileImage, setSelectedImage);
+                if (bottomSheetRef.current) {
+                  bottomSheetRef.current.close();
+                }
                 setAttachmentPickerVisible(false);
               }}
               style={styles.btnSection}

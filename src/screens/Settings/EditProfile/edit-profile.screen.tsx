@@ -221,6 +221,7 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         bottomSheetRef={bottomSheetRef}
         snapPoints={snapPoints}
         renderBackdrop={renderBackdrop}
+        setAttachmentPickerVisible={setImagePickerVisible}
       />
 
       <CountryPickerModal

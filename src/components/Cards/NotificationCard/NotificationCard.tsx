@@ -17,8 +17,11 @@ const NotificationCard = ({ item, onPress }: NotificationCardI) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const senderName: string = `${capitalize(item.from.firstname)} ${capitalize(item.from.lastname)}` || "";
-  const profileImage: string | null = item?.from.profilePicture;
+  const senderName: string =
+    item.from._id === item.to._id
+      ? "Yoocha"
+      : `${capitalize(item.from.firstname)} ${capitalize(item.from.lastname)}` || "";
+  const profileImage: string | null = item.from._id === item.to._id ? "app_logo" : item?.from.profilePicture;
 
   return (
     <TouchableOpacity

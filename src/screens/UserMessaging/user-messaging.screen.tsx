@@ -62,11 +62,11 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const snapPoints: string[] = useMemo(() => ["25%", "50%", "75%"], []);
 
   const [otherUser, setOtherUser] = useState<UserI>();
-  const [menuVisible, setMenuVisible] = useState<boolean>(false);
   const [menuOption, setMenuOption] = useState<MenuOptionI>({
     id: 0,
     title: "",
   });
+  const [menuVisible, setMenuVisible] = useState<boolean>(false);
 
   const [message, setMessage] = useState<string>("");
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
@@ -250,7 +250,17 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
               <Ionicons name="chevron-back" color={theme.colors.iconColor} size={24} />
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.5} style={styles.userData} onPress={() => {}}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.userData}
+              onPress={() => {
+                if (otherUser) {
+                  navigation.navigate(ScreenEnum.PUBLIC_PROFILE, { item: otherUser });
+                } else {
+                  console.warn("User not found");
+                }
+              }}
+            >
               <View style={styles.imageContainer}>
                 <Image
                   source={friendProfileImage}
