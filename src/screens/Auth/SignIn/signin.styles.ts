@@ -29,6 +29,9 @@ const createStyles = (theme) =>
       flexDirection: "row",
       justifyContent: "center",
     },
+    submitButton: {
+      marginTop: hp(2),
+    },
   });
 
 export default createStyles;

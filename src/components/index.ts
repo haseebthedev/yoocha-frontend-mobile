@@ -26,6 +26,7 @@ export * from "./Drawer/drawer";
 //Button
 export * from "./Buttons/AddFriendButton/AddFriendButton";
 export * from "./Buttons/AppButton/AppButton";
+export * from "./Buttons/ActionButton/ActionButton";
 
 //Modal HOC
 export * from "./HOCModal/ModalScreen/ModalScreen";

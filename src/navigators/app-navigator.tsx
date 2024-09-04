@@ -9,7 +9,6 @@ import {
   MainScreen,
   UserMessagingScreen,
   BlockedUsersScreen,
-  // SettingsScreen,
   EditProfileScreen,
   AppSettingsScreen,
   SignInScreen,

@@ -7,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { colors } from "theme";
-import { ScreenEnum } from "enums";
+import { AccountStatus, ScreenEnum } from "enums";
 import { useAppTheme } from "hooks";
 import { getDeviceToken } from "utils/deviceInfo";
 import { AlertBox, SettingListItem, Text } from "components";
@@ -17,6 +17,7 @@ import {
   getMyProfileService,
   logoutUser,
   removeFcmTokenService,
+  updateUserService,
   useAppDispatch,
   useAppSelector,
 } from "store";
@@ -49,13 +50,20 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
 
   const onCloseAlertBoxPress = () => setAlertModalVisible((prev) => !prev);
 
-  const onDelModalCancelPress = () => setDeleteAccModalVisible((prev) => !prev);
+  const onCancelDelModalPress = () => setDeleteAccModalVisible((prev) => !prev);
 
   const deleteAccountHandler = async () => {
-    await dispatch(deleteMyProfileService())
-      .unwrap()
-      .then(() => navigation.navigate(ScreenEnum.SIGN_IN))
-      .catch((err) => console.log("Error: ", err));
+    try {
+      const fcmToken = await getDeviceToken();
+
+      await dispatch(deleteMyProfileService()).unwrap();
+
+      await dispatch(removeFcmTokenService({ userId: user._id, token: fcmToken })).unwrap();
+    } catch (err) {
+      console.error("Error during account deletion:", err);
+    } finally {
+      navigation.navigate(ScreenEnum.SIGN_IN);
+    }
   };
 
   useEffect(() => {
@@ -139,7 +147,7 @@ const ProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.PR
         type="error"
         title="Delete Account!"
         description="Are you sure you want to delete your account permanently?"
-        onClose={onDelModalCancelPress}
+        onClose={onCancelDelModalPress}
         primaryButtonText="Delete"
         primaryOnClick={deleteAccountHandler}
         secondaryButtonText="Cancel"

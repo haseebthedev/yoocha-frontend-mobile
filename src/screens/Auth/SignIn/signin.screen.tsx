@@ -10,40 +10,34 @@ import { getDeviceToken } from "utils/deviceInfo";
 import { NavigatorParamList } from "navigators";
 import { signinValidationSchema } from "utils/validations";
 import { useAppTheme, useFormikHook } from "hooks";
-import { saveFcmTokenService, signinService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
+import { signinService, useAppDispatch, useAppSelector, RootState } from "store";
 import createStyles from "./signin.styles";
 
 const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_IN>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const validationSchema = signinValidationSchema;
   const initialValues: SigninI = { email: "", password: "" };
 
   const submit = async ({ email, password }: SigninI) => {
-    Keyboard.dismiss();
-    setLoading(true);
-    await dispatch(signinService({ email, password }))
-      .unwrap()
-      .then(async (response) => {
-        const fcmToken = await getDeviceToken();
-        const userId = response.result.user._id;
-        await dispatch(saveFcmTokenService({ token: fcmToken, userId }));
-      })
-      .then(() => {
-        resetForm();
-        navigation.navigate(ScreenEnum.MAIN);
-      })
-      .catch((error) => console.log(error.message))
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      Keyboard.dismiss();
+      const fcmToken = await getDeviceToken();
+
+      await dispatch(signinService({ email, password, fcmToken })).unwrap();
+
+      resetForm();
+      navigation.navigate(ScreenEnum.MAIN);
+    } catch (err) {
+      console.log("error === ", err);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values, setFieldValue, resetForm } =
@@ -62,6 +56,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("email")}
           error={errors.email}
           visible={touched.email}
+          isEditable={!loading}
         />
         <TextInput
           label="Password"
@@ -74,6 +69,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           onChangeText={handleChange("password")}
           error={errors.password}
           visible={touched.password}
+          isEditable={!loading}
         />
 
         <AppButton
@@ -81,6 +77,7 @@ const SignInScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           text={loading ? "" : "Login"}
           onPress={handleSubmit}
           disabled={loading}
+          style={styles.submitButton}
           RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
 

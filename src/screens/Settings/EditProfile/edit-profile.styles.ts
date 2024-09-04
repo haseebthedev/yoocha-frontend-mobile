@@ -6,7 +6,7 @@ const createStyles = (theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: hp(2.5),
+      paddingTop: hp(2),
       backgroundColor: theme.colors.bgColor,
     },
     mainContainer: {
@@ -89,8 +89,9 @@ const createStyles = (theme) =>
       color: colors.primary,
     },
     saveButton: {
-      width: "auto",
-      padding: 10,
+      width: wp(15),
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 

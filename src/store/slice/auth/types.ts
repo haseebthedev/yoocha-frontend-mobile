@@ -10,6 +10,7 @@ export interface UserI {
   city?: string | null;
   createdAt: string;
   updatedAt: string;
+  accountStatus?: boolean;
   isFriendReqSent?: boolean;
 }
 
@@ -31,7 +32,11 @@ export interface SignupResponseI {
   result: UserI;
 }
 
-export type SigninPayloadI = Pick<SignupPayloadI, "email" | "password">;
+export interface SigninPayloadI {
+  email: string;
+  password: string;
+  fcmToken?: string;
+}
 
 export interface SigninResponseI {
   result: {
@@ -54,6 +59,8 @@ export interface UpdateUserPayloadI {
   lastname: string;
   country: string;
   dateOfBirth: string;
+  accountStatus?: boolean;
+  isFirstSignIn?: boolean;
 }
 
 export interface UpdateUserResponseI {

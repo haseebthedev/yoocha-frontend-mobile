@@ -10,17 +10,17 @@ import { useAppTheme } from "hooks";
 import { useFormikHook } from "hooks/UseFormikHook";
 import { NavigatorParamList } from "navigators";
 import { signupValidationSchema } from "utils/validations";
-import { signupService, useAppDispatch } from "store";
 import { AppButton, Header, LoadingIndicator, Text, TextInput } from "components";
+import { signupService, useAppDispatch, useAppSelector, RootState } from "store";
 import createStyles from "./signup.styles";
 
 const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIGN_UP>> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state: RootState) => state.auth);
 
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
@@ -28,24 +28,23 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
   const initialValues: SignupI = { firstname: "", lastname: "", email: "", password: "", confirmPassword: "" };
 
   const submit = async () => {
-    Keyboard.dismiss();
-    setLoading(true);
+    try {
+      Keyboard.dismiss();
 
-    await dispatch(
-      signupService({
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        password: values.password,
-      })
-    )
-      .unwrap()
-      .then((response) => {
-        navigation.navigate(ScreenEnum.SIGN_IN);
-        resetForm();
-      })
-      .catch((error) => console.log("Error occurred during sign-up: ", error))
-      .finally(() => setLoading(false));
+      await dispatch(
+        signupService({
+          firstname: values.firstname,
+          lastname: values.lastname,
+          email: values.email,
+          password: values.password,
+        })
+      ).unwrap();
+
+      navigation.navigate(ScreenEnum.SIGN_IN);
+      resetForm();
+    } catch (error) {
+      console.log("Error occurred during sign-up: ", error);
+    }
   };
 
   const { handleChange, handleSubmit, setFieldTouched, errors, touched, values, resetForm } = useFormikHook(
@@ -123,6 +122,7 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
           text={loading ? "" : "Sign Up"}
           onPress={handleSubmit}
           disabled={loading}
+          style={styles.submitButton}
           RightAccessory={() => loading && <LoadingIndicator color={colors.white} />}
         />
 

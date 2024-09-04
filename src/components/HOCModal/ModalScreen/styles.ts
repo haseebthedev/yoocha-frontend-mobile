@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
-import { colors } from "theme";
-import { isIOS } from "utils/deviceInfo";
+
 import { hp } from "utils/responsive";
+import { colors } from "theme";
 
 const styles = StyleSheet.create({
   container: {
@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
   modalView: {
     height: hp(100),
     backgroundColor: colors.black,
-    paddingTop: isIOS ? hp(6.5) : hp(3),
     position: "absolute",
     top: 0,
     right: 0,

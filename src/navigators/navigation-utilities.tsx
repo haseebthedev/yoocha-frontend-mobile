@@ -6,6 +6,7 @@ import {
   NavigationAction,
   createNavigationContainerRef,
 } from "@react-navigation/native";
+import { NavigatorParamList } from "./app-navigator";
 
 /* eslint-disable */
 export const RootNavigation = {
@@ -19,7 +20,7 @@ export const RootNavigation = {
 };
 /* eslint-enable */
 
-export const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef<NavigatorParamList>();
 
 /**
  * Gets the current screen from any navigation state.

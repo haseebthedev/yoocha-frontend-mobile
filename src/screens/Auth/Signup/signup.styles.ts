@@ -34,12 +34,15 @@ const createStyles = (theme) =>
     haveAccContainer: {
       flexDirection: "row",
       justifyContent: "center",
-      marginBottom: hp(3),
+      marginTop: hp(2),
     },
     signupText: {
       color: colors.primaryLight,
       marginHorizontal: wp(1),
       textDecorationLine: "underline",
+    },
+    submitButton: {
+      marginTop: hp(2),
     },
   });
 

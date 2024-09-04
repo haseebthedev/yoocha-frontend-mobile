@@ -8,10 +8,10 @@ const createStyles = (theme) =>
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: wp(3),
-    },
-    imagePreviewHeader: {
       zIndex: 1,
+      backgroundColor: "black",
     },
+    imagePreviewHeader: {},
     userInfo: {
       flexDirection: "row",
       alignItems: "center",
