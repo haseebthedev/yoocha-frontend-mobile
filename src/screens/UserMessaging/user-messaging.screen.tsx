@@ -337,9 +337,13 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
             )}
 
             <View style={styles.actionButtons}>
-              {!imageMessage && (
-                <ActionButton icon="attach" onPress={handleOpenImagePicker} color={theme.colors.iconColor} size={30} />
-              )}
+              <ActionButton
+                icon="attach"
+                onPress={handleOpenImagePicker}
+                disabled={message || imageMessage ? true : false}
+                color={theme.colors.iconColor}
+                size={30}
+              />
 
               <ActionButton
                 icon="send"
