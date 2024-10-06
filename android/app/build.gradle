@@ -112,6 +112,11 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    
+    aaptOptions {
+        cruncherEnabled = false
+        additionalParameters '--no-version-vectors'
+    }
 }
 
 dependencies {

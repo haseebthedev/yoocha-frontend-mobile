@@ -76,7 +76,13 @@ const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnu
         profilePicture = await uploadImageToCloudinary(selectedImage);
       }
 
-      const dataToBeUpdate: UserUpdateI = { firstname, lastname, email, country: selectedCountry, dateOfBirth };
+      const dataToBeUpdate: UserUpdateI = {
+        firstname: firstname.trim(),
+        lastname: lastname.trim(),
+        email,
+        country: selectedCountry,
+        dateOfBirth,
+      };
 
       if (profilePicture) {
         dataToBeUpdate.profilePicture = profilePicture;

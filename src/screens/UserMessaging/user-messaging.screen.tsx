@@ -72,6 +72,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   const [isUserBlock, setIsUserBlock] = useState<boolean>(false);
   const [imageMessage, setImageMessage] = useState<ImageSourcePropType | null>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [isMessageSending, setIsMessageSending] = useState<boolean>(false);
   const [blockModalVisible, setBlockModalVisible] = useState<boolean>(false);
   const [attachmentPickerVisible, setAttachmentPickerVisible] = useState<boolean>(false);
   const [state, setState] = useState<ListWithPagination<MessageItemI>>({
@@ -158,12 +159,20 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
   };
 
   const sendMessage = async () => {
-    if (message) {
-      await handleTextMessage();
-    }
+    if (isMessageSending) return;
 
-    if (selectedImage) {
-      await handleImageMessage();
+    setIsMessageSending(true);
+
+    try {
+      if (message) {
+        await handleTextMessage();
+      }
+
+      if (selectedImage) {
+        await handleImageMessage();
+      }
+    } finally {
+      setIsMessageSending(false);
     }
   };
 
@@ -350,7 +359,8 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
                 onPress={sendMessage}
                 color={colors.primary}
                 size={25}
-                disabled={message || imageMessage ? false : true}
+                disabled={isMessageSending || (!message && !imageMessage)}
+                // disabled={message || imageMessage ? false : true}
               />
             </View>
           </View>

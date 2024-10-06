@@ -27,13 +27,13 @@ const App = () => {
 
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     console.log("Message handled in the background!", remoteMessage);
-    showLocalNotification(remoteMessage, "friend-request-channel");
+    showLocalNotification(remoteMessage, "yoocha-channel");
   });
 
   const setupMessagingHandlers = () => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("Received message: ", remoteMessage);
-      showLocalNotification(remoteMessage, "friend-request-channel");
+      console.log("Message handled on foreground!", remoteMessage);
+      showLocalNotification(remoteMessage, "yoocha-channel");
     });
 
     messaging().onNotificationOpenedApp((remoteMessage) => {
@@ -71,7 +71,7 @@ const App = () => {
   useEffect(() => {
     setTimeout(() => {
       BootSplash.hide();
-    }, 2000);
+    }, 1000);
   }, []);
 
   return (

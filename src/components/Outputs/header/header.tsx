@@ -54,11 +54,11 @@ export function Header({
 
   return (
     <View style={[styles.container, style, isSticky && { position: "absolute", top: 0, width: "100%" }]}>
-      <View>{renderLeftIcon()}</View>
+      <View style={[styles.iconContainer, { alignItems: "flex-start" }]}>{renderLeftIcon()}</View>
 
       <Text text={headerText} style={titleStyle} preset="logo" />
 
-      <View>{renderRightIcon()}</View>
+      <View style={[styles.iconContainer, { alignItems: "flex-end" }]}>{renderRightIcon()}</View>
     </View>
   );
 }
