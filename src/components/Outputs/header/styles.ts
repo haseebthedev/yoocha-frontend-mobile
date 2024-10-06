@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
   },
+  iconContainer: {
+    flex: 1,
+  },
 });
 
 export default styles;

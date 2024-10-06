@@ -33,9 +33,9 @@ const SignUpScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.SIG
 
       await dispatch(
         signupService({
-          firstname: values.firstname,
-          lastname: values.lastname,
-          email: values.email,
+          firstname: values.firstname.trim(),
+          lastname: values.lastname.trim(),
+          email: values.email.trim(),
           password: values.password,
         })
       ).unwrap();

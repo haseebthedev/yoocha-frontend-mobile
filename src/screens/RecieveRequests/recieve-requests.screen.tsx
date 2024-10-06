@@ -20,6 +20,7 @@ import {
   useAppSelector,
 } from "store";
 import createStyles from "./recieve-requests.styles";
+import { showFlashMessage } from "utils/flashMessage";
 
 const LIMIT: number = 10;
 
@@ -66,7 +67,8 @@ const RecieveRequestsScreen: FC<NativeStackScreenProps<NavigatorParamList, Scree
 
       await dispatch(acceptFriendRequest({ roomId })).unwrap();
     } catch (err) {
-      console.error("Error while accepting friend request: ", err);
+      showFlashMessage({ type: "danger", message: `Error while accepting friend request: ${err}` });
+      // console.error("Error while accepting friend request: ", err);
     }
   };
 

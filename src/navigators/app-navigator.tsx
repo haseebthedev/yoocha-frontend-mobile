@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { StatusBar } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";

@@ -6,6 +6,7 @@ export var socket: Socket | null = null;
 
 export const initSocketIO = async () => {
   const token = await loadString("UserToken");
+  console.log("UserToken retrieved:", token);
 
   let extraHeaders = {};
 
@@ -13,12 +14,21 @@ export const initSocketIO = async () => {
     extraHeaders["authorization"] = token ? token : null;
   }
 
-  socket = io(API_URL, { transports: ["websocket"], extraHeaders });
+  socket = io(API_URL, { transports: ["websocket"], extraHeaders, timeout: 10000 });
+
+  socket.on("connect", () => {
+    console.log("Socket connected:", socket?.id);
+  });
+
+  socket.on("connect_error", (error) => {
+    console.error("Socket connection error:", error);
+  });
 };
 
 export const disconnectSocketIO = async () => {
   if (socket) {
     await socket.disconnect();
+    console.log("Socket disconnected");
     return;
   }
 

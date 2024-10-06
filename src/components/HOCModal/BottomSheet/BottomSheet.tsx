@@ -25,6 +25,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
           snapPoints={snapPoints}
           enablePanDownToClose={true}
           backdropComponent={renderBackdrop}
+          backgroundStyle={{ backgroundColor: "red" }}
         >
           {children}
         </BottomSheet>
