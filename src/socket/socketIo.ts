@@ -14,7 +14,7 @@ export const initSocketIO = async () => {
     extraHeaders["authorization"] = token ? token : null;
   }
 
-  socket = io(API_URL, { transports: ["websocket"], extraHeaders, timeout: 10000 });
+  socket = io(API_URL, { transports: ["websocket"], extraHeaders });
 
   socket.on("connect", () => {
     console.log("Socket connected:", socket?.id);

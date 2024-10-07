@@ -1,5 +1,7 @@
 import React from "react";
 import BottomSheet, { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { useAppTheme } from "hooks";
+import createStyles from "./styles";
 
 interface BottomSheetModalProps {
   isVisible: boolean;
@@ -16,6 +18,9 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   renderBackdrop,
   children,
 }: React.PropsWithChildren<BottomSheetModalProps>) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <>
       {isVisible && (
@@ -25,7 +30,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
           snapPoints={snapPoints}
           enablePanDownToClose={true}
           backdropComponent={renderBackdrop}
-          backgroundStyle={{ backgroundColor: "red" }}
+          backgroundStyle={styles.bottomSheetStyle}
         >
           {children}
         </BottomSheet>

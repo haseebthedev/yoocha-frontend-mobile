@@ -40,7 +40,7 @@ const createStyles = (theme) =>
       width: wp(74),
     },
     notificationText: {
-      width: wp(60),
+      width: wp(70),
       marginTop: hp(-0.4),
       color: theme.colors.subHeading,
     },
