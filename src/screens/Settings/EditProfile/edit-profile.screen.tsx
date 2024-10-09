@@ -21,7 +21,6 @@ import { AlertBox, CountryPickerModal, Header, ImagePickerModal, LoadingIndicato
 import personPlaceholder from "assets/images/person.png";
 
 import createStyles from "./edit-profile.styles";
-import { hp, wp } from "utils/responsive";
 
 const EditProfileScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEnum.EDIT_PROFILE>> = ({
   navigation,
