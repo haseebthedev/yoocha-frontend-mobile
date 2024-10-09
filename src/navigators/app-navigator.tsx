@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { StatusBar } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -110,16 +110,20 @@ export const AppNavigator = (props: NavigationProps) => {
 
   useBackButtonHandler(canExit);
 
-  useEffect(() => {
+  const initializeSocket = useCallback(() => {
     if (token) {
       console.log("Initializing the client socket!");
       initSocketIO();
     }
+  }, [token]);
+
+  useEffect(() => {
+    initializeSocket();
 
     return () => {
       disconnectSocketIO();
     };
-  }, [token]);
+  }, [initializeSocket]);
 
   return (
     <NavigationContainer ref={navigationRef} {...props}>

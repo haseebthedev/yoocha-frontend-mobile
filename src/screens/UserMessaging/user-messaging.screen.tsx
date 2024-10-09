@@ -236,6 +236,7 @@ const UserMessagingScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenE
 
   useEffect(() => {
     if (socket) {
+      console.log("OK");
       const handleReceiveMessage = (payload: any) => {
         setState((prev: ListWithPagination<MessageItemI>) => {
           const updatedMessages = prev.list.filter((msg: MessageItemI) => msg.chatRoomId === payload._doc.chatRoomId);
