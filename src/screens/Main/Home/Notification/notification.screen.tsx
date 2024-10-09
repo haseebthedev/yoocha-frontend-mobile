@@ -1,22 +1,22 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { colors } from "theme";
 import { useAppTheme } from "hooks";
-import { useAppDispatch } from "store";
+import { deleteNotificationService, useAppDispatch } from "store";
 import { NavigatorParamList } from "navigators";
 import { NotificationListResponseI } from "interfaces";
 import { NotificationEnum, ScreenEnum } from "enums";
+import { EmptyListText, Header, LoadingIndicator, NotificationCard } from "components";
 import {
   NotificationResponseI,
   readNotificationService,
   listNotificationService,
   ListNotificationResponseI,
 } from "store";
-import { EmptyListText, Header, LoadingIndicator, NotificationCard } from "components";
-
 import createStyles from "./notification.styles";
 
 const LIMIT: number = 10;
@@ -73,6 +73,19 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
       console.error("Error occurred while handling notification:", error);
     }
   };
+
+  const onNotificationDismiss = useCallback(async (id: string) => {
+    setState((prev: NotificationListResponseI) => ({
+      ...prev,
+      list: prev.list.filter((item) => item._id !== id),
+    }));
+
+    try {
+      await dispatch(deleteNotificationService({ id })).unwrap();
+    } catch (error) {
+      console.log("Error while deleting notification: ", error);
+    }
+  }, []);
 
   const getNotificationList = useCallback(async () => {
     setState((prev: NotificationListResponseI) => ({
@@ -144,7 +157,7 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
   }, []);
 
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={[styles.container, { flex: 1 }]}>
       <Header
         headerText="Notifications"
         leftIcon="chevron-back"
@@ -156,7 +169,9 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
         data={state.list}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <NotificationCard item={item} onPress={onNotificationPress} />}
+        renderItem={({ item }) => (
+          <NotificationCard item={item} onPress={onNotificationPress} onNotificationDismiss={onNotificationDismiss} />
+        )}
         style={styles.notiList}
         contentContainerStyle={styles.notiListContainer}
         onEndReached={loadMoreItems}
@@ -170,8 +185,9 @@ const NotificationScreen: FC<NativeStackScreenProps<NavigatorParamList, ScreenEn
           )
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        nestedScrollEnabled={true}
       />
-    </View>
+    </GestureHandlerRootView>
   );
 };
 

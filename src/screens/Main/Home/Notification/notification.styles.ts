@@ -13,6 +13,7 @@ const createStyles = (theme) =>
       paddingTop: hp(1),
     },
     notiListContainer: {
+      flexGrow: 1,
       paddingBottom: hp(1),
     },
     notificationDivider: {

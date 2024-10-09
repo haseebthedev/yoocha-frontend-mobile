@@ -9,7 +9,8 @@ import { Text } from "components/General/text/text";
 import { colors } from "theme";
 import { BottomSheetModal } from "components/HOCModal/BottomSheet/BottomSheet";
 import { launchCameraHandler, launchImageLibraryHandler } from "utils/imagePicker";
-import styles from "./styles";
+import createStyles from "./styles";
+import { useAppTheme } from "hooks";
 interface ImagePickerModalI {
   isVisible: boolean;
   title?: string;
@@ -31,6 +32,9 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
   renderBackdrop,
   setAttachmentPickerVisible,
 }: ImagePickerModalI) => {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+
   return (
     <BottomSheetModal
       isVisible={isVisible}
@@ -54,7 +58,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
               style={styles.btnSection}
             >
               <Ionicons name="camera" size={35} color={colors.primary} />
-              <Text text="Open Camera" preset="subheading" />
+              <Text text="Open Camera" preset="subheading" style={styles.btnTitle} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -68,7 +72,7 @@ const ImagePickerModal: React.FC<ImagePickerModalI> = ({
               style={styles.btnSection}
             >
               <Ionicons name="image" size={35} color={colors.primary} />
-              <Text text="Open Gallery" preset="subheading" />
+              <Text text="Open Gallery" preset="subheading" style={styles.btnTitle} />
             </TouchableOpacity>
           </View>
         </View>

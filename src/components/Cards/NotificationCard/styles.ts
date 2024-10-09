@@ -1,10 +1,12 @@
 import { StyleSheet } from "react-native";
 import { hp, wp } from "utils/responsive";
 
+const LIST_ITEM_HEIGHT = 90;
+
 const createStyles = (theme) =>
   StyleSheet.create({
     container: {
-      height: hp(11),
+      height: LIST_ITEM_HEIGHT,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
@@ -40,7 +42,7 @@ const createStyles = (theme) =>
       width: wp(74),
     },
     notificationText: {
-      width: wp(60),
+      width: wp(70),
       marginTop: hp(-0.4),
       color: theme.colors.subHeading,
     },
@@ -56,6 +58,13 @@ const createStyles = (theme) =>
     time: {
       fontSize: hp(1.5),
       color: theme.colors.subHeading,
+    },
+    iconContainer: {
+      height: LIST_ITEM_HEIGHT,
+      position: "absolute",
+      right: "10%",
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 
